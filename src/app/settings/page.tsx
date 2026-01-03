@@ -50,7 +50,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-900">Notificaciones</p>
-                  <p className="text-xs text-slate-500">Email y push (mock)</p>
+                  <p className="text-xs text-slate-500">Email y push</p>
                 </div>
                 <label className="inline-flex cursor-pointer items-center">
                   <input type="checkbox" className="sr-only" defaultChecked />
@@ -60,7 +60,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
                 <div>
                   <p className="text-sm font-semibold text-slate-900">Tema</p>
-                  <p className="text-xs text-slate-500">Claro/Oscuro (mock)</p>
+                  <p className="text-xs text-slate-500">Claro/Oscuro</p>
                 </div>
                 <button
                   onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}

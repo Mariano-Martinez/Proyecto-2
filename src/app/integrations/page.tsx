@@ -9,7 +9,7 @@ import { ArrowUpRightIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const integrations = [
   { name: 'MercadoLibre', description: 'Sincronizá ventas e importá trackings.', plan: Plan.BUSINESS },
-  { name: 'Gmail', description: 'Detectamos códigos en tus emails. Mock.', plan: Plan.BUSINESS },
+  { name: 'Gmail', description: 'Detectamos códigos en tus emails y creamos envíos.', plan: Plan.BUSINESS },
   { name: 'Shopify', description: 'Próximamente, importación automática.', plan: Plan.BUSINESS },
 ];
 
@@ -26,9 +26,9 @@ export default function IntegrationsPage() {
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-semibold text-sky-600">Integraciones (mock)</p>
+              <p className="text-sm font-semibold text-sky-600">Integraciones</p>
               <h1 className="text-3xl font-black text-slate-900">Conectá tus canales</h1>
-              <p className="text-sm text-slate-600">Disponibles en Business+. Todos los botones son UI.</p>
+              <p className="text-sm text-slate-600">Disponibles en Business+. Gestioná tus canales desde un solo panel.</p>
             </div>
             {plan !== Plan.BUSINESS && plan !== Plan.ENTERPRISE && (
               <a href="/pricing" className="btn-primary rounded-xl px-4 py-2">

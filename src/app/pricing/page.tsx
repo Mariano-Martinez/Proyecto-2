@@ -10,15 +10,15 @@ import { useRouter } from 'next/navigation';
 const faqs = [
   {
     q: '¿Puedo cambiar de plan cuando quiera?',
-    a: 'Sí, en el mock podés elegir otro plan y se actualiza el límite localmente.',
+    a: 'Sí, podés elegir otro plan cuando quieras y actualizamos tu límite de envíos al instante.',
   },
   {
     q: '¿Cómo funciona el límite de envíos?',
-    a: 'Contamos los envíos activos (no entregados). Si alcanzás el límite, el botón para agregar mostrará un aviso.',
+    a: 'Contamos los envíos activos (no entregados). Si alcanzás el límite, verás un aviso antes de cargar otro.',
   },
   {
     q: '¿Hay integración real con correos?',
-    a: 'Todavía no. Todo es mock con datos locales y detección simple por prefijos.',
+    a: 'Estamos listos para conectar con APIs de correos. Hoy usamos datos locales y detección por prefijos.',
   },
 ];
 
@@ -79,12 +79,12 @@ export default function PricingPage() {
               <div className="card flex flex-col gap-3 p-5">
                 <h3 className="text-lg font-bold text-slate-900">Beneficios rápidos</h3>
                 <ul className="space-y-2 text-sm text-slate-600">
-                  <li>• Enforce de límite de envíos por plan.</li>
-                  <li>• Persistencia local (localStorage) lista para reemplazar por API.</li>
-                  <li>• Mock de upgrades y redirecciones a /auth.</li>
+                  <li>• Límite de envíos activo por plan.</li>
+                  <li>• Persistencia local lista para conectarse a tus APIs.</li>
+                  <li>• Flujo de upgrade guiado desde el panel.</li>
                 </ul>
                 <div className="rounded-xl bg-sky-50 p-4 text-sky-700">
-                  Más adelante: reemplazá la escritura en localStorage por llamados a tus API routes.
+                  Conecta tu backend cuando quieras: reemplazá el almacenamiento local por tus endpoints.
                 </div>
               </div>
             </section>

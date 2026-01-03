@@ -46,7 +46,9 @@ export default function PricingPage() {
           </div>
         </div>
 
-        <PricingCard annual={annual} />
+        <section id="planes" className="scroll-mt-10 space-y-4">
+          <PricingCard annual={annual} />
+        </section>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">

@@ -21,7 +21,7 @@ export default function IntegrationsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="lg:flex">
+      <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
           <div className="flex items-center justify-between">

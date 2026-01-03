@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HomeIcon, TruckIcon, Cog6ToothIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
+import { CurrencyDollarIcon, HomeIcon, TruckIcon, Cog6ToothIcon, Squares2X2Icon } from '@heroicons/react/24/outline';
 
 const nav = [
   { href: '/dashboard', label: 'Inicio', icon: HomeIcon },
   { href: '/shipments', label: 'Envíos', icon: TruckIcon },
+  { href: '/pricing#planes', label: 'Planes', icon: CurrencyDollarIcon },
   { href: '/settings', label: 'Perfil', icon: Cog6ToothIcon },
 ];
 
@@ -20,7 +21,8 @@ export const MobileNav = () => {
           TrackHub
         </Link>
         {nav.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const activePath = item.href.split('#')[0];
+          const active = pathname.startsWith(activePath);
           return (
             <Link
               key={item.href}

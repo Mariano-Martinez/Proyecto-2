@@ -2,26 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { HomeIcon, Squares2X2Icon, Cog6ToothIcon, TruckIcon, PuzzlePieceIcon } from '@heroicons/react/24/outline';
+import { CurrencyDollarIcon, HomeIcon, Squares2X2Icon, Cog6ToothIcon, TruckIcon, PuzzlePieceIcon } from '@heroicons/react/24/outline';
 
 const nav = [
   { href: '/dashboard', label: 'Dashboard', icon: HomeIcon },
   { href: '/shipments', label: 'Envíos', icon: TruckIcon },
   { href: '/integrations', label: 'Integraciones', icon: PuzzlePieceIcon },
+  { href: '/pricing#planes', label: 'Planes', icon: CurrencyDollarIcon },
   { href: '/settings', label: 'Configuración', icon: Cog6ToothIcon },
 ];
 
 export const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-slate-200 lg:bg-white lg:p-6 lg:shadow-sm">
+    <aside className="hidden lg:flex lg:w-64 lg:min-h-screen lg:flex-col lg:border-r lg:border-slate-200 lg:bg-white lg:p-6 lg:shadow-sm">
       <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
         <Squares2X2Icon className="h-6 w-6 text-sky-600" />
         TrackHub AR
       </div>
       <nav className="mt-8 flex-1 space-y-1">
         {nav.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const activePath = item.href.split('#')[0];
+          const active = pathname.startsWith(activePath);
           return (
             <Link
               key={item.href}

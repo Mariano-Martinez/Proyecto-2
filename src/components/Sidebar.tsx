@@ -8,7 +8,7 @@ const nav = [
   { href: '/dashboard', label: 'Dashboard', icon: HomeIcon },
   { href: '/shipments', label: 'Envíos', icon: TruckIcon },
   { href: '/integrations', label: 'Integraciones', icon: PuzzlePieceIcon },
-  { href: '/pricing#planes', label: 'Planes', icon: CurrencyDollarIcon },
+  { href: '/pricing', label: 'Planes', icon: CurrencyDollarIcon },
   { href: '/settings', label: 'Configuración', icon: Cog6ToothIcon },
 ];
 

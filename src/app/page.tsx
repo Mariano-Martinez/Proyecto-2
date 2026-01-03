@@ -43,28 +43,33 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 via-white to-slate-100">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12">
         <section className="gradient-hero relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-12 shadow-sm">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="inline-flex items-center gap-3 rounded-full bg-slate-900 px-4 py-2 text-white shadow-lg">
+              <span className="text-sm font-semibold">TrackHub AR</span>
+              <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-slate-100">Mock</span>
+            </div>
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 px-4 py-2 text-sm text-slate-600 backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
+              Listo para probar sin backend
+            </div>
+          </div>
           <div className="grid items-start gap-10 lg:grid-cols-2">
             <div className="space-y-6">
-              <span className="inline-flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
-                Mock interactivo
-                <span className="text-sky-500">•</span>
-                Plan Free al iniciar sesión
-              </span>
               <h1 className="text-4xl font-black text-slate-900 sm:text-5xl">
-                Seguimiento unificado y upgrades en un clic
+                Seguimiento unificado para tus envíos
               </h1>
               <p className="text-lg text-slate-600">
-                Centralizá todos tus envíos en Argentina con detección automática de courier, estados en tiempo real y
-                upgrades simulados. Ideal para demos y para planificar tu stack real.
+                Gestioná todo en un solo lugar: detección automática de courier, timeline por paquete y upgrades de
+                plan en un clic. Ideal para demos o para imaginar tu flujo real.
               </p>
               <div className="grid gap-3 md:grid-cols-2">
-                <div className="rounded-2xl bg-sky-50 p-4 text-sm text-sky-800">
+                <div className="rounded-2xl bg-sky-50 p-4 text-sm text-sky-800 shadow-sm">
                   <p className="font-semibold text-slate-900">Visibilidad total</p>
-                  <p>Tabla + cards mobile, timeline y métricas por estado.</p>
+                  <p>Dashboard, tabla y cards mobile con métricas por estado.</p>
                 </div>
-                <div className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800">
-                  <p className="font-semibold text-slate-900">Ready para upgrades</p>
-                  <p>Elegí Planes y simulá Business/Enterprise sin tocar el backend.</p>
+                <div className="rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-800 shadow-sm">
+                  <p className="font-semibold text-slate-900">Límite controlado</p>
+                  <p>Plan Free por defecto y upgrade desde Planes cuando quieras.</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm text-slate-600">
@@ -80,7 +85,7 @@ export default function HomePage() {
                 Más de 5 envíos mock listos para probar desde el minuto uno.
               </div>
               <div className="flex flex-wrap gap-3">
-                <Link href="/pricing#planes" className="btn-secondary rounded-xl px-5 py-3 text-base">
+                <Link href="/pricing" className="btn-secondary rounded-xl px-5 py-3 text-base">
                   Ver planes y upgrades
                 </Link>
                 <Link href="/dashboard" className="btn-link text-base font-semibold text-sky-700">
@@ -90,9 +95,14 @@ export default function HomePage() {
             </div>
 
             <div className="card relative overflow-hidden border-sky-100 bg-white px-6 py-8 shadow-lg">
-              <div className="mb-2 text-sm font-semibold uppercase text-slate-500">Accedé ahora</div>
-              <h2 className="text-2xl font-bold text-slate-900">Logueate directo en el landing</h2>
-              <p className="text-sm text-slate-600">Todo es mock: guardamos el flag y te damos el plan Free.</p>
+              <div className="mb-2 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold uppercase text-slate-500">Accedé ahora</p>
+                  <h2 className="text-2xl font-bold text-slate-900">Logueate directo en el landing</h2>
+                  <p className="text-sm text-slate-600">Guardamos el flag y te damos el plan Free.</p>
+                </div>
+                <div className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">Sin backend</div>
+              </div>
               <form className="mt-6 space-y-4" onSubmit={handleLogin}>
                 <div>
                   <label className="label">Nombre</label>
@@ -161,19 +171,6 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </section>
-
-        <section className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="section-title">Pricing</h2>
-              <p className="section-subtitle">Planes pensados para vendedores, equipos y empresas.</p>
-            </div>
-            <Link href="/pricing" className="btn-secondary rounded-xl px-4 py-2">
-              Comparar planes
-            </Link>
-          </div>
-          <PricingCard annual={false} />
         </section>
 
         <footer className="flex flex-col gap-3 border-t border-slate-200 py-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">

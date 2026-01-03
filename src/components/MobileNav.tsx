@@ -7,7 +7,7 @@ import { CurrencyDollarIcon, HomeIcon, TruckIcon, Cog6ToothIcon, Squares2X2Icon 
 const nav = [
   { href: '/dashboard', label: 'Inicio', icon: HomeIcon },
   { href: '/shipments', label: 'Envíos', icon: TruckIcon },
-  { href: '/pricing#planes', label: 'Planes', icon: CurrencyDollarIcon },
+  { href: '/pricing', label: 'Planes', icon: CurrencyDollarIcon },
   { href: '/settings', label: 'Perfil', icon: Cog6ToothIcon },
 ];
 

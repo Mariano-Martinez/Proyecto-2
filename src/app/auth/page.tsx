@@ -20,6 +20,13 @@ export default function AuthPage() {
     router.replace(stored || next);
   };
 
+  const handleSocial = () => {
+    setAuth(true);
+    if (!getPlan()) setPlan(Plan.FREE);
+    const stored = consumeRedirectPath();
+    router.replace(stored || next);
+  };
+
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 lg:flex-row lg:items-center lg:gap-16">
@@ -65,9 +72,18 @@ export default function AuthPage() {
             <button type="submit" className="btn-primary w-full rounded-xl px-4 py-2">
               {mode === 'login' ? 'Entrar' : 'Crear cuenta'}
             </button>
-            <button type="button" className="btn-secondary w-full rounded-xl px-4 py-2">
-              Continuar con Google (UI)
-            </button>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {['Google', 'Facebook', 'Apple'].map((provider) => (
+                <button
+                  key={provider}
+                  type="button"
+                  className="btn-secondary w-full rounded-xl px-4 py-2"
+                  onClick={handleSocial}
+                >
+                  {provider}
+                </button>
+              ))}
+            </div>
             <p className="text-center text-sm text-slate-600">
               ¿Todavía no sabés qué plan elegir?{' '}
               <Link href="/pricing" className="font-semibold text-sky-600">

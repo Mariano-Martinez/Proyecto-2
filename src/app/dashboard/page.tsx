@@ -56,15 +56,10 @@ export default function DashboardPage() {
   return (
     <AppShell>
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-sky-600">Resumen</p>
-            <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
-            <p className="text-sm text-slate-600">Seguimiento rápido de tu operación y próximos pasos.</p>
-          </div>
-          <button onClick={() => setOpen(true)} className="btn-primary rounded-xl px-4 py-2">
-            Agregar tracking
-          </button>
+        <div className="flex flex-col gap-3">
+          <p className="text-sm font-semibold text-sky-600">Resumen</p>
+          <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
+          <p className="text-sm text-slate-600">Seguimiento rápido de tu operación y próximos pasos.</p>
         </div>
 
         <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -105,7 +100,7 @@ export default function DashboardPage() {
             <h2 className="text-xl font-bold text-slate-900">Mis envíos</h2>
             <p className="text-sm text-slate-600">Vista tabla en desktop y cards en mobile.</p>
           </div>
-          <button onClick={() => setOpen(true)} className="btn-secondary rounded-xl px-4 py-2">
+          <button onClick={() => setOpen(true)} className="btn-primary rounded-xl px-4 py-2">
             Agregar tracking
           </button>
         </div>

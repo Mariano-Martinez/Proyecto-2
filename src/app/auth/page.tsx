@@ -7,7 +7,7 @@ export default function AuthPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/');
+    router.replace('/login');
   }, [router]);
 
   return null;

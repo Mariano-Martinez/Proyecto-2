@@ -57,7 +57,7 @@ export default function PricingPage() {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-slate-900">Comparativa de features</h2>
-                <button onClick={() => router.push('/auth')} className="btn-secondary rounded-xl px-4 py-2">
+                <button onClick={() => router.push('/login')} className="btn-secondary rounded-xl px-4 py-2">
                   Probar ahora
                 </button>
               </div>

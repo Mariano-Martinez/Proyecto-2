@@ -1,7 +1,7 @@
 'use client';
 
 import { detectCourier } from '@/lib/detection';
-import { addShipment, setRedirectPath } from '@/lib/storage';
+import { addShipment, setRedirectPath, getAuth } from '@/lib/storage';
 import { Courier } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useMemo, useState } from 'react';
@@ -22,6 +22,13 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
+    if (!getAuth()) {
+      if (typeof window !== 'undefined') {
+        setRedirectPath(window.location.pathname);
+      }
+      router.push('/login?reason=save');
+      return;
+    }
     try {
       addShipment({ code, alias, courier: courier === 'auto' ? undefined : courier });
       onCreated();

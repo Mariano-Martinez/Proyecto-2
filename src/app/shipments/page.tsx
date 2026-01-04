@@ -3,15 +3,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { MobileNav } from '@/components/MobileNav';
-import { useAuthGuard } from '@/lib/hooks';
-import { deleteShipment, getShipments, getUsage } from '@/lib/storage';
+import { useAuthGuard, useAuthStatus } from '@/lib/hooks';
+import { deleteShipment, getShipments, getUsage, setRedirectPath } from '@/lib/storage';
 import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { ShipmentTable } from '@/components/ShipmentTable';
 import { FunnelIcon, Squares2X2Icon, TableCellsIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default function ShipmentsPage() {
-  const ready = useAuthGuard();
+  const ready = useAuthGuard({ allowGuest: true });
+  const isAuthed = useAuthStatus();
+  const router = useRouter();
+  const pathname = usePathname();
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [view, setView] = useState<'cards' | 'table'>('cards');
   const [status, setStatus] = useState<string>('all');
@@ -20,6 +25,11 @@ export default function ShipmentsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [usage, setUsage] = useState<{ active: number; limit: number }>({ active: 0, limit: 3 });
   const handleDelete = (id: string) => {
+    if (!isAuthed) {
+      setRedirectPath(pathname);
+      router.push(`/login?reason=save&next=${encodeURIComponent(pathname)}`);
+      return;
+    }
     deleteShipment(id);
     setSelected((prev) => {
       const next = new Set(prev);
@@ -60,6 +70,11 @@ export default function ShipmentsPage() {
   };
 
   const bulkDelete = () => {
+    if (!isAuthed) {
+      setRedirectPath(pathname);
+      router.push(`/login?reason=save&next=${encodeURIComponent(pathname)}`);
+      return;
+    }
     selected.forEach((id) => deleteShipment(id));
     setSelected(new Set());
     refresh();

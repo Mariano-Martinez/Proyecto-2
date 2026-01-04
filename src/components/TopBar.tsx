@@ -4,11 +4,11 @@ import { MagnifyingGlassIcon, BellIcon, PlusIcon } from '@heroicons/react/24/out
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-export const TopBar = ({ onAdd }: { onAdd?: () => void }) => {
+export const TopBar = ({ onAdd, demo }: { onAdd?: () => void; demo?: boolean }) => {
   const router = useRouter();
   const pathname = usePathname();
   return (
-    <header className="sticky top-0 z-20 flex items-center gap-3 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:border-b-0 lg:bg-transparent lg:px-0 lg:py-0">
+    <header className="sticky top-0 z-20 flex flex-wrap items-center gap-3 border-b border-slate-200 bg-white/90 px-4 py-3 backdrop-blur lg:border-b-0 lg:bg-transparent lg:px-0 lg:py-0">
       <div className="flex flex-1 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
         <MagnifyingGlassIcon className="h-5 w-5 text-slate-400" />
         <input className="w-full text-sm focus:outline-none" placeholder="Buscar envíos o códigos" />
@@ -29,6 +29,7 @@ export const TopBar = ({ onAdd }: { onAdd?: () => void }) => {
       <Link href="/settings" className={`hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold lg:inline-flex ${pathname.startsWith('/settings') ? 'text-sky-600' : 'text-slate-700'}`}>
         Perfil
       </Link>
+      {demo && <span className="badge bg-amber-100 text-amber-800">Demo mode</span>}
     </header>
   );
 };

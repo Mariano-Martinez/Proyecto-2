@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
-  const ready = useAuthGuard();
+  const ready = useAuthGuard({ allowGuest: true });
   const router = useRouter();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
@@ -21,7 +21,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     clearAuth();
-    router.replace('/auth');
+    router.replace('/login');
   };
 
   if (!ready) return null;

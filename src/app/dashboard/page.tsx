@@ -6,12 +6,13 @@ import { MobileNav } from '@/components/MobileNav';
 import { ShipmentTable } from '@/components/ShipmentTable';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { AddShipmentModal } from '@/components/AddShipmentModal';
-import { useAuthGuard } from '@/lib/hooks';
-import { deleteShipment, getShipments, getUsage } from '@/lib/storage';
+import { useAuthGuard, useAuthStatus } from '@/lib/hooks';
+import { deleteShipment, getShipments, getUsage, setRedirectPath } from '@/lib/storage';
 import { Shipment, ShipmentStatus } from '@/lib/types';
 import { StatusBadge } from '@/components/StatusBadge';
 import { TopBar } from '@/components/TopBar';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const metricOrder: { key: ShipmentStatus; label: string }[] = [
   { key: ShipmentStatus.IN_TRANSIT, label: 'En tránsito' },
@@ -21,7 +22,9 @@ const metricOrder: { key: ShipmentStatus; label: string }[] = [
 ];
 
 export default function DashboardPage() {
-  const ready = useAuthGuard();
+  const ready = useAuthGuard({ allowGuest: true });
+  const isAuthed = useAuthStatus();
+  const router = useRouter();
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [open, setOpen] = useState(false);
   const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
@@ -38,6 +41,11 @@ export default function DashboardPage() {
   };
 
   const handleDelete = (id: string) => {
+    if (!isAuthed) {
+      setRedirectPath('/dashboard');
+      router.push('/login?reason=save&next=/dashboard');
+      return;
+    }
     deleteShipment(id);
     refresh();
   };
@@ -57,8 +65,23 @@ export default function DashboardPage() {
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-4 lg:px-8 lg:pb-12">
-          <TopBar onAdd={() => setOpen(true)} />
+          <TopBar onAdd={() => setOpen(true)} demo={!isAuthed} />
           <div className="mt-6 flex flex-col gap-8">
+            {!isAuthed && (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-semibold">Estás en modo demo</p>
+                    <p className="text-amber-800">
+                      Iniciá sesión para guardar envíos, activar notificaciones y sincronizar tu historial.
+                    </p>
+                  </div>
+                  <Link href="/login" className="btn-primary rounded-xl px-4 py-2">
+                    Iniciar sesión para guardar
+                  </Link>
+                </div>
+              </div>
+            )}
             <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl bg-sky-50 p-4">
                 <p className="text-sm font-semibold text-slate-600">Plan actual</p>

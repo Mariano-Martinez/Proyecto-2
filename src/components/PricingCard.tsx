@@ -14,7 +14,7 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
     setPlan(plan);
     if (!authed) {
       setRedirectPath('/pricing');
-      router.push('/auth');
+      router.push('/login');
       return;
     }
     router.push('/dashboard');

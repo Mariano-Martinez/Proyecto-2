@@ -14,7 +14,7 @@ const integrations = [
 ];
 
 export default function IntegrationsPage() {
-  const ready = useAuthGuard();
+  const ready = useAuthGuard({ allowGuest: true });
   const plan = typeof window === 'undefined' ? Plan.FREE : getPlan();
 
   if (!ready) return null;

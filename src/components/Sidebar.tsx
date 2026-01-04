@@ -39,8 +39,8 @@ export const Sidebar = () => {
         })}
       </nav>
       <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
-        <p className="font-semibold text-slate-900">Sesión activa</p>
-        <p className="mt-1 text-slate-600">Gestioná tus envíos y upgrades desde el panel.</p>
+        <p className="font-semibold text-slate-900">Panel</p>
+        <p className="mt-1 text-slate-600">Probá en demo o iniciá sesión para guardar tu progreso.</p>
       </div>
     </aside>
   );

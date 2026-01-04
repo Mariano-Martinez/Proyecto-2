@@ -4,15 +4,16 @@ import { Sidebar } from '@/components/Sidebar';
 import { MobileNav } from '@/components/MobileNav';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Timeline } from '@/components/Timeline';
-import { useAuthGuard } from '@/lib/hooks';
-import { getShipments, simulateProgress } from '@/lib/storage';
+import { useAuthGuard, useAuthStatus } from '@/lib/hooks';
+import { getShipments, simulateProgress, setRedirectPath } from '@/lib/storage';
 import { Shipment } from '@/lib/types';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function ShipmentDetailPage({ params }: { params: { id: string } }) {
-  const ready = useAuthGuard();
+  const ready = useAuthGuard({ allowGuest: true });
+  const isAuthed = useAuthStatus();
   const router = useRouter();
   const [shipment, setShipment] = useState<Shipment | null>(null);
 
@@ -24,6 +25,11 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
 
   const handleSimulate = () => {
     if (!shipment) return;
+    if (!isAuthed) {
+      setRedirectPath(`/shipments/${params.id}`);
+      router.push(`/login?reason=save&next=${encodeURIComponent(`/shipments/${params.id}`)}`);
+      return;
+    }
     simulateProgress(shipment.id);
     const updated = getShipments().find((s) => s.id === shipment.id) || null;
     setShipment(updated);

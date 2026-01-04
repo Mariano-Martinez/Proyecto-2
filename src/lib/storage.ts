@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   auth: 'trackhub_auth',
   plan: 'trackhub_plan',
   redirect: 'trackhub_redirect',
+  demo: 'trackhub_demo',
 };
 
 const nowISO = () => new Date().toISOString();

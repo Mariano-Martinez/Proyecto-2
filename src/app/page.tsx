@@ -44,13 +44,9 @@ export default function HomePage() {
     <main className="gradient-page flex min-h-screen flex-col">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-14 px-4 py-12">
         <section className="gradient-hero relative overflow-hidden rounded-3xl border border-slate-200 bg-white px-6 py-12 shadow-md">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-start">
             <div className="inline-flex items-center gap-3 rounded-full bg-slate-900 px-4 py-2 text-white shadow-lg">
               <span className="text-sm font-semibold">TrackHub AR</span>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/70 px-4 py-2 text-sm text-slate-600 backdrop-blur sm:mt-1">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" />
-              Panel unificado de envíos y notificaciones
             </div>
           </div>
           <div className="grid items-start gap-10 lg:grid-cols-2">

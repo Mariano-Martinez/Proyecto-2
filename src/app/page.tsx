@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan } from '@/lib/storage';
 import { useRouter } from 'next/navigation';

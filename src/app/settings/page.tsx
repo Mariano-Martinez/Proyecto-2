@@ -26,7 +26,7 @@ export default function SettingsPage() {
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
           <TopBar />
-          <h1 className="mt-4 text-3xl font-black text-slate-900">Configuración</h1>
+          <h1 className="mt-6 text-3xl font-black text-slate-900">Configuración</h1>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <div className="card space-y-4 p-5">
               <h3 className="text-lg font-bold text-slate-900">Perfil</h3>

@@ -26,7 +26,7 @@ export default function IntegrationsPage() {
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
           <TopBar />
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-6 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-sky-600">Integraciones</p>
               <h1 className="text-3xl font-black text-slate-900">Conectá tus canales</h1>

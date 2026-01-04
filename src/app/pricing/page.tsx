@@ -34,7 +34,7 @@ export default function PricingPage() {
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
           <TopBar />
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
-            <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm font-semibold text-sky-600">Planes</p>
                 <h1 className="text-4xl font-black text-slate-900">Precios pensados para crecer</h1>

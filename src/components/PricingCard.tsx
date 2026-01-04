@@ -25,9 +25,11 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
       {pricingTiers.map((tier) => (
         <div
           key={tier.id}
-          className={`card flex flex-col gap-4 p-5 ${tier.id === Plan.PRO ? 'ring-1 ring-sky-100 shadow-md shadow-slate-900/5 bg-gradient-to-br from-sky-50/60 via-white to-white' : ''}`}
+          className={`card flex h-full flex-col gap-4 p-5 ${
+            tier.id === Plan.PRO ? 'ring-1 ring-sky-100 shadow-md shadow-slate-900/5 bg-gradient-to-br from-sky-50/60 via-white to-white' : ''
+          } ${[Plan.FREE, Plan.BASIC, Plan.PRO].includes(tier.id) ? 'md:min-h-[420px]' : ''}`}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex min-h-[48px] items-start justify-between">
             <div>
               <p className="text-sm font-semibold uppercase text-slate-500">{tier.name}</p>
               <p className="mt-1 text-lg text-slate-700">{tier.description}</p>
@@ -39,28 +41,30 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
             <span className="text-base font-medium text-slate-500">/ {annual ? 'año' : 'mes'}</span>
           </div>
           <p className="text-sm text-slate-600">Hasta {tier.limit === Infinity ? 'ilimitado' : `${tier.limit} envíos activos`}.</p>
-          <button
-            onClick={() => handleChoose(tier.id)}
-            className="btn-primary w-full justify-center rounded-xl px-4 py-2"
-          >
-            Elegir plan
-          </button>
-          <div className="mt-2 space-y-2 text-sm text-slate-700">
-            {planFeatures.map((feature) => {
-              const available = isFeatureAvailable(tier.id, feature.availableFrom);
-              return (
-                <div key={feature.label} className="flex items-center gap-2">
-                  {available ? (
-                    <CheckIcon className="h-4 w-4 text-sky-600" />
-                  ) : (
-                    <MinusIcon className="h-4 w-4 text-slate-400" />
-                  )}
-                  <span className={available ? '' : 'text-slate-400'}>
-                    {feature.label} {feature.note && <span className="text-xs text-slate-400">({feature.note})</span>}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="mt-auto space-y-3">
+            <button
+              onClick={() => handleChoose(tier.id)}
+              className="btn-primary w-full justify-center rounded-xl px-4 py-2"
+            >
+              Elegir plan
+            </button>
+            <div className="space-y-2 text-sm text-slate-700">
+              {planFeatures.map((feature) => {
+                const available = isFeatureAvailable(tier.id, feature.availableFrom);
+                return (
+                  <div key={feature.label} className="flex items-center gap-2">
+                    {available ? (
+                      <CheckIcon className="h-4 w-4 text-sky-600" />
+                    ) : (
+                      <MinusIcon className="h-4 w-4 text-slate-400" />
+                    )}
+                    <span className={available ? '' : 'text-slate-400'}>
+                      {feature.label} {feature.note && <span className="text-xs text-slate-400">({feature.note})</span>}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       ))}

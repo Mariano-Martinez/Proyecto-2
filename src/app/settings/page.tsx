@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function SettingsPage() {
-  const ready = useAuthGuard({ allowGuest: true });
+  const ready = useAuthGuard();
   const router = useRouter();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
@@ -41,7 +41,7 @@ export default function SettingsPage() {
               </div>
               <div>
                 <label className="label">Email</label>
-                <input className="input mt-1" defaultValue="demo@trackhub.ar" />
+                <input className="input mt-1" defaultValue="usuario@trackhub.ar" />
               </div>
             </div>
 

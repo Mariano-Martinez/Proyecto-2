@@ -10,91 +10,9 @@ const STORAGE_KEYS = {
   auth: 'trackhub_auth',
   plan: 'trackhub_plan',
   redirect: 'trackhub_redirect',
-  demo: 'trackhub_demo',
 };
 
 const nowISO = () => new Date().toISOString();
-
-const demoEvents = (status: ShipmentStatus): TimelineEvent[] => [
-  {
-    id: 'evt-created',
-    label: 'Envío creado',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-  },
-  {
-    id: 'evt-dispatched',
-    label: 'Paquete despachado',
-    date: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-  },
-  {
-    id: 'evt-status',
-    label: `Estado actual: ${status}`,
-    date: nowISO(),
-  },
-];
-
-const demoShipments = (): Shipment[] => [
-  {
-    id: 's1',
-    code: 'AN123456789012',
-    alias: 'Zapatillas ML',
-    courier: Courier.ANDREANI,
-    status: ShipmentStatus.IN_TRANSIT,
-    lastUpdated: nowISO(),
-    origin: 'Córdoba',
-    destination: 'Buenos Aires',
-    eta: '2 días',
-    events: demoEvents(ShipmentStatus.IN_TRANSIT),
-  },
-  {
-    id: 's2',
-    code: 'OC9988776655',
-    alias: 'Regalo mamá',
-    courier: Courier.OCA,
-    status: ShipmentStatus.OUT_FOR_DELIVERY,
-    lastUpdated: nowISO(),
-    origin: 'Rosario',
-    destination: 'Mendoza',
-    eta: 'Hoy',
-    events: demoEvents(ShipmentStatus.OUT_FOR_DELIVERY),
-  },
-  {
-    id: 's3',
-    code: 'AR4455667788',
-    alias: 'Compra internacional',
-    courier: Courier.CORREO_ARGENTINO,
-    status: ShipmentStatus.CUSTOMS,
-    lastUpdated: nowISO(),
-    origin: 'Miami',
-    destination: 'Buenos Aires',
-    eta: '5 días',
-    events: demoEvents(ShipmentStatus.CUSTOMS),
-  },
-  {
-    id: 's4',
-    code: 'DHL1234567890',
-    alias: 'Repuestos bici',
-    courier: Courier.DHL,
-    status: ShipmentStatus.DELIVERED,
-    lastUpdated: nowISO(),
-    origin: 'Berlin',
-    destination: 'Mar del Plata',
-    eta: 'Entregado',
-    events: demoEvents(ShipmentStatus.DELIVERED),
-  },
-  {
-    id: 's5',
-    code: '1Z999AA10123456784',
-    alias: 'Laptop',
-    courier: Courier.UPS,
-    status: ShipmentStatus.DISPATCHED,
-    lastUpdated: nowISO(),
-    origin: 'San Francisco',
-    destination: 'Buenos Aires',
-    eta: '7 días',
-    events: demoEvents(ShipmentStatus.DISPATCHED),
-  },
-];
 
 const readLocal = <T>(key: string): T | null => {
   if (typeof window === 'undefined') return null;
@@ -113,35 +31,9 @@ const writeLocal = (key: string, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-const ensureSeed = () => {
-  if (typeof window === 'undefined') return [] as Shipment[];
-  const existing = readLocal<Shipment[]>(STORAGE_KEYS.shipments);
-  const plan = getPlan();
-  if (existing && existing.length) return existing;
-  const seeded = demoShipments();
-  if (plan === Plan.FREE) {
-    let activeCount = 0;
-    seeded.forEach((shipment) => {
-      if (isActiveStatus(shipment.status)) {
-        activeCount += 1;
-        if (activeCount > 3) {
-          shipment.status = ShipmentStatus.DELIVERED;
-          shipment.events.push({
-            id: `${shipment.id}-delivered`,
-            label: 'Entregado (limitado por plan)',
-            date: nowISO(),
-          });
-        }
-      }
-    });
-  }
-  writeLocal(STORAGE_KEYS.shipments, seeded);
-  return seeded;
-};
-
 export const getShipments = (): Shipment[] => {
   if (typeof window === 'undefined') return [];
-  return ensureSeed();
+  return readLocal<Shipment[]>(STORAGE_KEYS.shipments) ?? [];
 };
 
 export const addShipment = (data: {

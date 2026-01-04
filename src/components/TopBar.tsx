@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon, BellIcon, PlusIcon } from '@heroicons/react/24/out
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
-export const TopBar = ({ onAdd, demo }: { onAdd?: () => void; demo?: boolean }) => {
+export const TopBar = ({ onAdd }: { onAdd?: () => void }) => {
   const router = useRouter();
   const pathname = usePathname();
   return (
@@ -29,7 +29,6 @@ export const TopBar = ({ onAdd, demo }: { onAdd?: () => void; demo?: boolean }) 
       <Link href="/settings" className={`hidden rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold lg:inline-flex ${pathname.startsWith('/settings') ? 'text-sky-600' : 'text-slate-700'}`}>
         Perfil
       </Link>
-      {demo && <span className="badge bg-amber-100 text-amber-800">Demo mode</span>}
     </header>
   );
 };

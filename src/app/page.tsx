@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ShieldCheckIcon, PhoneIcon } from '@heroicons/react/24/outline';
 
 const couriers: { name: Courier; logo: string }[] = [
   { name: Courier.OCA, logo: '/images/oca.svg' },
@@ -29,8 +29,8 @@ export default function HomePage() {
     router.replace('/dashboard');
   };
 
-  const goDemo = () => {
-    router.push('/dashboard');
+  const goLogin = () => {
+    router.push('/login');
   };
 
   return (
@@ -52,18 +52,17 @@ export default function HomePage() {
                 Seguimiento unificado para tus envíos
               </h1>
               <p className="text-lg text-slate-600">
-                Probá el panel en segundos con datos de ejemplo. Cuando quieras guardar envíos reales o activar alertas,
-                iniciás sesión y listo.
+                Accedé al panel de envíos y notificaciones. Empezá con el Plan Free y activá mejoras cuando quieras.
               </p>
               <div className="flex flex-wrap gap-3">
-                <button onClick={goDemo} className="btn-primary rounded-xl px-5 py-3 text-base">
-                  Probar demo
+                <button onClick={goLogin} className="btn-primary rounded-xl px-5 py-3 text-base">
+                  Continuar gratis
                 </button>
                 <Link href="/pricing" className="btn-secondary rounded-xl px-5 py-3 text-base">
                   Ver planes
                 </Link>
               </div>
-              <p className="text-sm font-semibold text-slate-600">Sin tarjeta. Sin spam.</p>
+              <p className="text-sm font-semibold text-slate-600">Sin tarjeta • Podés cancelar cuando quieras.</p>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-2xl bg-sky-50 p-4 text-sm text-sky-800 shadow-sm">
                   <p className="font-semibold text-slate-900">Visibilidad total</p>
@@ -92,46 +91,57 @@ export default function HomePage() {
               <div className="mb-2 flex items-center justify-between">
                 <div>
                   <p className="text-sm font-semibold uppercase text-slate-500">ACCEDÉ AHORA</p>
-                  <h2 className="text-2xl font-bold text-slate-900">Probá el panel en 10 segundos</h2>
-                  <p className="text-sm text-slate-600">
-                    Sin registro. Datos de ejemplo. Para guardar envíos reales y activar alertas, necesitás cuenta.
-                  </p>
+                  <h2 className="text-2xl font-bold text-slate-900">Continuar gratis</h2>
+                  <p className="text-sm text-slate-600">Creá tu cuenta en segundos. Plan Free incluido.</p>
+                  <p className="text-xs text-slate-500 mt-1">Sin tarjeta • Podés cancelar cuando quieras</p>
                 </div>
-                <div className="rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">Modo demo</div>
               </div>
-              <div className="mt-6 space-y-4">
-                <button onClick={goDemo} className="btn-primary w-full rounded-xl px-4 py-3 text-base">
-                  Probar demo
+              <div className="mt-6 space-y-3">
+                <button
+                  type="button"
+                  className="btn-primary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base"
+                  onClick={handleSocial}
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-900">
+                    G
+                  </span>
+                  Continuar con Google
                 </button>
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-semibold text-slate-900">¿Querés guardar tu seguimiento?</p>
-                  <button onClick={() => router.push('/login')} className="btn-secondary mt-2 w-full rounded-xl px-4 py-2">
-                    Iniciar sesión
-                  </button>
-                  <p className="mt-2 text-xs text-slate-500">Guardá envíos reales • Alertas • Sync entre dispositivos</p>
-                </div>
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold uppercase text-slate-500">Login rápido</p>
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      className="btn-secondary w-full rounded-xl px-4 py-2"
-                      onClick={handleSocial}
-                    >
-                      Google
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-secondary w-full rounded-xl px-4 py-2"
-                      onClick={handleSocial}
-                    >
-                      Apple
-                    </button>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Tras loguearte, podés upgradear desde Planes y gestionar envíos ilimitados.
-                  </p>
-                </div>
+                <button
+                  type="button"
+                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base"
+                  onClick={handleSocial}
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
+                    
+                  </span>
+                  Continuar con Apple
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
+                  disabled
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
+                    MS
+                  </span>
+                  Continuar con Microsoft
+                  <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
+                  disabled
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-700">
+                    <PhoneIcon className="h-4 w-4" />
+                  </span>
+                  Continuar con el teléfono
+                  <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
+                </button>
+                <p className="text-xs text-slate-500 text-center">
+                  Al continuar, aceptás los Términos y la Política de privacidad.
+                </p>
               </div>
             </div>
           </div>
@@ -145,7 +155,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2 text-sm text-slate-600">
               <ShieldCheckIcon className="h-5 w-5 text-sky-600" />
-              Sin fricción: podés probar antes de registrarte.
+              Acceso seguro con SSO y Plan Free de inicio.
             </div>
           </div>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">

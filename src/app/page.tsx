@@ -1,7 +1,7 @@
 'use client';
 
 import { Courier } from '@/lib/types';
-import { setAuth, setPlan, getPlan } from '@/lib/storage';
+import { setAuth, setPlan, getPlan, setUser } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
@@ -23,8 +23,13 @@ export default function HomePage() {
     setPlan(getPlan());
   };
 
-  const handleSocial = () => {
+  const handleSocial = (provider: 'Google' | 'Apple') => {
     persistAuth();
+    setUser({
+      name: provider === 'Apple' ? 'Lucía Torres' : 'María González',
+      email: provider === 'Apple' ? 'lucia@trackhub.ar' : 'maria@trackhub.ar',
+      provider,
+    });
     router.replace('/dashboard');
   };
 
@@ -91,13 +96,13 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="mt-6 space-y-3">
-                <button type="button" className={providerBtn} onClick={handleSocial}>
+                <button type="button" className={providerBtn} onClick={() => handleSocial('Google')}>
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
                     <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
                   </span>
                   <span>Continuar con Google</span>
                 </button>
-                <button type="button" className={providerBtn} onClick={handleSocial}>
+                <button type="button" className={providerBtn} onClick={() => handleSocial('Apple')}>
                   <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
                     <Image src="/icons/apple.svg" alt="Apple" width={20} height={20} />
                   </span>

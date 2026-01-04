@@ -37,7 +37,7 @@ TrackHub AR es un mock de una aplicación Next.js (App Router) para unificar el 
 - **State machine**: CREATED → DISPATCHED → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED (+ CUSTOMS, ISSUE). El botón “Simular actualización” avanza al siguiente estado y agrega eventos al timeline.
 
 ## Estructura rápida
-- `src/app` Rutas App Router (landing, pricing, auth, dashboard, shipments, integrations, settings).
+- `src/app` Rutas App Router (landing, pricing, dashboard, shipments, integrations, settings).
 - `src/components` UI reutilizable: sidebar, mobile nav, tablas/cards de envíos, badges, pricing, timeline, modal para agregar tracking.
 - `src/lib` Tipos, planes/limits, storage service, detección de courier y helpers de estado/auth.
 - `public/images` Placeholders de logos de couriers.

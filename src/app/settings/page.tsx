@@ -3,13 +3,12 @@
 import { Sidebar } from '@/components/Sidebar';
 import { MobileNav } from '@/components/MobileNav';
 import { useAuthGuard } from '@/lib/hooks';
-import { clearAuth, getPlan, getUsage } from '@/lib/storage';
-import { useRouter } from 'next/navigation';
+import { getPlan, getUsage } from '@/lib/storage';
 import { useEffect, useState } from 'react';
+import { TopBar } from '@/components/TopBar';
 
 export default function SettingsPage() {
   const ready = useAuthGuard();
-  const router = useRouter();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
 
@@ -19,11 +18,6 @@ export default function SettingsPage() {
     setUsage({ ...u, plan: getPlan() });
   }, [ready]);
 
-  const handleLogout = () => {
-    clearAuth();
-    router.replace('/login');
-  };
-
   if (!ready) return null;
 
   return (
@@ -31,7 +25,8 @@ export default function SettingsPage() {
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
-          <h1 className="text-3xl font-black text-slate-900">Configuración</h1>
+          <TopBar />
+          <h1 className="mt-4 text-3xl font-black text-slate-900">Configuración</h1>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">
             <div className="card space-y-4 p-5">
               <h3 className="text-lg font-bold text-slate-900">Perfil</h3>
@@ -69,9 +64,6 @@ export default function SettingsPage() {
                   {theme === 'light' ? 'Cambiar a oscuro' : 'Cambiar a claro'}
                 </button>
               </div>
-              <button onClick={handleLogout} className="btn-primary rounded-xl px-4 py-2">
-                Cerrar sesión
-              </button>
             </div>
 
             <div className="card space-y-3 p-5 lg:col-span-2">

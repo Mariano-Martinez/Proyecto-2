@@ -57,7 +57,7 @@ export default function DashboardPage() {
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-4 lg:px-8 lg:pb-12">
-          <TopBar onAdd={() => setOpen(true)} />
+          <TopBar />
           <div className="mt-6 flex flex-col gap-8">
             <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
               <div className="rounded-2xl bg-sky-50 p-4">

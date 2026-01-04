@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setAuth, setPlan, getPlan, consumeRedirectPath, setRedirectPath } from '@/lib/storage';
+import { setAuth, setPlan, getPlan, consumeRedirectPath, setRedirectPath, setUser } from '@/lib/storage';
 import Image from 'next/image';
 
 export default function LoginPage() {
@@ -17,9 +17,14 @@ export default function LoginPage() {
     }
   }, [search]);
 
-  const login = () => {
+  const login = (provider: 'Google' | 'Apple') => {
     setAuth(true);
     setPlan(getPlan());
+    setUser({
+      name: provider === 'Apple' ? 'Lucía Torres' : 'María González',
+      email: provider === 'Apple' ? 'lucia@trackhub.ar' : 'maria@trackhub.ar',
+      provider,
+    });
     const redirect = consumeRedirectPath();
     router.replace(redirect || search.get('next') || '/dashboard');
   };
@@ -44,13 +49,13 @@ export default function LoginPage() {
           </p>
         </div>
         <div className="space-y-3">
-          <button onClick={login} className={providerBtn}>
+          <button onClick={() => login('Google')} className={providerBtn}>
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
               <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
             </span>
             <span>Continuar con Google</span>
           </button>
-          <button onClick={login} className={providerBtn}>
+          <button onClick={() => login('Apple')} className={providerBtn}>
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
               <Image src="/icons/apple.svg" alt="Apple" width={20} height={20} />
             </span>

@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   auth: 'trackhub_auth',
   plan: 'trackhub_plan',
   redirect: 'trackhub_redirect',
+  user: 'trackhub_user',
 };
 
 const nowISO = () => new Date().toISOString();
@@ -108,6 +109,7 @@ export const setAuth = (flag: boolean) => writeLocal(STORAGE_KEYS.auth, flag);
 
 export const clearAuth = () => {
   writeLocal(STORAGE_KEYS.auth, false);
+  writeLocal(STORAGE_KEYS.user, '');
 };
 
 export const getPlan = (): Plan => {
@@ -123,6 +125,16 @@ export const consumeRedirectPath = (): string | null => {
   if (value) writeLocal(STORAGE_KEYS.redirect, '');
   return value;
 };
+
+type StoredUser = {
+  name?: string;
+  email?: string;
+  provider?: string;
+};
+
+export const setUser = (user: StoredUser) => writeLocal(STORAGE_KEYS.user, user);
+export const getUser = (): StoredUser | null => readLocal<StoredUser>(STORAGE_KEYS.user);
+export const clearUser = () => writeLocal(STORAGE_KEYS.user, '');
 
 export const getUsage = () => {
   const shipments = getShipments();

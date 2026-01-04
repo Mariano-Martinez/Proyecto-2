@@ -8,6 +8,7 @@ import { deleteShipment, getShipments, getUsage } from '@/lib/storage';
 import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { ShipmentTable } from '@/components/ShipmentTable';
+import { TopBar } from '@/components/TopBar';
 import { FunnelIcon, Squares2X2Icon, TableCellsIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 
@@ -74,7 +75,8 @@ export default function ShipmentsPage() {
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-4 lg:px-8 lg:pb-12">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <TopBar />
+          <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-semibold text-sky-600">Gestión de envíos</p>
               <h1 className="text-3xl font-black text-slate-900">Mis envíos</h1>

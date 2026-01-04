@@ -14,7 +14,7 @@ export const useAuthGuard = (options?: { allowGuest?: boolean }) => {
     const authed = getAuth();
     if (!authed && !allowGuest) {
       setRedirectPath(pathname);
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      router.replace(`/?next=${encodeURIComponent(pathname)}`);
     } else {
       setReady(true);
     }

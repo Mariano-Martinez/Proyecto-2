@@ -24,7 +24,7 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-slate-50">
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
-        <main className="flex-1 px-4 pb-24 lg:px-8 lg:pb-12">
+        <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12 lg:pt-8">
           <TopBar />
           <h1 className="mt-6 text-3xl font-black text-slate-900">Configuración</h1>
           <div className="mt-6 grid gap-4 lg:grid-cols-2">

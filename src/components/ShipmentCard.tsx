@@ -5,8 +5,19 @@ import { StatusBadge } from './StatusBadge';
 import { Shipment } from '@/lib/types';
 import { ClipboardDocumentIcon, TrashIcon } from '@heroicons/react/24/outline';
 
-export const ShipmentCard = ({ shipment, onDelete }: { shipment: Shipment; onDelete: (id: string) => void }) => {
-  const copy = (code: string) => navigator.clipboard?.writeText(code);
+export const ShipmentCard = ({
+  shipment,
+  onDelete,
+  onCopy,
+}: {
+  shipment: Shipment;
+  onDelete: (id: string) => void;
+  onCopy?: (code: string) => void;
+}) => {
+  const copy = (code: string) => {
+    navigator.clipboard?.writeText(code);
+    onCopy?.(code);
+  };
   return (
     <div className="card space-y-3 p-4">
       <div className="flex items-center justify-between">
@@ -21,7 +32,11 @@ export const ShipmentCard = ({ shipment, onDelete }: { shipment: Shipment; onDel
           <p className="text-xs text-slate-500">Código</p>
           <p className="font-mono text-sm text-slate-800">{shipment.code}</p>
         </div>
-        <button onClick={() => copy(shipment.code)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100">
+        <button
+          onClick={() => copy(shipment.code)}
+          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+          title="Copiar código"
+        >
           <ClipboardDocumentIcon className="h-4 w-4" />
         </button>
       </div>
@@ -33,7 +48,11 @@ export const ShipmentCard = ({ shipment, onDelete }: { shipment: Shipment; onDel
         <Link href={`/shipments/${shipment.id}`} className="text-sm font-semibold text-sky-600">
           Ver detalle
         </Link>
-        <button onClick={() => onDelete(shipment.id)} className="text-sm font-semibold text-rose-600">
+        <button
+          onClick={() => onDelete(shipment.id)}
+          className="text-sm font-semibold text-rose-600 transition hover:text-rose-700"
+          title="Eliminar"
+        >
           <TrashIcon className="h-4 w-4" />
         </button>
       </div>

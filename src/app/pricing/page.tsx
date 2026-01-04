@@ -42,7 +42,12 @@ export default function PricingPage() {
               <input type="checkbox" className="peer sr-only" checked={annual} onChange={(e) => setAnnual(e.target.checked)} />
               <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:bg-sky-500 peer-checked:after:translate-x-full" />
             </label>
-            <span className={annual ? 'font-semibold text-slate-900' : 'text-slate-500'}>Anual</span>
+            <div className="flex items-center gap-1">
+              <span className={annual ? 'font-semibold text-slate-900' : 'text-slate-500'}>Anual</span>
+              <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase text-emerald-700 ring-1 ring-emerald-100">
+                Ahorra 15%
+              </span>
+            </div>
           </div>
         </div>
 
@@ -84,6 +89,17 @@ export default function PricingPage() {
             </div>
           </div>
         </section>
+
+        <div className="card mt-4 flex flex-col items-start gap-3 p-6 text-left sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs uppercase text-slate-500">¿Listo para empezar?</p>
+            <h3 className="text-xl font-bold text-slate-900">Elegí un plan y probá TrackHub AR</h3>
+            <p className="text-sm text-slate-600">Podés cambiar de plan luego desde Configuración.</p>
+          </div>
+          <button onClick={() => router.push('/login')} className="btn-primary rounded-xl px-4 py-2">
+            Probar ahora
+          </button>
+        </div>
       </div>
     </AppShell>
   );

@@ -23,13 +23,16 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {pricingTiers.map((tier) => (
-        <div key={tier.id} className="card flex flex-col gap-4 p-5">
+        <div
+          key={tier.id}
+          className={`card flex flex-col gap-4 p-5 ${tier.id === Plan.PRO ? 'ring-1 ring-sky-100 shadow-md shadow-slate-900/5 bg-gradient-to-br from-sky-50/60 via-white to-white' : ''}`}
+        >
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-semibold uppercase text-slate-500">{tier.name}</p>
               <p className="mt-1 text-lg text-slate-700">{tier.description}</p>
             </div>
-            {tier.id === Plan.PRO && <span className="badge bg-amber-100 text-amber-700">Popular</span>}
+            {tier.id === Plan.PRO && <span className="badge bg-sky-100 text-sky-700 ring-1 ring-sky-200">Popular</span>}
           </div>
           <div className="text-3xl font-bold text-slate-900">
             {tier.id === Plan.ENTERPRISE ? 'Contactar' : `ARS ${annual ? tier.priceYearly : tier.priceMonthly}`}
@@ -48,7 +51,7 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
               return (
                 <div key={feature.label} className="flex items-center gap-2">
                   {available ? (
-                    <CheckIcon className="h-4 w-4 text-emerald-500" />
+                    <CheckIcon className="h-4 w-4 text-sky-600" />
                   ) : (
                     <MinusIcon className="h-4 w-4 text-slate-400" />
                   )}

@@ -57,7 +57,7 @@ export default function HomePage() {
               <p className="max-w-xl text-lg text-slate-600">
                 Accedé al panel de envíos y notificaciones. Empezá con el Plan Free y activá mejoras cuando quieras.
               </p>
-              <p className="text-sm font-semibold text-slate-600">Sin tarjeta • Podés cancelar cuando quieras.</p>
+              <p className="text-sm font-semibold text-slate-600">Sin tarjeta • Sin anuncios • Podés cancelar cuando quieras.</p>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-2xl bg-sky-50 p-4 text-sm text-sky-800 shadow-sm">
                   <p className="font-semibold text-slate-900">Visibilidad total</p>
@@ -88,7 +88,6 @@ export default function HomePage() {
                   <p className="text-sm font-semibold uppercase text-slate-500">ACCEDÉ AHORA</p>
                   <h2 className="text-2xl font-bold text-slate-900">Continuar gratis</h2>
                   <p className="text-sm text-slate-600">Creá tu cuenta en segundos. Plan Free incluido.</p>
-                  <p className="text-xs text-slate-500 mt-1">Sin tarjeta • Podés cancelar cuando quieras</p>
                 </div>
               </div>
               <div className="mt-6 space-y-3">

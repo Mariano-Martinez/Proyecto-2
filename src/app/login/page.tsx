@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setAuth, setPlan, getPlan, consumeRedirectPath, setRedirectPath } from '@/lib/storage';
-import { PhoneIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,6 +24,13 @@ export default function LoginPage() {
     router.replace(redirect || search.get('next') || '/dashboard');
   };
 
+  const handleMicrosoft = () => {
+    alert('Microsoft SSO (mock): aún no está conectado.');
+  };
+
+  const providerBtn =
+    'flex h-12 w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500';
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
       <div className="card w-full max-w-md space-y-4 p-6">
@@ -37,39 +44,23 @@ export default function LoginPage() {
           </p>
         </div>
         <div className="space-y-3">
-          <button onClick={login} className="btn-primary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-900">
-              G
+          <button onClick={login} className={providerBtn}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+              <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
             </span>
-            Continuar con Google
+            <span>Continuar con Google</span>
           </button>
-          <button onClick={login} className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-              
+          <button onClick={login} className={providerBtn}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+              <Image src="/icons/apple.svg" alt="Apple" width={20} height={20} />
             </span>
-            Continuar con Apple
+            <span>Continuar con Apple</span>
           </button>
-          <button
-            className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
-            type="button"
-            disabled
-          >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
-              MS
+          <button type="button" onClick={handleMicrosoft} className={providerBtn}>
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+              <Image src="/icons/microsoft.svg" alt="Microsoft" width={20} height={20} />
             </span>
-            Continuar con Microsoft
-            <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
-          </button>
-          <button
-            className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
-            type="button"
-            disabled
-          >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-700">
-              <PhoneIcon className="h-4 w-4" />
-            </span>
-            Continuar con el teléfono
-            <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
+            <span>Continuar con Microsoft</span>
           </button>
           <p className="text-xs text-slate-500 text-center">Plan Free incluido. Podés cancelar cuando quieras.</p>
         </div>

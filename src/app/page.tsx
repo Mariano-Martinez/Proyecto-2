@@ -5,7 +5,8 @@ import Image from 'next/image';
 import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
-import { ShieldCheckIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
 
 const couriers: { name: Courier; logo: string }[] = [
   { name: Courier.OCA, logo: '/images/oca.svg' },
@@ -29,9 +30,16 @@ export default function HomePage() {
     router.replace('/dashboard');
   };
 
+  const handleMicrosoft = () => {
+    alert('Microsoft SSO (mock): aún no está conectado.');
+  };
+
   const goLogin = () => {
     router.push('/login');
   };
+
+  const providerBtn =
+    'flex h-12 w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500';
 
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 via-white to-slate-100">
@@ -97,47 +105,23 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="mt-6 space-y-3">
-                <button
-                  type="button"
-                  className="btn-primary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base"
-                  onClick={handleSocial}
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm font-semibold text-slate-900">
-                    G
+                <button type="button" className={providerBtn} onClick={handleSocial}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                    <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
                   </span>
-                  Continuar con Google
+                  <span>Continuar con Google</span>
                 </button>
-                <button
-                  type="button"
-                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base"
-                  onClick={handleSocial}
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-sm font-semibold text-white">
-                    
+                <button type="button" className={providerBtn} onClick={handleSocial}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                    <Image src="/icons/apple.svg" alt="Apple" width={20} height={20} />
                   </span>
-                  Continuar con Apple
+                  <span>Continuar con Apple</span>
                 </button>
-                <button
-                  type="button"
-                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
-                  disabled
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-sky-100 text-sm font-semibold text-sky-700">
-                    MS
+                <button type="button" className={providerBtn} onClick={handleMicrosoft}>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100">
+                    <Image src="/icons/microsoft.svg" alt="Microsoft" width={20} height={20} />
                   </span>
-                  Continuar con Microsoft
-                  <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary w-full justify-start gap-3 rounded-xl px-4 py-3 text-base opacity-70"
-                  disabled
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-700">
-                    <PhoneIcon className="h-4 w-4" />
-                  </span>
-                  Continuar con el teléfono
-                  <span className="ml-auto rounded-full bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-600">Próx.</span>
+                  <span>Continuar con Microsoft</span>
                 </button>
                 <p className="text-xs text-slate-500 text-center">
                   Al continuar, aceptás los Términos y la Política de privacidad.

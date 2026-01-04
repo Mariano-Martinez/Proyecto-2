@@ -23,7 +23,6 @@ TrackHub AR es un mock de una aplicación Next.js (App Router) para unificar el 
 ## Rutas principales
 - `/` Landing con hero, cómo funciona, couriers soportados y resumen de pricing.
 - `/pricing` Comparativa completa de planes, tabla de features, FAQ y lógica para guardar el plan en `localStorage`.
-- `/auth` Login/Signup mock; setea `auth=true` y respeta `next` en la URL para redirigir.
 - `/dashboard` Vista principal con sidebar desktop/bottom nav mobile, métricas, plan actual y listado de envíos.
 - `/shipments` Gestión con filtros, selección múltiple y cambio de vista (cards/tabla).
 - `/shipments/[id]` Detalle con timeline y botón “Simular actualización” que avanza el estado.
@@ -32,7 +31,7 @@ TrackHub AR es un mock de una aplicación Next.js (App Router) para unificar el 
 
 ## Lógica mock
 - **Planes**: enum `Plan` (FREE, BASIC, PRO, BUSINESS, ENTERPRISE) con límites activos (3, 15, 50, 200, ∞). Persistidos en `localStorage`.
-- **Auth**: flag booleano `auth=true` en `localStorage`. Las rutas protegidas redirigen a `/auth` si no hay sesión.
+- **Auth**: flag booleano `auth=true` en `localStorage`. Las rutas protegidas redirigen a `/login` (o la landing) si no hay sesión.
 - **Envíos**: se guardan en `localStorage` con seed inicial de 5 envíos. Si el plan es FREE, se respetan 3 activos máximo (resto se marca entregado).
 - **Detección de courier**: función `detectCourier` con reglas simples por prefijo/longitud.
 - **State machine**: CREATED → DISPATCHED → IN_TRANSIT → OUT_FOR_DELIVERY → DELIVERED (+ CUSTOMS, ISSUE). El botón “Simular actualización” avanza al siguiente estado y agrega eventos al timeline.

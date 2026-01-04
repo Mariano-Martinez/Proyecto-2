@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
@@ -33,10 +32,6 @@ export default function HomePage() {
     alert('Microsoft SSO (mock): aún no está conectado.');
   };
 
-  const goLogin = () => {
-    router.push('/login');
-  };
-
   const providerBtn =
     'flex h-12 w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500';
 
@@ -61,14 +56,6 @@ export default function HomePage() {
               <p className="text-lg text-slate-600">
                 Accedé al panel de envíos y notificaciones. Empezá con el Plan Free y activá mejoras cuando quieras.
               </p>
-              <div className="flex flex-wrap gap-3">
-                <button onClick={goLogin} className="btn-primary rounded-xl px-5 py-3 text-base">
-                  Continuar gratis
-                </button>
-                <Link href="/pricing" className="btn-secondary rounded-xl px-5 py-3 text-base">
-                  Ver planes
-                </Link>
-              </div>
               <p className="text-sm font-semibold text-slate-600">Sin tarjeta • Podés cancelar cuando quieras.</p>
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-2xl bg-sky-50 p-4 text-sm text-sky-800 shadow-sm">

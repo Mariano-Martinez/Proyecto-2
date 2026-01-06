@@ -31,6 +31,8 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState('');
   const [syncDebug, setSyncDebug] = useState('');
+  const [syncWarning, setSyncWarning] = useState('');
+  const [syncWarningDebug, setSyncWarningDebug] = useState('');
   const [autoSynced, setAutoSynced] = useState(false);
 
   useEffect(() => {
@@ -69,9 +71,18 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     if (!shipment) return;
     setSyncError('');
     setSyncDebug('');
+    setSyncWarning('');
+    setSyncWarningDebug('');
     setSyncing(true);
     try {
       const tracking = await fetchAndreani(shipment.code);
+      const debugInfo = tracking?.debugInfo;
+      if (debugInfo && debugInfo.eventsFromJson + debugInfo.eventsFromText + debugInfo.eventsFromLines === 0) {
+        setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
+        setSyncWarningDebug(
+          `eventsFromJson=${debugInfo.eventsFromJson}, eventsFromText=${debugInfo.eventsFromText}, eventsFromLines=${debugInfo.eventsFromLines}, plainLength=${debugInfo.plainLength}`
+        );
+      }
       const updated = applyPrefilledShipment(shipment.id, {
         courier: Courier.ANDREANI,
         status: tracking.status,
@@ -182,6 +193,15 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                     <div className="text-sm text-amber-700">
                       <p>{syncError}</p>
                       {syncDebug && <p className="text-xs text-slate-600">Detalle técnico: {syncDebug}</p>}
+                    </div>
+                  )}
+                  {syncWarning && (
+                    <div className="text-sm text-sky-700">
+                      <p>{syncWarning}</p>
+                      {syncWarningDebug && <p className="text-xs text-slate-600">Detalle técnico: {syncWarningDebug}</p>}
+                      <p className="text-xs text-slate-600">
+                        Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+                      </p>
                     </div>
                   )}
                 </div>

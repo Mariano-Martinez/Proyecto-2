@@ -28,6 +28,8 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const [courier, setCourier] = useState<Courier | 'auto'>('auto');
   const [error, setError] = useState('');
   const [errorDebug, setErrorDebug] = useState('');
+  const [warning, setWarning] = useState('');
+  const [warningDebug, setWarningDebug] = useState('');
   const [loading, setLoading] = useState(false);
 
   const detected = useMemo(() => detectCourier(code), [code]);
@@ -56,6 +58,9 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setErrorDebug('');
+    setWarning('');
+    setWarningDebug('');
     if (!getAuth()) {
       if (typeof window !== 'undefined') {
         setRedirectPath(window.location.pathname);
@@ -70,6 +75,13 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       if (selectedCourier === Courier.ANDREANI) {
         try {
           const tracking = await fetchAndreani(code.trim());
+          const debugInfo = tracking?.debugInfo;
+          if (debugInfo && debugInfo.eventsFromJson + debugInfo.eventsFromText + debugInfo.eventsFromLines === 0) {
+            setWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
+            setWarningDebug(
+              `eventsFromJson=${debugInfo.eventsFromJson}, eventsFromText=${debugInfo.eventsFromText}, eventsFromLines=${debugInfo.eventsFromLines}, plainLength=${debugInfo.plainLength}`
+            );
+          }
           prefilled = {
             courier: Courier.ANDREANI,
             status: tracking.status,
@@ -164,6 +176,15 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
               >
                 Ver planes
               </button>
+            </div>
+          )}
+          {warning && (
+            <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
+              <p>{warning}</p>
+              {warningDebug && <p className="mt-1 text-xs text-slate-600">Detalle técnico: {warningDebug}</p>}
+              <p className="mt-1 text-xs text-slate-600">
+                Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+              </p>
             </div>
           )}
           <div className="flex justify-end gap-2">

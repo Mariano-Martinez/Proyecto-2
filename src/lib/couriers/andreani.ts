@@ -509,15 +509,7 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     apiCookieCaptured: apiAttempt.debug.apiCookieCaptured,
     apiPayloadSample: apiAttempt.debug.apiPayloadSample,
   };
-  const apiStatus = apiAttempt.debug.apiStatusV3 ?? apiAttempt.debug.apiStatusV1 ?? apiAttempt.debug.apiStatus;
-  const apiFailedHard =
-    typeof apiStatus === 'number' && (apiStatus >= 300 || apiStatus === 206 || apiStatus === 0 || apiStatus === 204);
-
-  // Si el API devolvió algo útil, retornamos; si falló con status no-OK, propagamos error y no caemos al mock.
-  if (!apiAttempt.payload && apiFailedHard) {
-    const err = new AndreaniScraperError(`Andreani API respondió ${apiStatus ?? 'sin status'}`, 'NETWORK_ERROR', undefined, baseDebug);
-    throw err;
-  }
+  // Siempre intentamos scraping si la API no devolvió eventos; 206 (Partial Content) y otros estados se reportan en debugInfo pero no bloquean el fallback.
 
   // Fallback a scraping HTML solo si el v3 respondió OK pero sin eventos.
   const scraped = await scrapeAndreaniHtmlTracking(code, baseDebug);

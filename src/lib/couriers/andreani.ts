@@ -62,6 +62,21 @@ type ParsedFromJson = {
   eta?: string;
 };
 
+const monthToNumber: Record<string, number> = {
+  ene: 0,
+  feb: 1,
+  mar: 2,
+  abr: 3,
+  may: 4,
+  jun: 5,
+  jul: 6,
+  ago: 7,
+  sep: 8,
+  oct: 9,
+  nov: 10,
+  dic: 11,
+};
+
 const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | null => {
   const scriptMatch = html.match(/<script[^>]+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
   if (!scriptMatch) return null;
@@ -93,6 +108,11 @@ const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | nul
       });
     };
 
+    const considerStringEvent = (value: string) => {
+      const lineEvents = parseEventsFromStrings([value], code);
+      lineEvents.forEach((ev) => collected.push(ev));
+    };
+
     const walk = (value: unknown) => {
       if (value && typeof value === 'object') {
         if (visited.has(value as object)) return;
@@ -119,6 +139,9 @@ const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | nul
         }
         Object.values(obj).forEach(walk);
       }
+      if (typeof value === 'string') {
+        considerStringEvent(value);
+      }
     };
 
     walk(json);
@@ -130,20 +153,6 @@ const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | nul
   } catch (error) {
     return null;
   }
-};
-const monthToNumber: Record<string, number> = {
-  ene: 0,
-  feb: 1,
-  mar: 2,
-  abr: 3,
-  may: 4,
-  jun: 5,
-  jul: 6,
-  ago: 7,
-  sep: 8,
-  oct: 9,
-  nov: 10,
-  dic: 11,
 };
 
 const parseDateString = (date: string, time?: string) => {
@@ -204,18 +213,31 @@ const parseEventsFromText = (text: string, code: string): TimelineEvent[] => {
   }
 
   if (events.length === 0) {
-    // Fallback: intentar detectar el estado principal como único evento.
-    const status = mapStatus(text);
-    events.push({
-      id: `${code}-0`,
-      label: 'Estado actualizado',
-      date: new Date().toISOString(),
-      location: undefined,
-    });
     return events;
   }
 
   // Ordenar descendente por fecha.
+  events.sort((a, b) => (a.date < b.date ? 1 : -1));
+  return events;
+};
+
+const parseEventsFromStrings = (lines: string[], code: string): TimelineEvent[] => {
+  const events: TimelineEvent[] = [];
+  const datePattern =
+    /(\\d{1,2}[\\/-]\\d{1,2}[\\/-]\\d{2,4}|\\d{1,2}\\s+(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\\s+\\d{4})/i;
+  lines.forEach((line) => {
+    const trimmed = line.trim();
+    const dateMatch = trimmed.match(datePattern);
+    if (!dateMatch) return;
+    const timeMatch = trimmed.match(/\\b(\\d{2}:\\d{2})\\b/);
+    const label = trimmed.replace(datePattern, '').replace(/\\b\\d{2}:\\d{2}\\b/, '').trim();
+    const parsedDate = parseDateString(dateMatch[0], timeMatch ? timeMatch[1] : undefined);
+    events.push({
+      id: `${code}-txt-${events.length}`,
+      label: label || trimmed,
+      date: parsedDate,
+    });
+  });
   events.sort((a, b) => (a.date < b.date ? 1 : -1));
   return events;
 };
@@ -250,8 +272,16 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
   }
 
   const eventsFromText = plain ? parseEventsFromText(plain, code) : [];
-  const events = jsonParsed?.events?.length ? jsonParsed.events : eventsFromText;
-  const statusFromEvents = events.length > 0 ? mapStatus(events[0].label) : undefined;
+  const eventsFromLines = plain ? parseEventsFromStrings(plain.split('\n'), code) : [];
+  const combinedEvents = [...eventsFromText, ...eventsFromLines];
+  combinedEvents.sort((a, b) => (a.date < b.date ? 1 : -1));
+
+  const events = jsonParsed?.events?.length ? jsonParsed.events : combinedEvents;
+  if (events.length === 0) {
+    throw new AndreaniScraperError('No se pudieron extraer eventos del tracking de Andreani', 'PARSING_ERROR');
+  }
+
+  const statusFromEvents = mapStatus(events[0].label);
   const status = statusFromEvents ?? mapStatus(plain ?? '');
   const lastUpdated = events[0]?.date ?? new Date().toISOString();
 

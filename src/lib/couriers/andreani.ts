@@ -22,8 +22,11 @@ export type AndreaniTrackingPayload = {
     eventsFromJson: number;
     eventsFromApi?: number;
     apiStatus?: number;
+    apiStatusV1?: number;
+    apiStatusV3?: number;
     apiPayloadFound?: boolean;
     apiError?: string;
+    apiCookieCaptured?: boolean;
     plainLength: number;
     htmlLength: number;
     plainSample?: string;
@@ -278,9 +281,12 @@ const buildApiHeaders = () => {
 
 type ApiAttemptDebug = {
   apiStatus?: number;
+  apiStatusV1?: number;
+  apiStatusV3?: number;
   apiPayloadFound?: boolean;
   eventsFromApi: number;
   apiError?: string;
+  apiCookieCaptured?: boolean;
 };
 
 const extractPayloadToken = (value: unknown): string | undefined => {
@@ -306,6 +312,7 @@ const extractPayloadToken = (value: unknown): string | undefined => {
 const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: AndreaniTrackingPayload; debug: ApiAttemptDebug }> => {
   const headers = buildApiHeaders();
   const debug: ApiAttemptDebug = { eventsFromApi: 0 };
+  let cookie: string | undefined;
 
   try {
     const payloadRes = await fetch(
@@ -316,9 +323,16 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
       }
     );
     debug.apiStatus = payloadRes.status;
+    debug.apiStatusV1 = payloadRes.status;
     if (!payloadRes.ok) {
       debug.apiError = `v1 status ${payloadRes.status}`;
       return { debug };
+    }
+    const setCookie = payloadRes.headers.get('set-cookie');
+    if (setCookie) {
+      // Mantener la cookie de sesión si la API la requiere para el v3.
+      cookie = setCookie.split(',')[0];
+      debug.apiCookieCaptured = true;
     }
     const payloadJson = await payloadRes.json();
     const payloadToken = extractPayloadToken(payloadJson);
@@ -331,11 +345,12 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
     const trackingRes = await fetch(
       `${ANDREANI_API_BASE}/api/v3/Tracking?payload=${encodeURIComponent(payloadToken)}`,
       {
-        headers,
+        headers: cookie ? { ...headers, cookie } : headers,
         cache: 'no-store',
       }
     );
     debug.apiStatus = trackingRes.status;
+    debug.apiStatusV3 = trackingRes.status;
     if (!trackingRes.ok) {
       debug.apiError = `v3 status ${trackingRes.status}`;
       return { debug };
@@ -363,6 +378,8 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
         eventsFromJson: parsed.rawEventCount,
         eventsFromApi: parsed.rawEventCount,
         apiStatus: trackingRes.status,
+        apiStatusV1: debug.apiStatusV1,
+        apiStatusV3: trackingRes.status,
         apiPayloadFound: debug.apiPayloadFound,
         plainLength: 0,
         htmlLength: 0,
@@ -468,8 +485,11 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
   const baseDebug = {
     eventsFromApi: apiAttempt.debug.eventsFromApi,
     apiStatus: apiAttempt.debug.apiStatus,
+    apiStatusV1: apiAttempt.debug.apiStatusV1,
+    apiStatusV3: apiAttempt.debug.apiStatusV3,
     apiPayloadFound: apiAttempt.debug.apiPayloadFound,
     apiError: apiAttempt.debug.apiError,
+    apiCookieCaptured: apiAttempt.debug.apiCookieCaptured,
   };
 
   const scraped = await scrapeAndreaniHtmlTracking(code, baseDebug);
@@ -480,8 +500,11 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     eventsFromJson: scraped.debugInfo?.eventsFromJson ?? 0,
     eventsFromApi: baseDebug.eventsFromApi ?? scraped.debugInfo?.eventsFromApi,
     apiStatus: baseDebug.apiStatus ?? scraped.debugInfo?.apiStatus,
+    apiStatusV1: baseDebug.apiStatusV1 ?? scraped.debugInfo?.apiStatusV1,
+    apiStatusV3: baseDebug.apiStatusV3 ?? scraped.debugInfo?.apiStatusV3,
     apiPayloadFound: baseDebug.apiPayloadFound ?? scraped.debugInfo?.apiPayloadFound,
     apiError: baseDebug.apiError ?? scraped.debugInfo?.apiError,
+    apiCookieCaptured: baseDebug.apiCookieCaptured ?? scraped.debugInfo?.apiCookieCaptured,
     plainLength: scraped.debugInfo?.plainLength ?? 0,
     htmlLength: scraped.debugInfo?.htmlLength ?? 0,
     plainSample: scraped.debugInfo?.plainSample,

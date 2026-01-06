@@ -12,12 +12,25 @@ import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+class AndreaniLookupError extends Error {
+  constructor(
+    message: string,
+    public kind: 'NOT_FOUND' | 'FETCH_FAILED',
+    public details?: string,
+    public status?: number
+  ) {
+    super(message);
+    this.name = 'AndreaniLookupError';
+  }
+}
+
 export default function ShipmentDetailPage({ params }: { params: { id: string } }) {
   const ready = useAuthGuard();
   const router = useRouter();
   const [shipment, setShipment] = useState<Shipment | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState('');
+  const [syncDebug, setSyncDebug] = useState('');
   const [autoSynced, setAutoSynced] = useState(false);
 
   useEffect(() => {
@@ -35,11 +48,12 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     const payload = await response.json().catch(() => ({}));
     if (response.status === 404) {
       const message = payload?.error ?? 'Envío no encontrado';
-      throw new Error(`NOT_FOUND:${message}`);
+      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status);
     }
     if (!response.ok) {
-      const message = payload?.details || payload?.error || `HTTP ${response.status}`;
-      throw new Error(`FETCH_FAILED:${message}`);
+      const message = payload?.error || 'No pudimos consultar Andreani';
+      const details = payload?.details || `HTTP ${response.status}`;
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status);
     }
     return payload;
   };
@@ -54,6 +68,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const handleSyncAndreani = async () => {
     if (!shipment) return;
     setSyncError('');
+    setSyncDebug('');
     setSyncing(true);
     try {
       const tracking = await fetchAndreani(shipment.code);
@@ -70,15 +85,19 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
         setShipment(updated);
       }
     } catch (err) {
-      const reason = (err as Error).message;
-      if (reason.startsWith('NOT_FOUND')) {
-        setSyncError(reason.split(':').slice(1).join(':') || 'No encontramos este envío en Andreani.');
-      } else if (reason.startsWith('FETCH_FAILED')) {
-        setSyncError(reason.split(':').slice(1).join(':') || 'No pudimos actualizar desde Andreani. Probá más tarde.');
+      if (err instanceof AndreaniLookupError) {
+        const friendly =
+          err.kind === 'NOT_FOUND'
+            ? err.message || 'No encontramos este envío en Andreani.'
+            : err.message || 'No pudimos actualizar desde Andreani. Probá más tarde.';
+        setSyncError(friendly);
+        setSyncDebug(err.details || `Status: ${err.status ?? 'n/d'}`);
+        console.error('Andreani sync failed', { message: err.message, details: err.details, status: err.status });
       } else {
         setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');
+        setSyncDebug((err as Error)?.message ?? '');
+        console.error('Andreani sync failed', err);
       }
-      console.error('Andreani sync failed', reason);
     } finally {
       setSyncing(false);
     }
@@ -159,7 +178,12 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                     </button>
                     <p className="text-sm text-slate-600">Trae el estado real de Andreani para este envío.</p>
                   </div>
-                  {syncError && <p className="text-sm text-amber-700">{syncError}</p>}
+                  {syncError && (
+                    <div className="text-sm text-amber-700">
+                      <p>{syncError}</p>
+                      {syncDebug && <p className="text-xs text-slate-600">Detalle técnico: {syncDebug}</p>}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="mt-4 flex items-center gap-3">

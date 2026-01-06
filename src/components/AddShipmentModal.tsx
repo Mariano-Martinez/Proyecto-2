@@ -9,12 +9,25 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const courierOptions = Object.values(Courier);
 
+class AndreaniLookupError extends Error {
+  constructor(
+    message: string,
+    public kind: 'NOT_FOUND' | 'FETCH_FAILED',
+    public details?: string,
+    public status?: number
+  ) {
+    super(message);
+    this.name = 'AndreaniLookupError';
+  }
+}
+
 export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; onClose: () => void; onCreated: () => void }) => {
   const router = useRouter();
   const [code, setCode] = useState('');
   const [alias, setAlias] = useState('');
   const [courier, setCourier] = useState<Courier | 'auto'>('auto');
   const [error, setError] = useState('');
+  const [errorDebug, setErrorDebug] = useState('');
   const [loading, setLoading] = useState(false);
 
   const detected = useMemo(() => detectCourier(code), [code]);
@@ -30,11 +43,12 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
     const payload = await response.json().catch(() => ({}));
     if (response.status === 404) {
       const message = payload?.error ?? 'Envío no encontrado';
-      throw new Error(`NOT_FOUND:${message}`);
+      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status);
     }
     if (!response.ok) {
-      const message = payload?.details || payload?.error || `HTTP ${response.status}`;
-      throw new Error(`FETCH_FAILED:${message}`);
+      const message = payload?.error || 'No pudimos consultar Andreani';
+      const details = payload?.details || `HTTP ${response.status}`;
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status);
     }
     return payload;
   };
@@ -66,15 +80,19 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             lastUpdated: tracking.lastUpdated,
           };
         } catch (err) {
-          const reason = (err as Error).message;
-          if (reason.startsWith('NOT_FOUND')) {
-            setError(reason.split(':').slice(1).join(':') || 'No encontramos este envío en Andreani. Verificá el código.');
-          } else if (reason.startsWith('FETCH_FAILED')) {
-            setError(reason.split(':').slice(1).join(':') || 'No pudimos consultar Andreani en este momento. Probá más tarde.');
+          if (err instanceof AndreaniLookupError) {
+            const friendly =
+              err.kind === 'NOT_FOUND'
+                ? err.message || 'No encontramos este envío en Andreani. Verificá el código.'
+                : err.message || 'No pudimos consultar Andreani en este momento. Probá más tarde.';
+            setError(friendly);
+            setErrorDebug(err.details || `Status: ${err.status ?? 'n/d'}`);
+            console.error('Andreani lookup failed', { message: err.message, details: err.details, status: err.status });
           } else {
             setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
+            setErrorDebug((err as Error)?.message ?? '');
+            console.error('Andreani lookup failed', err);
           }
-          console.error('Andreani lookup failed', reason);
           setLoading(false);
           return;
         }
@@ -134,7 +152,8 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           </div>
           {error && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              {error}{' '}
+              <p>{error}</p>
+              {errorDebug && <p className="mt-1 text-xs text-slate-600">Detalle técnico: {errorDebug}</p>}
               <button
                 type="button"
                 className="font-semibold underline"

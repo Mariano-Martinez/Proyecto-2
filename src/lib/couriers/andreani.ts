@@ -18,6 +18,8 @@ export type AndreaniTrackingPayload = {
     eventsFromLines: number;
     eventsFromJson: number;
     plainLength: number;
+    htmlLength: number;
+    plainSample?: string;
   };
 };
 
@@ -293,6 +295,8 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     eventsFromLines: eventsFromLines.length,
     eventsFromJson: jsonParsed?.events?.length ?? 0,
     plainLength: plain?.length ?? 0,
+    htmlLength: html.length,
+    plainSample: plain?.slice(0, 300),
   };
 
   // Si no pudimos extraer eventos, devolvemos un evento de fallback para evitar un 422

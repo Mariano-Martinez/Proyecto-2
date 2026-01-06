@@ -18,6 +18,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const [shipment, setShipment] = useState<Shipment | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState('');
+  const [autoSynced, setAutoSynced] = useState(false);
 
   useEffect(() => {
     if (!ready) return;
@@ -80,6 +81,12 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const canSyncAndreani =
     shipment &&
     (shipment.courier === Courier.ANDREANI || detectCourier(shipment.code) === Courier.ANDREANI);
+
+  useEffect(() => {
+    if (!canSyncAndreani || autoSynced) return;
+    // Auto-intentar sincronizar apenas se detecte Andreani y no haya sincronizado aún.
+    handleSyncAndreani().finally(() => setAutoSynced(true));
+  }, [canSyncAndreani, autoSynced]);
 
   if (!ready) return null;
 

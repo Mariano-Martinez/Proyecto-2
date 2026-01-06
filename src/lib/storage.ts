@@ -41,6 +41,7 @@ export const addShipment = (data: {
   code: string;
   alias?: string;
   courier?: Courier;
+  prefilled?: Partial<Shipment>;
 }): Shipment => {
   const shipments = getShipments();
   const plan = getPlan();
@@ -49,24 +50,28 @@ export const addShipment = (data: {
   if (active >= limit) {
     throw new Error('PLAN_LIMIT');
   }
-  const courier = data.courier ?? detectCourier(data.code);
+  const courier = data.prefilled?.courier ?? data.courier ?? detectCourier(data.code);
+  const createdAt = nowISO();
   const newShipment: Shipment = {
     id: crypto.randomUUID(),
     code: data.code,
     alias: data.alias?.trim() || 'Envío sin alias',
     courier,
-    status: ShipmentStatus.CREATED,
-    lastUpdated: nowISO(),
-    origin: 'Buenos Aires',
-    destination: 'Argentina',
-    eta: 'Próximamente',
-    events: [
-      {
-        id: 'created',
-        label: 'Envío creado',
-        date: nowISO(),
-      },
-    ],
+    status: data.prefilled?.status ?? ShipmentStatus.CREATED,
+    lastUpdated: data.prefilled?.lastUpdated ?? createdAt,
+    origin: data.prefilled?.origin ?? 'Buenos Aires',
+    destination: data.prefilled?.destination ?? 'Argentina',
+    eta: data.prefilled?.eta ?? 'Próximamente',
+    events:
+      data.prefilled?.events && data.prefilled.events.length > 0
+        ? [...data.prefilled.events].sort((a, b) => (a.date < b.date ? 1 : -1))
+        : [
+            {
+              id: 'created',
+              label: 'Envío creado',
+              date: createdAt,
+            },
+          ],
   };
   const updated = [newShipment, ...shipments];
   writeLocal(STORAGE_KEYS.shipments, updated);

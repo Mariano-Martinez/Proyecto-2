@@ -15,13 +15,30 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const [alias, setAlias] = useState('');
   const [courier, setCourier] = useState<Courier | 'auto'>('auto');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const detected = useMemo(() => detectCourier(code), [code]);
 
   if (!open) return null;
 
-  const submit = (e: FormEvent) => {
+  const fetchAndreani = async (shipmentCode: string) => {
+    const response = await fetch('/api/track/andreani', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ code: shipmentCode }),
+    });
+    if (response.status === 404) {
+      throw new Error('NOT_FOUND');
+    }
+    if (!response.ok) {
+      throw new Error('FETCH_FAILED');
+    }
+    return response.json();
+  };
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!getAuth()) {
       if (typeof window !== 'undefined') {
         setRedirectPath(window.location.pathname);
@@ -29,8 +46,35 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       router.push('/login?reason=save');
       return;
     }
+    setLoading(true);
     try {
-      addShipment({ code, alias, courier: courier === 'auto' ? undefined : courier });
+      const selectedCourier = courier === 'auto' ? detected : courier;
+      let prefilled = undefined;
+      if (selectedCourier === Courier.ANDREANI) {
+        try {
+          const tracking = await fetchAndreani(code.trim());
+          prefilled = {
+            courier: Courier.ANDREANI,
+            status: tracking.status,
+            events: tracking.events,
+            origin: tracking.origin,
+            destination: tracking.destination,
+            eta: tracking.eta,
+            lastUpdated: tracking.lastUpdated,
+          };
+        } catch (err) {
+          const reason = (err as Error).message;
+          if (reason === 'NOT_FOUND') {
+            setError('No encontramos este envío en Andreani. Verificá el código.');
+          } else {
+            setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
+          }
+          setLoading(false);
+          return;
+        }
+      }
+
+      addShipment({ code, alias, courier: selectedCourier === 'auto' ? undefined : selectedCourier, prefilled });
       onCreated();
       setCode('');
       setAlias('');
@@ -43,6 +87,8 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       } else {
         setError('No pudimos crear el envío. Verificá el código.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,8 +145,8 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             <button type="button" onClick={onClose} className="btn-secondary rounded-xl px-4 py-2">
               Cancelar
             </button>
-            <button type="submit" className="btn-primary rounded-xl px-4 py-2">
-              Guardar
+            <button type="submit" className="btn-primary rounded-xl px-4 py-2" disabled={loading}>
+              {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </form>

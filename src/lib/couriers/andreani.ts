@@ -261,7 +261,8 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     if (res.status === 404) {
       throw new AndreaniScraperError('Envío no encontrado en Andreani', 'NOT_FOUND');
     }
-    throw new AndreaniScraperError(`Respuesta inesperada (${res.status})`, 'NETWORK_ERROR');
+    const networkError = new Error(`Respuesta inesperada (${res.status}) ${res.statusText}`);
+    throw new AndreaniScraperError(`Respuesta inesperada (${res.status})`, 'NETWORK_ERROR', networkError);
   }
 
   const html = await res.text();

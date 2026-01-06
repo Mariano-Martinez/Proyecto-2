@@ -24,17 +24,17 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     if (error instanceof AndreaniScraperError) {
-      if (error.code === 'NOT_FOUND') {
-        return NextResponse.json({ error: 'Envío no encontrado' }, { status: 404 });
-      }
-      if (error.code === 'PARSING_ERROR') {
-        return NextResponse.json({ error: 'No se pudo interpretar la página de Andreani' }, { status: 422 });
-      }
-      if (error.code === 'NETWORK_ERROR') {
-        return NextResponse.json({ error: 'Error al consultar Andreani' }, { status: 502 });
-      }
+      const details = error.cause instanceof Error ? error.cause.message : undefined;
+      const payload = { error: error.message, code: error.code, details };
+      if (error.code === 'NOT_FOUND') return NextResponse.json(payload, { status: 404 });
+      if (error.code === 'PARSING_ERROR') return NextResponse.json(payload, { status: 422 });
+      if (error.code === 'NETWORK_ERROR') return NextResponse.json(payload, { status: 502 });
+      return NextResponse.json(payload, { status: 500 });
     }
     console.error('Unexpected error scraping Andreani', error);
-    return NextResponse.json({ error: 'Error inesperado al consultar Andreani' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error inesperado al consultar Andreani', details: (error as Error)?.message },
+      { status: 500 }
+    );
   }
 }

@@ -32,13 +32,16 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ code: shipmentCode }),
     });
+    const payload = await response.json().catch(() => ({}));
     if (response.status === 404) {
-      throw new Error('NOT_FOUND');
+      const message = payload?.error ?? 'Envío no encontrado';
+      throw new Error(`NOT_FOUND:${message}`);
     }
     if (!response.ok) {
-      throw new Error('FETCH_FAILED');
+      const message = payload?.details || payload?.error || `HTTP ${response.status}`;
+      throw new Error(`FETCH_FAILED:${message}`);
     }
-    return response.json();
+    return payload;
   };
 
   const handleSimulate = () => {
@@ -68,11 +71,14 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       }
     } catch (err) {
       const reason = (err as Error).message;
-      if (reason === 'NOT_FOUND') {
-        setSyncError('No encontramos este envío en Andreani.');
+      if (reason.startsWith('NOT_FOUND')) {
+        setSyncError(reason.split(':').slice(1).join(':') || 'No encontramos este envío en Andreani.');
+      } else if (reason.startsWith('FETCH_FAILED')) {
+        setSyncError(reason.split(':').slice(1).join(':') || 'No pudimos actualizar desde Andreani. Probá más tarde.');
       } else {
         setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');
       }
+      console.error('Andreani sync failed', reason);
     } finally {
       setSyncing(false);
     }

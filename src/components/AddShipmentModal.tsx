@@ -27,13 +27,16 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ code: shipmentCode }),
     });
+    const payload = await response.json().catch(() => ({}));
     if (response.status === 404) {
-      throw new Error('NOT_FOUND');
+      const message = payload?.error ?? 'Envío no encontrado';
+      throw new Error(`NOT_FOUND:${message}`);
     }
     if (!response.ok) {
-      throw new Error('FETCH_FAILED');
+      const message = payload?.details || payload?.error || `HTTP ${response.status}`;
+      throw new Error(`FETCH_FAILED:${message}`);
     }
-    return response.json();
+    return payload;
   };
 
   const submit = async (e: FormEvent) => {
@@ -64,11 +67,14 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           };
         } catch (err) {
           const reason = (err as Error).message;
-          if (reason === 'NOT_FOUND') {
-            setError('No encontramos este envío en Andreani. Verificá el código.');
+          if (reason.startsWith('NOT_FOUND')) {
+            setError(reason.split(':').slice(1).join(':') || 'No encontramos este envío en Andreani. Verificá el código.');
+          } else if (reason.startsWith('FETCH_FAILED')) {
+            setError(reason.split(':').slice(1).join(':') || 'No pudimos consultar Andreani en este momento. Probá más tarde.');
           } else {
             setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
           }
+          console.error('Andreani lookup failed', reason);
           setLoading(false);
           return;
         }

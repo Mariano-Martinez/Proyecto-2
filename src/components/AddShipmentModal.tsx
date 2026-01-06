@@ -30,6 +30,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const [errorDebug, setErrorDebug] = useState('');
   const [warning, setWarning] = useState('');
   const [warningDebug, setWarningDebug] = useState('');
+  const [debugDump, setDebugDump] = useState('');
   const [loading, setLoading] = useState(false);
 
   const detected = useMemo(() => detectCourier(code), [code]);
@@ -61,6 +62,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
     setErrorDebug('');
     setWarning('');
     setWarningDebug('');
+    setDebugDump('');
     if (!getAuth()) {
       if (typeof window !== 'undefined') {
         setRedirectPath(window.location.pathname);
@@ -76,6 +78,18 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
         try {
           const tracking = await fetchAndreani(code.trim());
           const debugInfo = tracking?.debugInfo;
+          setDebugDump(
+            JSON.stringify(
+              {
+                code: code.trim(),
+                status: tracking.status,
+                events: tracking.events,
+                debugInfo,
+              },
+              null,
+              2
+            )
+          );
           if (debugInfo && debugInfo.eventsFromJson + debugInfo.eventsFromText + debugInfo.eventsFromLines === 0) {
             setWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
             setWarningDebug(
@@ -185,6 +199,18 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
               <p className="mt-1 text-xs text-slate-600">
                 Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
               </p>
+              {debugDump && (
+                <div className="mt-2 space-y-1 text-xs">
+                  <button
+                    type="button"
+                    className="btn-secondary rounded-lg px-3 py-1 text-xs"
+                    onClick={() => navigator.clipboard.writeText(debugDump)}
+                  >
+                    Copiar dump de depuración
+                  </button>
+                  <pre className="max-h-40 overflow-auto rounded bg-slate-100 p-2 text-[11px] text-slate-700">{debugDump}</pre>
+                </div>
+              )}
             </div>
           )}
           <div className="flex justify-end gap-2">

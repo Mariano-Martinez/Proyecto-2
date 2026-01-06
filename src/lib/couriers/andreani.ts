@@ -3,7 +3,11 @@ import { Courier, ShipmentStatus, TimelineEvent } from '@/lib/types';
 const DEFAULT_TRACKING_URL_TEMPLATE = process.env.ANDREANI_TRACKING_URL_TEMPLATE ?? 'https://www.andreani.com/#!/detalle-envio/{code}';
 const ANDREANI_API_BASE = process.env.ANDREANI_TRACKING_API_BASE ?? 'https://tracking-api.andreani.com';
 const ANDREANI_ORIGIN = process.env.ANDREANI_TRACKING_ORIGIN ?? 'https://www.andreani.com';
-const ANDREANI_AUTH = process.env.ANDREANI_TRACKING_AUTH;
+// Fallback al token observado en DevTools para facilitar pruebas locales; debe reemplazarse en producción mediante env.
+const ANDREANI_AUTH =
+  process.env.ANDREANI_TRACKING_AUTH ??
+  'XqPMiwXzTRKHH0mF3gmtPtQt3LNGIuqCTdgaUHINMdmlaFid0x9MzlYTKXPxluYQ';
+const ENABLE_PAYLOAD_DUMP = process.env.ANDREANI_TRACKING_DEBUG_PAYLOAD === 'true';
 const USER_AGENT =
   process.env.ANDREANI_USER_AGENT ??
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
@@ -27,6 +31,7 @@ export type AndreaniTrackingPayload = {
     apiPayloadFound?: boolean;
     apiError?: string;
     apiCookieCaptured?: boolean;
+    apiPayloadSample?: string;
     plainLength: number;
     htmlLength: number;
     plainSample?: string;
@@ -37,7 +42,8 @@ export class AndreaniScraperError extends Error {
   constructor(
     message: string,
     public code: 'NOT_FOUND' | 'PARSING_ERROR' | 'NETWORK_ERROR' | 'UNKNOWN',
-    public cause?: unknown
+    public cause?: unknown,
+    public debugInfo?: AndreaniTrackingPayload['debugInfo']
   ) {
     super(message);
     this.name = 'AndreaniScraperError';
@@ -287,6 +293,7 @@ type ApiAttemptDebug = {
   eventsFromApi: number;
   apiError?: string;
   apiCookieCaptured?: boolean;
+  apiPayloadSample?: string;
 };
 
 const extractPayloadToken = (value: unknown): string | undefined => {
@@ -351,11 +358,14 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
     );
     debug.apiStatus = trackingRes.status;
     debug.apiStatusV3 = trackingRes.status;
-    if (!trackingRes.ok) {
+    if (!trackingRes.ok || trackingRes.status === 206) {
       debug.apiError = `v3 status ${trackingRes.status}`;
       return { debug };
     }
     const trackingJson = await trackingRes.json();
+    if (ENABLE_PAYLOAD_DUMP) {
+      debug.apiPayloadSample = JSON.stringify(trackingJson).slice(0, 2000);
+    }
     const parsed = extractEventsFromUnknown(trackingJson, code);
     if (!parsed || parsed.events.length === 0) {
       debug.apiError = 'v3 sin eventos';
@@ -381,13 +391,20 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
         apiStatusV1: debug.apiStatusV1,
         apiStatusV3: trackingRes.status,
         apiPayloadFound: debug.apiPayloadFound,
+        apiPayloadSample: debug.apiPayloadSample,
         plainLength: 0,
         htmlLength: 0,
       },
     };
 
     return {
-      payload,
+      payload: {
+        ...payload,
+        debugInfo: {
+          ...payload.debugInfo,
+          apiPayloadSample: debug.apiPayloadSample,
+        },
+      },
       debug: { ...debug, eventsFromApi: parsed.events.length },
     };
   } catch (error) {
@@ -490,8 +507,19 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     apiPayloadFound: apiAttempt.debug.apiPayloadFound,
     apiError: apiAttempt.debug.apiError,
     apiCookieCaptured: apiAttempt.debug.apiCookieCaptured,
+    apiPayloadSample: apiAttempt.debug.apiPayloadSample,
   };
+  const apiStatus = apiAttempt.debug.apiStatusV3 ?? apiAttempt.debug.apiStatusV1 ?? apiAttempt.debug.apiStatus;
+  const apiFailedHard =
+    typeof apiStatus === 'number' && (apiStatus >= 300 || apiStatus === 206 || apiStatus === 0 || apiStatus === 204);
 
+  // Si el API devolvió algo útil, retornamos; si falló con status no-OK, propagamos error y no caemos al mock.
+  if (!apiAttempt.payload && apiFailedHard) {
+    const err = new AndreaniScraperError(`Andreani API respondió ${apiStatus ?? 'sin status'}`, 'NETWORK_ERROR', undefined, baseDebug);
+    throw err;
+  }
+
+  // Fallback a scraping HTML solo si el v3 respondió OK pero sin eventos.
   const scraped = await scrapeAndreaniHtmlTracking(code, baseDebug);
   // combinar debug info enriqueciendo con la traza del intento API
   scraped.debugInfo = {
@@ -505,6 +533,7 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     apiPayloadFound: baseDebug.apiPayloadFound ?? scraped.debugInfo?.apiPayloadFound,
     apiError: baseDebug.apiError ?? scraped.debugInfo?.apiError,
     apiCookieCaptured: baseDebug.apiCookieCaptured ?? scraped.debugInfo?.apiCookieCaptured,
+    apiPayloadSample: baseDebug.apiPayloadSample ?? scraped.debugInfo?.apiPayloadSample,
     plainLength: scraped.debugInfo?.plainLength ?? 0,
     htmlLength: scraped.debugInfo?.htmlLength ?? 0,
     plainSample: scraped.debugInfo?.plainSample,

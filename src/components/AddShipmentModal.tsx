@@ -14,7 +14,8 @@ class AndreaniLookupError extends Error {
     message: string,
     public kind: 'NOT_FOUND' | 'FETCH_FAILED',
     public details?: string,
-    public status?: number
+    public status?: number,
+    public debugInfo?: any
   ) {
     super(message);
     this.name = 'AndreaniLookupError';
@@ -44,16 +45,33 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       body: JSON.stringify({ code: shipmentCode }),
     });
     const payload = await response.json().catch(() => ({}));
+    const debugInfo = payload?.debugInfo;
     if (response.status === 404) {
       const message = payload?.error ?? 'Envío no encontrado';
-      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status);
+      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status, debugInfo);
     }
     if (!response.ok) {
       const message = payload?.error || 'No pudimos consultar Andreani';
-      const details = payload?.details || `HTTP ${response.status}`;
-      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status);
+      const details = payload?.details || buildDebugSummary(debugInfo) || `HTTP ${response.status}`;
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status, debugInfo);
     }
     return payload;
+  };
+
+  const buildDebugSummary = (debugInfo: any) => {
+    if (!debugInfo) return '';
+    const parts: string[] = [];
+    if (typeof debugInfo.eventsFromApi === 'number') parts.push(`eventsFromApi=${debugInfo.eventsFromApi}`);
+    if (typeof debugInfo.eventsFromJson === 'number') parts.push(`eventsFromJson=${debugInfo.eventsFromJson}`);
+    if (typeof debugInfo.eventsFromText === 'number') parts.push(`eventsFromText=${debugInfo.eventsFromText}`);
+    if (typeof debugInfo.eventsFromLines === 'number') parts.push(`eventsFromLines=${debugInfo.eventsFromLines}`);
+    if (typeof debugInfo.apiStatusV1 === 'number') parts.push(`apiStatusV1=${debugInfo.apiStatusV1}`);
+    if (typeof debugInfo.apiStatusV3 === 'number') parts.push(`apiStatusV3=${debugInfo.apiStatusV3}`);
+    if (typeof debugInfo.apiStatus === 'number') parts.push(`apiStatus=${debugInfo.apiStatus}`);
+    if (typeof debugInfo.apiPayloadFound === 'boolean') parts.push(`apiPayloadFound=${debugInfo.apiPayloadFound}`);
+    if (typeof debugInfo.apiCookieCaptured === 'boolean') parts.push(`apiCookieCaptured=${debugInfo.apiCookieCaptured}`);
+    if (debugInfo.apiError) parts.push(`apiError=${debugInfo.apiError}`);
+    return parts.join(', ');
   };
 
   const submit = async (e: FormEvent) => {
@@ -90,34 +108,42 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
               2
             )
           );
-          if (debugInfo && debugInfo.eventsFromJson + debugInfo.eventsFromText + debugInfo.eventsFromLines === 0) {
+          const totalParsed =
+            (debugInfo?.eventsFromApi ?? 0) +
+            (debugInfo?.eventsFromJson ?? 0) +
+            (debugInfo?.eventsFromText ?? 0) +
+            (debugInfo?.eventsFromLines ?? 0);
+          const hasRealEvents = Array.isArray(tracking.events) && tracking.events.some((ev: any) => !`${ev.id}`.endsWith('-fallback'));
+          if (debugInfo && totalParsed === 0) {
             setWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
             setWarningDebug(
-              `eventsFromJson=${debugInfo.eventsFromJson}, eventsFromText=${debugInfo.eventsFromText}, eventsFromLines=${debugInfo.eventsFromLines}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
+              `${buildDebugSummary(debugInfo)}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
             );
           }
           prefilled = {
             courier: Courier.ANDREANI,
             status: tracking.status,
-            events: tracking.events,
+            events: hasRealEvents ? tracking.events : [],
             origin: tracking.origin,
             destination: tracking.destination,
             eta: tracking.eta,
             lastUpdated: tracking.lastUpdated,
           };
-        } catch (err) {
-          if (err instanceof AndreaniLookupError) {
-            const friendly =
-              err.kind === 'NOT_FOUND'
-                ? err.message || 'No encontramos este envío en Andreani. Verificá el código.'
-                : err.message || 'No pudimos consultar Andreani en este momento. Probá más tarde.';
-            setError(friendly);
-            setErrorDebug(err.details || `Status: ${err.status ?? 'n/d'}`);
-            console.error('Andreani lookup failed', { message: err.message, details: err.details, status: err.status });
-          } else {
-            setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
-            setErrorDebug((err as Error)?.message ?? '');
-            console.error('Andreani lookup failed', err);
+          } catch (err) {
+            if (err instanceof AndreaniLookupError) {
+              const friendly =
+                err.kind === 'NOT_FOUND'
+                  ? err.message || 'No encontramos este envío en Andreani. Verificá el código.'
+                  : err.message || 'No pudimos consultar Andreani en este momento. Probá más tarde.';
+              const debugFromResponse = (err as any)?.debugInfo;
+              const debugDetails = debugFromResponse ? buildDebugSummary(debugFromResponse) : '';
+              setError(friendly);
+              setErrorDebug(err.details || debugDetails || `Status: ${err.status ?? 'n/d'}`);
+              console.error('Andreani lookup failed', { message: err.message, details: err.details, status: err.status });
+            } else {
+              setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
+              setErrorDebug((err as Error)?.message ?? '');
+              console.error('Andreani lookup failed', err);
           }
           setLoading(false);
           return;

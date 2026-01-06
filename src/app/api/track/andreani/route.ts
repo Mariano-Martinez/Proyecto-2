@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof AndreaniScraperError) {
       const details = error.cause instanceof Error ? error.cause.message : undefined;
-      const payload = { error: error.message, code: error.code, details };
+      const payload = { error: error.message, code: error.code, details, debugInfo: error.debugInfo };
       if (error.code === 'NOT_FOUND') return NextResponse.json(payload, { status: 404 });
       if (error.code === 'PARSING_ERROR') return NextResponse.json(payload, { status: 422 });
       if (error.code === 'NETWORK_ERROR') return NextResponse.json(payload, { status: 502 });

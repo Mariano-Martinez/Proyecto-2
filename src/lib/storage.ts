@@ -63,8 +63,10 @@ export const addShipment = (data: {
     destination: data.prefilled?.destination ?? 'Argentina',
     eta: data.prefilled?.eta ?? 'Próximamente',
     events:
-      data.prefilled?.events && data.prefilled.events.length > 0
-        ? [...data.prefilled.events].sort((a, b) => (a.date < b.date ? 1 : -1))
+      data.prefilled && 'events' in data.prefilled
+        ? data.prefilled?.events && data.prefilled.events.length > 0
+          ? [...data.prefilled.events].sort((a, b) => (a.date < b.date ? 1 : -1))
+          : []
         : [
             {
               id: 'created',

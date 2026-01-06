@@ -17,7 +17,8 @@ class AndreaniLookupError extends Error {
     message: string,
     public kind: 'NOT_FOUND' | 'FETCH_FAILED',
     public details?: string,
-    public status?: number
+    public status?: number,
+    public debugInfo?: any
   ) {
     super(message);
     this.name = 'AndreaniLookupError';
@@ -36,6 +37,22 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const [syncDump, setSyncDump] = useState('');
   const [autoSynced, setAutoSynced] = useState(false);
 
+  const buildDebugSummary = (debugInfo: any) => {
+    if (!debugInfo) return '';
+    const parts: string[] = [];
+    if (typeof debugInfo.eventsFromApi === 'number') parts.push(`eventsFromApi=${debugInfo.eventsFromApi}`);
+    if (typeof debugInfo.eventsFromJson === 'number') parts.push(`eventsFromJson=${debugInfo.eventsFromJson}`);
+    if (typeof debugInfo.eventsFromText === 'number') parts.push(`eventsFromText=${debugInfo.eventsFromText}`);
+    if (typeof debugInfo.eventsFromLines === 'number') parts.push(`eventsFromLines=${debugInfo.eventsFromLines}`);
+    if (typeof debugInfo.apiStatusV1 === 'number') parts.push(`apiStatusV1=${debugInfo.apiStatusV1}`);
+    if (typeof debugInfo.apiStatusV3 === 'number') parts.push(`apiStatusV3=${debugInfo.apiStatusV3}`);
+    if (typeof debugInfo.apiStatus === 'number') parts.push(`apiStatus=${debugInfo.apiStatus}`);
+    if (typeof debugInfo.apiPayloadFound === 'boolean') parts.push(`apiPayloadFound=${debugInfo.apiPayloadFound}`);
+    if (typeof debugInfo.apiCookieCaptured === 'boolean') parts.push(`apiCookieCaptured=${debugInfo.apiCookieCaptured}`);
+    if (debugInfo.apiError) parts.push(`apiError=${debugInfo.apiError}`);
+    return parts.join(', ');
+  };
+
   useEffect(() => {
     if (!ready) return;
     const data = getShipments().find((s) => s.id === params.id) || null;
@@ -49,14 +66,15 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       body: JSON.stringify({ code: shipmentCode }),
     });
     const payload = await response.json().catch(() => ({}));
+    const debugInfo = payload?.debugInfo;
     if (response.status === 404) {
       const message = payload?.error ?? 'Envío no encontrado';
-      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status);
+      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status, debugInfo);
     }
     if (!response.ok) {
       const message = payload?.error || 'No pudimos consultar Andreani';
-      const details = payload?.details || `HTTP ${response.status}`;
-      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status);
+      const details = payload?.details || buildDebugSummary(debugInfo) || `HTTP ${response.status}`;
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status, debugInfo);
     }
     return payload;
   };
@@ -91,16 +109,22 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
           2
         )
       );
-      if (debugInfo && debugInfo.eventsFromJson + debugInfo.eventsFromText + debugInfo.eventsFromLines === 0) {
+      const totalParsed =
+        (debugInfo?.eventsFromApi ?? 0) +
+        (debugInfo?.eventsFromJson ?? 0) +
+        (debugInfo?.eventsFromText ?? 0) +
+        (debugInfo?.eventsFromLines ?? 0);
+      const hasRealEvents = Array.isArray(tracking.events) && tracking.events.some((ev: any) => !`${ev.id}`.endsWith('-fallback'));
+      if (debugInfo && (totalParsed === 0 || !hasRealEvents)) {
         setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
         setSyncWarningDebug(
-          `eventsFromJson=${debugInfo.eventsFromJson}, eventsFromText=${debugInfo.eventsFromText}, eventsFromLines=${debugInfo.eventsFromLines}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
+          `${buildDebugSummary(debugInfo)}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
         );
       }
       const updated = applyPrefilledShipment(shipment.id, {
         courier: Courier.ANDREANI,
         status: tracking.status,
-        events: tracking.events,
+        events: hasRealEvents ? tracking.events : undefined,
         origin: tracking.origin,
         destination: tracking.destination,
         eta: tracking.eta,
@@ -115,8 +139,9 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
           err.kind === 'NOT_FOUND'
             ? err.message || 'No encontramos este envío en Andreani.'
             : err.message || 'No pudimos actualizar desde Andreani. Probá más tarde.';
+        const debugFromResponse = err.debugInfo ? buildDebugSummary(err.debugInfo) : '';
         setSyncError(friendly);
-        setSyncDebug(err.details || `Status: ${err.status ?? 'n/d'}`);
+        setSyncDebug(err.details || debugFromResponse || `Status: ${err.status ?? 'n/d'}`);
         console.error('Andreani sync failed', { message: err.message, details: err.details, status: err.status });
       } else {
         setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');

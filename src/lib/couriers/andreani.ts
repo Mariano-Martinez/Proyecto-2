@@ -1,6 +1,9 @@
 import { Courier, ShipmentStatus, TimelineEvent } from '@/lib/types';
 
 const DEFAULT_TRACKING_URL_TEMPLATE = process.env.ANDREANI_TRACKING_URL_TEMPLATE ?? 'https://www.andreani.com/#!/detalle-envio/{code}';
+const ANDREANI_API_BASE = process.env.ANDREANI_TRACKING_API_BASE ?? 'https://tracking-api.andreani.com';
+const ANDREANI_ORIGIN = process.env.ANDREANI_TRACKING_ORIGIN ?? 'https://www.andreani.com';
+const ANDREANI_AUTH = process.env.ANDREANI_TRACKING_AUTH;
 const USER_AGENT =
   process.env.ANDREANI_USER_AGENT ??
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
@@ -17,6 +20,10 @@ export type AndreaniTrackingPayload = {
     eventsFromText: number;
     eventsFromLines: number;
     eventsFromJson: number;
+    eventsFromApi?: number;
+    apiStatus?: number;
+    apiPayloadFound?: boolean;
+    apiError?: string;
     plainLength: number;
     htmlLength: number;
     plainSample?: string;
@@ -69,6 +76,7 @@ type ParsedFromJson = {
   destination?: string;
   eta?: string;
 };
+type ExtractedJsonResult = ParsedFromJson & { rawEventCount: number };
 
 const monthToNumber: Record<string, number> = {
   ene: 0,
@@ -85,79 +93,86 @@ const monthToNumber: Record<string, number> = {
   dic: 11,
 };
 
+const extractEventsFromUnknown = (value: unknown, code: string): ExtractedJsonResult | null => {
+  const collected: TimelineEvent[] = [];
+  let origin: string | undefined;
+  let destination: string | undefined;
+  let eta: string | undefined;
+  const visited = new WeakSet();
+
+  const considerEvent = (obj: Record<string, unknown>) => {
+    const keys = Object.keys(obj);
+    const dateKey = keys.find((k) => /fecha|date/i.test(k));
+    const labelKey = keys.find((k) => /descripcion|description|detalle|estado|status|mensaje|event/i.test(k));
+    if (!dateKey || !labelKey) return;
+    const timeKey = keys.find((k) => /hora|time|hour/i.test(k));
+    const locationKey = keys.find((k) => /lugar|ubicacion|location/i.test(k));
+    const dateValue = obj[dateKey];
+    const labelValue = obj[labelKey];
+    if (typeof dateValue !== 'string' || typeof labelValue !== 'string') return;
+    const parsedDate = parseDateString(dateValue, typeof obj[timeKey!] === 'string' ? (obj[timeKey!] as string) : undefined);
+    collected.push({
+      id: `${code}-${collected.length}`,
+      label: labelValue.trim(),
+      date: parsedDate,
+      location: typeof obj[locationKey!] === 'string' ? (obj[locationKey!] as string).trim() : undefined,
+    });
+  };
+
+  const considerStringEvent = (val: string) => {
+    const lineEvents = parseEventsFromStrings([val], code);
+    lineEvents.forEach((ev) => collected.push(ev));
+  };
+
+  const walk = (val: unknown) => {
+    if (val && typeof val === 'object') {
+      if (visited.has(val as object)) return;
+      visited.add(val as object);
+    }
+    if (Array.isArray(val)) {
+      val.forEach(walk);
+      return;
+    }
+    if (val && typeof val === 'object') {
+      const obj = val as Record<string, unknown>;
+      considerEvent(obj);
+      if (!origin) {
+        const originKey = Object.keys(obj).find((k) => /origen|origin/i.test(k));
+        if (originKey && typeof obj[originKey] === 'string') origin = (obj[originKey] as string).trim();
+      }
+      if (!destination) {
+        const destKey = Object.keys(obj).find((k) => /destino|destination/i.test(k));
+        if (destKey && typeof obj[destKey] === 'string') destination = (obj[destKey] as string).trim();
+      }
+      if (!eta) {
+        const etaKey = Object.keys(obj).find((k) => /eta|estimad/i.test(k));
+        if (etaKey && typeof obj[etaKey] === 'string') eta = (obj[etaKey] as string).trim();
+      }
+      Object.values(obj).forEach(walk);
+      return;
+    }
+    if (typeof val === 'string') {
+      considerStringEvent(val);
+    }
+  };
+
+  walk(value);
+
+  if (collected.length === 0 && !origin && !destination && !eta) return null;
+
+  const events = [...collected].sort((a, b) => (a.date < b.date ? 1 : -1));
+  return { events, origin, destination, eta, rawEventCount: collected.length };
+};
+
 const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | null => {
   const scriptMatch = html.match(/<script[^>]+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
   if (!scriptMatch) return null;
   const content = scriptMatch[1];
   try {
     const json = JSON.parse(content);
-    const collected: TimelineEvent[] = [];
-    let origin: string | undefined;
-    let destination: string | undefined;
-    let eta: string | undefined;
-    const visited = new WeakSet();
-
-    const considerEvent = (obj: Record<string, unknown>) => {
-      const keys = Object.keys(obj);
-      const dateKey = keys.find((k) => /fecha|date/i.test(k));
-      const labelKey = keys.find((k) => /descripcion|description|detalle|estado|status|mensaje|event/i.test(k));
-      if (!dateKey || !labelKey) return;
-      const timeKey = keys.find((k) => /hora|time|hour/i.test(k));
-      const locationKey = keys.find((k) => /lugar|ubicacion|location/i.test(k));
-      const dateValue = obj[dateKey];
-      const labelValue = obj[labelKey];
-      if (typeof dateValue !== 'string' || typeof labelValue !== 'string') return;
-      const parsedDate = parseDateString(dateValue, typeof obj[timeKey!] === 'string' ? (obj[timeKey!] as string) : undefined);
-      collected.push({
-        id: `${code}-${collected.length}`,
-        label: labelValue.trim(),
-        date: parsedDate,
-        location: typeof obj[locationKey!] === 'string' ? (obj[locationKey!] as string).trim() : undefined,
-      });
-    };
-
-    const considerStringEvent = (value: string) => {
-      const lineEvents = parseEventsFromStrings([value], code);
-      lineEvents.forEach((ev) => collected.push(ev));
-    };
-
-    const walk = (value: unknown) => {
-      if (value && typeof value === 'object') {
-        if (visited.has(value as object)) return;
-        visited.add(value as object);
-      }
-      if (Array.isArray(value)) {
-        value.forEach(walk);
-        return;
-      }
-      if (value && typeof value === 'object') {
-        const obj = value as Record<string, unknown>;
-        considerEvent(obj);
-        if (!origin) {
-          const originKey = Object.keys(obj).find((k) => /origen|origin/i.test(k));
-          if (originKey && typeof obj[originKey] === 'string') origin = (obj[originKey] as string).trim();
-        }
-        if (!destination) {
-          const destKey = Object.keys(obj).find((k) => /destino|destination/i.test(k));
-          if (destKey && typeof obj[destKey] === 'string') destination = (obj[destKey] as string).trim();
-        }
-        if (!eta) {
-          const etaKey = Object.keys(obj).find((k) => /eta|estimad/i.test(k));
-          if (etaKey && typeof obj[etaKey] === 'string') eta = (obj[etaKey] as string).trim();
-        }
-        Object.values(obj).forEach(walk);
-      }
-      if (typeof value === 'string') {
-        considerStringEvent(value);
-      }
-    };
-
-    walk(json);
-
-    if (collected.length === 0 && !origin && !destination && !eta) return null;
-
-    const events = [...collected].sort((a, b) => (a.date < b.date ? 1 : -1));
-    return { events, origin, destination, eta };
+    const extracted = extractEventsFromUnknown(json, code);
+    if (!extracted) return null;
+    return { events: extracted.events, origin: extracted.origin, destination: extracted.destination, eta: extracted.eta };
   } catch (error) {
     return null;
   }
@@ -200,7 +215,7 @@ const parseEventsFromText = (text: string, code: string): TimelineEvent[] => {
   const events: TimelineEvent[] = [];
   // Busca secuencias de fecha y hora (formato 06-01-2026 09:40, 06/01/2026 09:40 o 6 ene 2026 09:40)
   const datePattern =
-    /(\\d{1,2}[\\/-]\\d{1,2}[\\/-]\\d{2,4}|\\d{1,2}\\s+(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\\s+\\d{4})/i;
+    /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}\s+(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s+\d{4})/i;
   const regex = new RegExp(
     `${datePattern.source}\\s+(\\d{2}:\\d{2})?\\s+([^]*?)(?=${datePattern.source}|\\bPreguntas frecuentes\\b|$)`,
     'gi'
@@ -232,13 +247,13 @@ const parseEventsFromText = (text: string, code: string): TimelineEvent[] => {
 const parseEventsFromStrings = (lines: string[], code: string): TimelineEvent[] => {
   const events: TimelineEvent[] = [];
   const datePattern =
-    /(\\d{1,2}[\\/-]\\d{1,2}[\\/-]\\d{2,4}|\\d{1,2}\\s+(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\\s+\\d{4})/i;
+    /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d{1,2}\s+(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)[a-z]*\s+\d{4})/i;
   lines.forEach((line) => {
     const trimmed = line.trim();
     const dateMatch = trimmed.match(datePattern);
     if (!dateMatch) return;
-    const timeMatch = trimmed.match(/\\b(\\d{2}:\\d{2})\\b/);
-    const label = trimmed.replace(datePattern, '').replace(/\\b\\d{2}:\\d{2}\\b/, '').trim();
+    const timeMatch = trimmed.match(/\b(\d{2}:\d{2})\b/);
+    const label = trimmed.replace(datePattern, '').replace(/\b\d{2}:\d{2}\b/, '').trim();
     const parsedDate = parseDateString(dateMatch[0], timeMatch ? timeMatch[1] : undefined);
     events.push({
       id: `${code}-txt-${events.length}`,
@@ -250,7 +265,124 @@ const parseEventsFromStrings = (lines: string[], code: string): TimelineEvent[] 
   return events;
 };
 
-export const fetchAndreaniPublicTracking = async (code: string): Promise<AndreaniTrackingPayload> => {
+const buildApiHeaders = () => {
+  const headers: Record<string, string> = {
+    'user-agent': USER_AGENT,
+    accept: 'application/json, text/plain, */*',
+    origin: ANDREANI_ORIGIN,
+    referer: `${ANDREANI_ORIGIN}/`,
+  };
+  if (ANDREANI_AUTH) headers.authorization = ANDREANI_AUTH;
+  return headers;
+};
+
+type ApiAttemptDebug = {
+  apiStatus?: number;
+  apiPayloadFound?: boolean;
+  eventsFromApi: number;
+  apiError?: string;
+};
+
+const extractPayloadToken = (value: unknown): string | undefined => {
+  if (!value) return undefined;
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = extractPayloadToken(item);
+      if (found) return found;
+    }
+  }
+  if (typeof value === 'object') {
+    const obj = value as Record<string, unknown>;
+    if (typeof obj.payload === 'string') return obj.payload;
+    for (const v of Object.values(obj)) {
+      const found = extractPayloadToken(v);
+      if (found) return found;
+    }
+  }
+  return undefined;
+};
+
+const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: AndreaniTrackingPayload; debug: ApiAttemptDebug }> => {
+  const headers = buildApiHeaders();
+  const debug: ApiAttemptDebug = { eventsFromApi: 0 };
+
+  try {
+    const payloadRes = await fetch(
+      `${ANDREANI_API_BASE}/api/v1/BultosPorEnvio/?numero=${encodeURIComponent(code)}`,
+      {
+        headers,
+        cache: 'no-store',
+      }
+    );
+    debug.apiStatus = payloadRes.status;
+    if (!payloadRes.ok) {
+      debug.apiError = `v1 status ${payloadRes.status}`;
+      return { debug };
+    }
+    const payloadJson = await payloadRes.json();
+    const payloadToken = extractPayloadToken(payloadJson);
+    debug.apiPayloadFound = Boolean(payloadToken);
+    if (!payloadToken) {
+      debug.apiError = 'v1 sin payload';
+      return { debug };
+    }
+
+    const trackingRes = await fetch(
+      `${ANDREANI_API_BASE}/api/v3/Tracking?payload=${encodeURIComponent(payloadToken)}`,
+      {
+        headers,
+        cache: 'no-store',
+      }
+    );
+    debug.apiStatus = trackingRes.status;
+    if (!trackingRes.ok) {
+      debug.apiError = `v3 status ${trackingRes.status}`;
+      return { debug };
+    }
+    const trackingJson = await trackingRes.json();
+    const parsed = extractEventsFromUnknown(trackingJson, code);
+    if (!parsed || parsed.events.length === 0) {
+      debug.apiError = 'v3 sin eventos';
+      return { debug };
+    }
+
+    const status = mapStatus(parsed.events[0].label);
+    const lastUpdated = parsed.events[0]?.date ?? new Date().toISOString();
+    const payload: AndreaniTrackingPayload = {
+      courier: Courier.ANDREANI,
+      status,
+      events: parsed.events,
+      origin: parsed.origin,
+      destination: parsed.destination,
+      eta: parsed.eta,
+      lastUpdated,
+      debugInfo: {
+        eventsFromText: 0,
+        eventsFromLines: 0,
+        eventsFromJson: parsed.rawEventCount,
+        eventsFromApi: parsed.rawEventCount,
+        apiStatus: trackingRes.status,
+        apiPayloadFound: debug.apiPayloadFound,
+        plainLength: 0,
+        htmlLength: 0,
+      },
+    };
+
+    return {
+      payload,
+      debug: { ...debug, eventsFromApi: parsed.events.length },
+    };
+  } catch (error) {
+    debug.apiError = (error as Error)?.message ?? 'Error desconocido en API';
+    return { debug };
+  }
+};
+
+const scrapeAndreaniHtmlTracking = async (
+  code: string,
+  baseDebug?: Partial<AndreaniTrackingPayload['debugInfo']>
+): Promise<AndreaniTrackingPayload> => {
   const url = buildTrackingUrl(code);
 
   let res: Response;
@@ -294,12 +426,15 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     eventsFromText: eventsFromText.length,
     eventsFromLines: eventsFromLines.length,
     eventsFromJson: jsonParsed?.events?.length ?? 0,
+    eventsFromApi: baseDebug?.eventsFromApi,
+    apiStatus: baseDebug?.apiStatus,
+    apiPayloadFound: baseDebug?.apiPayloadFound,
+    apiError: baseDebug?.apiError,
     plainLength: plain?.length ?? 0,
     htmlLength: html.length,
     plainSample: plain?.slice(0, 300),
   };
 
-  // Si no pudimos extraer eventos, devolvemos un evento de fallback para evitar un 422
   const finalEvents =
     events.length > 0
       ? events
@@ -321,4 +456,35 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
     lastUpdated,
     debugInfo,
   };
+};
+
+export const fetchAndreaniPublicTracking = async (code: string): Promise<AndreaniTrackingPayload> => {
+  const apiAttempt = await tryFetchAndreaniApiTracking(code);
+  if (apiAttempt.payload && apiAttempt.payload.events.length > 0) {
+    return apiAttempt.payload;
+  }
+
+  // fallback a scraping HTML si la API no devolvió eventos o falló.
+  const baseDebug = {
+    eventsFromApi: apiAttempt.debug.eventsFromApi,
+    apiStatus: apiAttempt.debug.apiStatus,
+    apiPayloadFound: apiAttempt.debug.apiPayloadFound,
+    apiError: apiAttempt.debug.apiError,
+  };
+
+  const scraped = await scrapeAndreaniHtmlTracking(code, baseDebug);
+  // combinar debug info enriqueciendo con la traza del intento API
+  scraped.debugInfo = {
+    eventsFromText: scraped.debugInfo?.eventsFromText ?? 0,
+    eventsFromLines: scraped.debugInfo?.eventsFromLines ?? 0,
+    eventsFromJson: scraped.debugInfo?.eventsFromJson ?? 0,
+    eventsFromApi: baseDebug.eventsFromApi ?? scraped.debugInfo?.eventsFromApi,
+    apiStatus: baseDebug.apiStatus ?? scraped.debugInfo?.apiStatus,
+    apiPayloadFound: baseDebug.apiPayloadFound ?? scraped.debugInfo?.apiPayloadFound,
+    apiError: baseDebug.apiError ?? scraped.debugInfo?.apiError,
+    plainLength: scraped.debugInfo?.plainLength ?? 0,
+    htmlLength: scraped.debugInfo?.htmlLength ?? 0,
+    plainSample: scraped.debugInfo?.plainSample,
+  };
+  return scraped;
 };

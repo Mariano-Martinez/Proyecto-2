@@ -55,6 +55,82 @@ const mapStatus = (text: string): ShipmentStatus => {
   return ShipmentStatus.IN_TRANSIT;
 };
 
+type ParsedFromJson = {
+  events: TimelineEvent[];
+  origin?: string;
+  destination?: string;
+  eta?: string;
+};
+
+const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | null => {
+  const scriptMatch = html.match(/<script[^>]+id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
+  if (!scriptMatch) return null;
+  const content = scriptMatch[1];
+  try {
+    const json = JSON.parse(content);
+    const collected: TimelineEvent[] = [];
+    let origin: string | undefined;
+    let destination: string | undefined;
+    let eta: string | undefined;
+    const visited = new WeakSet();
+
+    const considerEvent = (obj: Record<string, unknown>) => {
+      const keys = Object.keys(obj);
+      const dateKey = keys.find((k) => /fecha|date/i.test(k));
+      const labelKey = keys.find((k) => /descripcion|description|detalle|estado|status|mensaje|event/i.test(k));
+      if (!dateKey || !labelKey) return;
+      const timeKey = keys.find((k) => /hora|time|hour/i.test(k));
+      const locationKey = keys.find((k) => /lugar|ubicacion|location/i.test(k));
+      const dateValue = obj[dateKey];
+      const labelValue = obj[labelKey];
+      if (typeof dateValue !== 'string' || typeof labelValue !== 'string') return;
+      const parsedDate = parseDateString(dateValue, typeof obj[timeKey!] === 'string' ? (obj[timeKey!] as string) : undefined);
+      collected.push({
+        id: `${code}-${collected.length}`,
+        label: labelValue.trim(),
+        date: parsedDate,
+        location: typeof obj[locationKey!] === 'string' ? (obj[locationKey!] as string).trim() : undefined,
+      });
+    };
+
+    const walk = (value: unknown) => {
+      if (value && typeof value === 'object') {
+        if (visited.has(value as object)) return;
+        visited.add(value as object);
+      }
+      if (Array.isArray(value)) {
+        value.forEach(walk);
+        return;
+      }
+      if (value && typeof value === 'object') {
+        const obj = value as Record<string, unknown>;
+        considerEvent(obj);
+        if (!origin) {
+          const originKey = Object.keys(obj).find((k) => /origen|origin/i.test(k));
+          if (originKey && typeof obj[originKey] === 'string') origin = (obj[originKey] as string).trim();
+        }
+        if (!destination) {
+          const destKey = Object.keys(obj).find((k) => /destino|destination/i.test(k));
+          if (destKey && typeof obj[destKey] === 'string') destination = (obj[destKey] as string).trim();
+        }
+        if (!eta) {
+          const etaKey = Object.keys(obj).find((k) => /eta|estimad/i.test(k));
+          if (etaKey && typeof obj[etaKey] === 'string') eta = (obj[etaKey] as string).trim();
+        }
+        Object.values(obj).forEach(walk);
+      }
+    };
+
+    walk(json);
+
+    if (collected.length === 0 && !origin && !destination && !eta) return null;
+
+    const events = [...collected].sort((a, b) => (a.date < b.date ? 1 : -1));
+    return { events, origin, destination, eta };
+  } catch (error) {
+    return null;
+  }
+};
 const monthToNumber: Record<string, number> = {
   ene: 0,
   feb: 1,
@@ -75,6 +151,12 @@ const parseDateString = (date: string, time?: string) => {
   const timeParts = time?.trim().split(':') ?? [];
   const hour = Number(timeParts[0] ?? '00');
   const minute = Number(timeParts[1] ?? '00');
+
+  // ISO or Date-parsable string
+  const asDate = new Date(date);
+  if (!Number.isNaN(asDate.getTime()) && date.includes('T')) {
+    return asDate.toISOString();
+  }
 
   // dd/mm/yyyy or dd-mm-yyyy
   const slashMatch = cleanDate.match(/(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/);
@@ -161,23 +243,25 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
   }
 
   const html = await res.text();
+  const jsonParsed = maybeExtractJsonState(html, code);
   const plain = toPlainText(html);
-  if (!plain) {
+  if (!plain && (!jsonParsed || jsonParsed.events.length === 0)) {
     throw new AndreaniScraperError('Contenido vacío al consultar Andreani', 'PARSING_ERROR');
   }
 
-  const events = parseEventsFromText(plain, code);
+  const eventsFromText = plain ? parseEventsFromText(plain, code) : [];
+  const events = jsonParsed?.events?.length ? jsonParsed.events : eventsFromText;
   const statusFromEvents = events.length > 0 ? mapStatus(events[0].label) : undefined;
-  const status = statusFromEvents ?? mapStatus(plain);
+  const status = statusFromEvents ?? mapStatus(plain ?? '');
   const lastUpdated = events[0]?.date ?? new Date().toISOString();
 
   return {
     courier: Courier.ANDREANI,
     status,
     events,
-    origin: undefined,
-    destination: undefined,
-    eta: undefined,
+    origin: jsonParsed?.origin,
+    destination: jsonParsed?.destination,
+    eta: jsonParsed?.eta,
     lastUpdated,
   };
 };

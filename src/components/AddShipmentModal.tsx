@@ -123,7 +123,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           prefilled = {
             courier: Courier.ANDREANI,
             status: tracking.status,
-            events: hasRealEvents ? tracking.events : [],
+            events: hasRealEvents ? tracking.events.filter((ev: any) => !`${ev.id}`.endsWith('-fallback')) : [],
             origin: tracking.origin,
             destination: tracking.destination,
             eta: tracking.eta,

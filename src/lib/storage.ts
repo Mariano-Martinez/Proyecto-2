@@ -91,6 +91,7 @@ export const applyPrefilledShipment = (id: string, data: Partial<Shipment>): Shi
   let updatedShipment: Shipment | null = null;
   const updated = shipments.map((s) => {
     if (s.id !== id) return s;
+    const incomingEvents = data.events?.filter((ev) => !`${ev.id}`.endsWith('-fallback'));
     const next: Shipment = {
       ...s,
       ...data,
@@ -101,8 +102,8 @@ export const applyPrefilledShipment = (id: string, data: Partial<Shipment>): Shi
       eta: data.eta ?? s.eta,
       lastUpdated: data.lastUpdated ?? s.lastUpdated ?? nowISO(),
       events:
-        data.events && data.events.length > 0
-          ? [...data.events].sort((a, b) => (a.date < b.date ? 1 : -1))
+        incomingEvents && incomingEvents.length > 0
+          ? [...incomingEvents].sort((a, b) => (a.date < b.date ? 1 : -1))
           : s.events,
     };
     updatedShipment = next;

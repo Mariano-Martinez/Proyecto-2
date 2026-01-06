@@ -114,7 +114,10 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
         (debugInfo?.eventsFromJson ?? 0) +
         (debugInfo?.eventsFromText ?? 0) +
         (debugInfo?.eventsFromLines ?? 0);
-      const hasRealEvents = Array.isArray(tracking.events) && tracking.events.some((ev: any) => !`${ev.id}`.endsWith('-fallback'));
+      const filteredEvents = Array.isArray(tracking.events)
+        ? tracking.events.filter((ev: any) => !`${ev.id}`.endsWith('-fallback'))
+        : [];
+      const hasRealEvents = filteredEvents.length > 0;
       if (debugInfo && (totalParsed === 0 || !hasRealEvents)) {
         setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
         setSyncWarningDebug(
@@ -124,7 +127,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       const updated = applyPrefilledShipment(shipment.id, {
         courier: Courier.ANDREANI,
         status: tracking.status,
-        events: hasRealEvents ? tracking.events : undefined,
+        events: hasRealEvents ? filteredEvents : undefined,
         origin: tracking.origin,
         destination: tracking.destination,
         eta: tracking.eta,

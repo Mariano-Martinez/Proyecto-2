@@ -112,14 +112,17 @@ const extractEventsFromUnknown = (value: unknown, code: string): ExtractedJsonRe
   const considerEvent = (obj: Record<string, unknown>) => {
     const keys = Object.keys(obj);
     const dateKey = keys.find((k) => /fecha|date/i.test(k));
-    const labelKey = keys.find((k) => /descripcion|description|detalle|estado|status|mensaje|event/i.test(k));
+    const labelKey = keys.find((k) => /descripcion|description|detalle|estado|status|mensaje|event|texto/i.test(k));
     if (!dateKey || !labelKey) return;
     const timeKey = keys.find((k) => /hora|time|hour/i.test(k));
-    const locationKey = keys.find((k) => /lugar|ubicacion|location/i.test(k));
+    const locationKey = keys.find((k) => /lugar|ubicacion|location|sucursal|branch/i.test(k));
     const dateValue = obj[dateKey];
     const labelValue = obj[labelKey];
-    if (typeof dateValue !== 'string' || typeof labelValue !== 'string') return;
-    const parsedDate = parseDateString(dateValue, typeof obj[timeKey!] === 'string' ? (obj[timeKey!] as string) : undefined);
+    if ((typeof dateValue !== 'string' && typeof dateValue !== 'number') || typeof labelValue !== 'string') return;
+    const parsedDate = parseDateString(
+      typeof dateValue === 'number' ? new Date(dateValue).toISOString() : dateValue,
+      typeof obj[timeKey!] === 'string' ? (obj[timeKey!] as string) : undefined
+    );
     collected.push({
       id: `${code}-${collected.length}`,
       label: labelValue.trim(),
@@ -195,7 +198,7 @@ const parseDateString = (date: string, time?: string) => {
 
   // ISO or Date-parsable string
   const asDate = new Date(date);
-  if (!Number.isNaN(asDate.getTime()) && date.includes('T')) {
+  if (!Number.isNaN(asDate.getTime()) && (date.includes('T') || date.includes('-') || date.includes('/'))) {
     return asDate.toISOString();
   }
 
@@ -272,6 +275,22 @@ const parseEventsFromStrings = (lines: string[], code: string): TimelineEvent[] 
   });
   events.sort((a, b) => (a.date < b.date ? 1 : -1));
   return events;
+};
+
+const normalizeEvents = (events: TimelineEvent[], code: string): TimelineEvent[] => {
+  const seen = new Set<string>();
+  return events
+    .filter((ev) => Boolean(ev.label))
+    .map((ev, idx) => ({
+      ...ev,
+      id: ev.id || `${code}-${idx}`,
+    }))
+    .filter((ev) => {
+      if (seen.has(ev.id)) return false;
+      seen.add(ev.id);
+      return true;
+    })
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
 };
 
 const buildApiHeaders = () => {
@@ -372,12 +391,13 @@ const tryFetchAndreaniApiTracking = async (code: string): Promise<{ payload?: An
       return { debug };
     }
 
-    const status = mapStatus(parsed.events[0].label);
-    const lastUpdated = parsed.events[0]?.date ?? new Date().toISOString();
+    const normalizedEvents = normalizeEvents(parsed.events, code);
+    const status = mapStatus(normalizedEvents[0].label);
+    const lastUpdated = normalizedEvents[0]?.date ?? new Date().toISOString();
     const payload: AndreaniTrackingPayload = {
       courier: Courier.ANDREANI,
       status,
-      events: parsed.events,
+      events: normalizedEvents,
       origin: parsed.origin,
       destination: parsed.destination,
       eta: parsed.eta,
@@ -448,10 +468,9 @@ const scrapeAndreaniHtmlTracking = async (
 
   const eventsFromText = plain ? parseEventsFromText(plain, code) : [];
   const eventsFromLines = plain ? parseEventsFromStrings(plain.split('\n'), code) : [];
-  const combinedEvents = [...eventsFromText, ...eventsFromLines];
-  combinedEvents.sort((a, b) => (a.date < b.date ? 1 : -1));
+  const combinedEvents = normalizeEvents([...eventsFromText, ...eventsFromLines], code);
 
-  const events = jsonParsed?.events?.length ? jsonParsed.events : combinedEvents;
+  const events = jsonParsed?.events?.length ? normalizeEvents(jsonParsed.events, code) : combinedEvents;
   const statusFromEvents = events.length > 0 ? mapStatus(events[0].label) : undefined;
   const status = statusFromEvents ?? mapStatus(plain ?? '');
   const lastUpdated = events[0]?.date ?? new Date().toISOString();
@@ -469,21 +488,14 @@ const scrapeAndreaniHtmlTracking = async (
     plainSample: plain?.slice(0, 300),
   };
 
-  const finalEvents =
-    events.length > 0
-      ? events
-      : [
-          {
-            id: `${code}-fallback`,
-            label: plain?.slice(0, 120) || 'Estado actualizado',
-            date: lastUpdated,
-          },
-        ];
+  if (events.length === 0) {
+    throw new AndreaniScraperError('No se pudieron extraer eventos de Andreani', 'PARSING_ERROR', undefined, debugInfo);
+  }
 
   return {
     courier: Courier.ANDREANI,
     status,
-    events: finalEvents,
+    events,
     origin: jsonParsed?.origin,
     destination: jsonParsed?.destination,
     eta: jsonParsed?.eta,

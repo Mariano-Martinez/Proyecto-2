@@ -13,6 +13,12 @@ export type AndreaniTrackingPayload = {
   destination?: string;
   eta?: string;
   lastUpdated: string;
+  debugInfo?: {
+    eventsFromText: number;
+    eventsFromLines: number;
+    eventsFromJson: number;
+    plainLength: number;
+  };
 };
 
 export class AndreaniScraperError extends Error {
@@ -278,21 +284,37 @@ export const fetchAndreaniPublicTracking = async (code: string): Promise<Andrean
   combinedEvents.sort((a, b) => (a.date < b.date ? 1 : -1));
 
   const events = jsonParsed?.events?.length ? jsonParsed.events : combinedEvents;
-  if (events.length === 0) {
-    throw new AndreaniScraperError('No se pudieron extraer eventos del tracking de Andreani', 'PARSING_ERROR');
-  }
-
-  const statusFromEvents = mapStatus(events[0].label);
+  const statusFromEvents = events.length > 0 ? mapStatus(events[0].label) : undefined;
   const status = statusFromEvents ?? mapStatus(plain ?? '');
   const lastUpdated = events[0]?.date ?? new Date().toISOString();
+
+  const debugInfo = {
+    eventsFromText: eventsFromText.length,
+    eventsFromLines: eventsFromLines.length,
+    eventsFromJson: jsonParsed?.events?.length ?? 0,
+    plainLength: plain?.length ?? 0,
+  };
+
+  // Si no pudimos extraer eventos, devolvemos un evento de fallback para evitar un 422
+  const finalEvents =
+    events.length > 0
+      ? events
+      : [
+          {
+            id: `${code}-fallback`,
+            label: plain?.slice(0, 120) || 'Estado actualizado',
+            date: lastUpdated,
+          },
+        ];
 
   return {
     courier: Courier.ANDREANI,
     status,
-    events,
+    events: finalEvents,
     origin: jsonParsed?.origin,
     destination: jsonParsed?.destination,
     eta: jsonParsed?.eta,
     lastUpdated,
+    debugInfo,
   };
 };

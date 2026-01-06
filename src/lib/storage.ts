@@ -84,6 +84,32 @@ export const updateShipment = (id: string, data: Partial<Shipment>) => {
   writeLocal(STORAGE_KEYS.shipments, updated);
 };
 
+export const applyPrefilledShipment = (id: string, data: Partial<Shipment>): Shipment | null => {
+  const shipments = getShipments();
+  let updatedShipment: Shipment | null = null;
+  const updated = shipments.map((s) => {
+    if (s.id !== id) return s;
+    const next: Shipment = {
+      ...s,
+      ...data,
+      courier: data.courier ?? s.courier,
+      status: data.status ?? s.status,
+      origin: data.origin ?? s.origin,
+      destination: data.destination ?? s.destination,
+      eta: data.eta ?? s.eta,
+      lastUpdated: data.lastUpdated ?? s.lastUpdated ?? nowISO(),
+      events:
+        data.events && data.events.length > 0
+          ? [...data.events].sort((a, b) => (a.date < b.date ? 1 : -1))
+          : s.events,
+    };
+    updatedShipment = next;
+    return next;
+  });
+  writeLocal(STORAGE_KEYS.shipments, updated);
+  return updatedShipment;
+};
+
 export const deleteShipment = (id: string) => {
   const shipments = getShipments();
   const updated = shipments.filter((s) => s.id !== id);

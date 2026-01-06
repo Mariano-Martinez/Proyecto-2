@@ -5,8 +5,9 @@ import { MobileNav } from '@/components/MobileNav';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Timeline } from '@/components/Timeline';
 import { useAuthGuard } from '@/lib/hooks';
-import { getShipments, simulateProgress } from '@/lib/storage';
-import { Shipment } from '@/lib/types';
+import { detectCourier } from '@/lib/detection';
+import { applyPrefilledShipment, getShipments, simulateProgress } from '@/lib/storage';
+import { Courier, Shipment } from '@/lib/types';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,6 +16,8 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const ready = useAuthGuard();
   const router = useRouter();
   const [shipment, setShipment] = useState<Shipment | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState('');
 
   useEffect(() => {
     if (!ready) return;
@@ -22,12 +25,61 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     setShipment(data);
   }, [params.id, ready]);
 
+  const fetchAndreani = async (shipmentCode: string) => {
+    const response = await fetch('/api/track/andreani', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ code: shipmentCode }),
+    });
+    if (response.status === 404) {
+      throw new Error('NOT_FOUND');
+    }
+    if (!response.ok) {
+      throw new Error('FETCH_FAILED');
+    }
+    return response.json();
+  };
+
   const handleSimulate = () => {
     if (!shipment) return;
     simulateProgress(shipment.id);
     const updated = getShipments().find((s) => s.id === shipment.id) || null;
     setShipment(updated);
   };
+
+  const handleSyncAndreani = async () => {
+    if (!shipment) return;
+    setSyncError('');
+    setSyncing(true);
+    try {
+      const tracking = await fetchAndreani(shipment.code);
+      const updated = applyPrefilledShipment(shipment.id, {
+        courier: Courier.ANDREANI,
+        status: tracking.status,
+        events: tracking.events,
+        origin: tracking.origin,
+        destination: tracking.destination,
+        eta: tracking.eta,
+        lastUpdated: tracking.lastUpdated,
+      });
+      if (updated) {
+        setShipment(updated);
+      }
+    } catch (err) {
+      const reason = (err as Error).message;
+      if (reason === 'NOT_FOUND') {
+        setSyncError('No encontramos este envío en Andreani.');
+      } else {
+        setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');
+      }
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const canSyncAndreani =
+    shipment &&
+    (shipment.courier === Courier.ANDREANI || detectCourier(shipment.code) === Courier.ANDREANI);
 
   if (!ready) return null;
 
@@ -85,12 +137,25 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   <p className="font-semibold">{new Date(shipment.lastUpdated).toLocaleString()}</p>
                 </div>
               </div>
-              <div className="mt-4 flex items-center gap-3">
-                <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
-                  <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
-                </button>
-                <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
-              </div>
+              {canSyncAndreani ? (
+                <div className="mt-4 flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    <button onClick={handleSyncAndreani} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
+                      <ArrowPathIcon className="mr-1 inline h-4 w-4" />{' '}
+                      {syncing ? 'Actualizando...' : 'Actualizar desde Andreani'}
+                    </button>
+                    <p className="text-sm text-slate-600">Trae el estado real de Andreani para este envío.</p>
+                  </div>
+                  {syncError && <p className="text-sm text-amber-700">{syncError}</p>}
+                </div>
+              ) : (
+                <div className="mt-4 flex items-center gap-3">
+                  <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
+                    <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
+                  </button>
+                  <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
+                </div>
+              )}
             </div>
 
             <div className="card p-5">

@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "andreani:smoke": "node scripts/andreani-smoke.js"
+    "andreani:smoke": "node scripts/andreani-smoke.js",
+    "tracking:smoke": "tsx scripts/tracking-smoke.ts"
   },
   "dependencies": {
     "next": "14.2.5",
@@ -28,6 +29,7 @@
     "postcss": "8.4.47",
     "tailwindcss": "3.4.14",
     "@tailwindcss/forms": "0.5.7",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "tsx": "4.19.2"
   }
 }

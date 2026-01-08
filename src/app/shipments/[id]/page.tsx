@@ -4,11 +4,18 @@ import { Sidebar } from '@/components/Sidebar';
 import { MobileNav } from '@/components/MobileNav';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Timeline } from '@/components/Timeline';
-import { flattenAndreaniTimelines, mapAndreaniEstadoToStatus } from '@/lib/andreani/client';
 import { useAuthGuard } from '@/lib/hooks';
 import { detectCourier } from '@/lib/detection';
 import { applyPrefilledShipment, getShipments, simulateProgress } from '@/lib/storage';
 import { Courier, Shipment } from '@/lib/types';
+import {
+  getTrackingLastUpdated,
+  mapTimelineEventsToTrackingEvents,
+  mapTrackingEventsToTimelineEvents,
+  mapTrackingStatusToShipmentStatus,
+} from '@/lib/tracking/mapper';
+import { formatDateTimeEsAR } from '@/lib/tracking/dates';
+import { TrackingNormalized } from '@/lib/tracking/types';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -30,10 +37,15 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const ready = useAuthGuard();
   const router = useRouter();
   const [shipment, setShipment] = useState<Shipment | null>(null);
+  const [trackingData, setTrackingData] = useState<TrackingNormalized | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState('');
   const [syncWarning, setSyncWarning] = useState('');
   const [autoSynced, setAutoSynced] = useState(false);
+  const lastUpdatedValue = trackingData ? getTrackingLastUpdated(trackingData) : shipment?.lastUpdated ?? '';
+  const formattedLastUpdated =
+    (lastUpdatedValue && formatDateTimeEsAR(lastUpdatedValue, 'full')) ||
+    (lastUpdatedValue ? new Date(lastUpdatedValue).toLocaleString() : '');
 
   useEffect(() => {
     if (!ready) return;
@@ -41,8 +53,10 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     setShipment(data);
   }, [params.id, ready]);
 
-  const fetchAndreani = async (shipmentCode: string) => {
-    const response = await fetch(`/api/andreani/track?numero=${encodeURIComponent(shipmentCode)}`);
+  const fetchAndreani = async (shipmentCode: string): Promise<TrackingNormalized> => {
+    const response = await fetch(
+      `/api/tracking/refresh?carrier=andreani&trackingNumber=${encodeURIComponent(shipmentCode)}`
+    );
     const payload = await response.json().catch(() => ({}));
     if (response.status === 400) {
       const message = payload?.error ?? 'Número inválido';
@@ -52,7 +66,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       const message = payload?.error || 'No pudimos consultar Andreani';
       throw new AndreaniLookupError(message, 'FETCH_FAILED', undefined, response.status);
     }
-    return payload?.data;
+    return payload?.data as TrackingNormalized;
   };
 
   const handleSimulate = () => {
@@ -69,16 +83,17 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     setSyncing(true);
     try {
       const tracking = await fetchAndreani(shipment.code);
-      const events = flattenAndreaniTimelines(tracking);
-      const hasRealEvents = events.length > 0;
+      setTrackingData(tracking);
+      const hasRealEvents = tracking.events.length > 0;
       if (!hasRealEvents) {
         setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisá que el tracking muestre eventos en la web.');
       }
+      const events = mapTrackingEventsToTimelineEvents(tracking.events, shipment.code);
       const updated = applyPrefilledShipment(shipment.id, {
         courier: Courier.ANDREANI,
-        status: mapAndreaniEstadoToStatus(tracking.estado),
+        status: mapTrackingStatusToShipmentStatus(tracking.status),
         events: hasRealEvents ? events : undefined,
-        lastUpdated: tracking.fechaUltimoEvento ?? new Date().toISOString(),
+        lastUpdated: getTrackingLastUpdated(tracking),
       });
       if (updated) {
         setShipment(updated);
@@ -145,6 +160,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   <p className="text-sm font-semibold text-slate-600">{shipment.courier}</p>
                   <h1 className="text-2xl font-bold text-slate-900">{shipment.alias}</h1>
                   <p className="font-mono text-sm text-slate-700">{shipment.code}</p>
+                  {trackingData && <p className="text-sm text-slate-600">Estado Andreani: {trackingData.statusLabel}</p>}
                 </div>
                 <StatusBadge status={shipment.status} />
               </div>
@@ -163,14 +179,14 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                 </div>
                 <div>
                   <p className="text-xs uppercase text-slate-500">Última actualización</p>
-                  <p className="font-semibold">{new Date(shipment.lastUpdated).toLocaleString()}</p>
+                  <p className="font-semibold">{formattedLastUpdated}</p>
                 </div>
               </div>
               {canSyncAndreani ? (
                 <div className="mt-4 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
                     <button onClick={handleSyncAndreani} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
-                      <ArrowPathIcon className="mr-1 inline h-4 w-4" />{' '}
+                      <ArrowPathIcon className={`mr-1 inline h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />{' '}
                       {syncing ? 'Actualizando...' : 'Actualizar desde Andreani'}
                     </button>
                     <p className="text-sm text-slate-600">Trae el estado real de Andreani para este envío.</p>
@@ -201,7 +217,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
 
             <div className="card p-5">
               <h3 className="text-lg font-bold text-slate-900">Timeline</h3>
-              <Timeline events={shipment.events} />
+              <Timeline events={trackingData?.events ?? mapTimelineEventsToTrackingEvents(shipment.events)} />
             </div>
           </div>
         </main>

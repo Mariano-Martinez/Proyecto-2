@@ -1,9 +1,9 @@
 'use client';
 
-import { flattenAndreaniTimelines, mapAndreaniEstadoToStatus } from '@/lib/andreani/client';
 import { detectCourier } from '@/lib/detection';
 import { addShipment, setRedirectPath, getAuth } from '@/lib/storage';
 import { Courier } from '@/lib/types';
+import { getTrackingLastUpdated, mapTrackingEventsToTimelineEvents, mapTrackingStatusToShipmentStatus } from '@/lib/tracking/mapper';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useMemo, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
@@ -37,7 +37,9 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   if (!open) return null;
 
   const fetchAndreani = async (shipmentCode: string) => {
-    const response = await fetch(`/api/andreani/track?numero=${encodeURIComponent(shipmentCode)}`);
+    const response = await fetch(
+      `/api/tracking/refresh?carrier=andreani&trackingNumber=${encodeURIComponent(shipmentCode)}`
+    );
     const payload = await response.json().catch(() => ({}));
     if (response.status === 400) {
       const message = payload?.error ?? 'Número inválido';
@@ -68,15 +70,15 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       if (selectedCourier === Courier.ANDREANI) {
         try {
           const tracking = await fetchAndreani(code.trim());
-          const events = flattenAndreaniTimelines(tracking);
+          const events = mapTrackingEventsToTimelineEvents(tracking.events, code.trim());
           if (events.length === 0) {
             setWarning('No encontramos eventos en la respuesta de Andreani. Revisá que el tracking tenga movimientos en la web.');
           }
           prefilled = {
             courier: Courier.ANDREANI,
-            status: mapAndreaniEstadoToStatus(tracking.estado),
+            status: mapTrackingStatusToShipmentStatus(tracking.status),
             events,
-            lastUpdated: tracking.fechaUltimoEvento ?? new Date().toISOString(),
+            lastUpdated: getTrackingLastUpdated(tracking),
           };
         } catch (err) {
           if (err instanceof AndreaniLookupError) {

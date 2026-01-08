@@ -1,5 +1,6 @@
 'use client';
 
+import { flattenAndreaniTimelines, mapAndreaniEstadoToStatus } from '@/lib/andreani/client';
 import { detectCourier } from '@/lib/detection';
 import { addShipment, setRedirectPath, getAuth } from '@/lib/storage';
 import { Courier } from '@/lib/types';
@@ -28,10 +29,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const [alias, setAlias] = useState('');
   const [courier, setCourier] = useState<Courier | 'auto'>('auto');
   const [error, setError] = useState('');
-  const [errorDebug, setErrorDebug] = useState('');
   const [warning, setWarning] = useState('');
-  const [warningDebug, setWarningDebug] = useState('');
-  const [debugDump, setDebugDump] = useState('');
   const [loading, setLoading] = useState(false);
 
   const detected = useMemo(() => detectCourier(code), [code]);
@@ -39,48 +37,23 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   if (!open) return null;
 
   const fetchAndreani = async (shipmentCode: string) => {
-    const response = await fetch('/api/track/andreani', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ code: shipmentCode }),
-    });
+    const response = await fetch(`/api/andreani/track?numero=${encodeURIComponent(shipmentCode)}`);
     const payload = await response.json().catch(() => ({}));
-    const debugInfo = payload?.debugInfo;
-    if (response.status === 404) {
-      const message = payload?.error ?? 'Envío no encontrado';
-      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status, debugInfo);
+    if (response.status === 400) {
+      const message = payload?.error ?? 'Número inválido';
+      throw new AndreaniLookupError(message, 'NOT_FOUND', undefined, response.status);
     }
-    if (!response.ok) {
+    if (!response.ok || payload?.ok === false) {
       const message = payload?.error || 'No pudimos consultar Andreani';
-      const details = payload?.details || buildDebugSummary(debugInfo) || `HTTP ${response.status}`;
-      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status, debugInfo);
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', undefined, response.status);
     }
-    return payload;
-  };
-
-  const buildDebugSummary = (debugInfo: any) => {
-    if (!debugInfo) return '';
-    const parts: string[] = [];
-    if (typeof debugInfo.eventsFromApi === 'number') parts.push(`eventsFromApi=${debugInfo.eventsFromApi}`);
-    if (typeof debugInfo.eventsFromJson === 'number') parts.push(`eventsFromJson=${debugInfo.eventsFromJson}`);
-    if (typeof debugInfo.eventsFromText === 'number') parts.push(`eventsFromText=${debugInfo.eventsFromText}`);
-    if (typeof debugInfo.eventsFromLines === 'number') parts.push(`eventsFromLines=${debugInfo.eventsFromLines}`);
-    if (typeof debugInfo.apiStatusV1 === 'number') parts.push(`apiStatusV1=${debugInfo.apiStatusV1}`);
-    if (typeof debugInfo.apiStatusV3 === 'number') parts.push(`apiStatusV3=${debugInfo.apiStatusV3}`);
-    if (typeof debugInfo.apiStatus === 'number') parts.push(`apiStatus=${debugInfo.apiStatus}`);
-    if (typeof debugInfo.apiPayloadFound === 'boolean') parts.push(`apiPayloadFound=${debugInfo.apiPayloadFound}`);
-    if (typeof debugInfo.apiCookieCaptured === 'boolean') parts.push(`apiCookieCaptured=${debugInfo.apiCookieCaptured}`);
-    if (debugInfo.apiError) parts.push(`apiError=${debugInfo.apiError}`);
-    return parts.join(', ');
+    return payload?.data;
   };
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setErrorDebug('');
     setWarning('');
-    setWarningDebug('');
-    setDebugDump('');
     if (!getAuth()) {
       if (typeof window !== 'undefined') {
         setRedirectPath(window.location.pathname);
@@ -95,55 +68,27 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       if (selectedCourier === Courier.ANDREANI) {
         try {
           const tracking = await fetchAndreani(code.trim());
-          const debugInfo = tracking?.debugInfo;
-          setDebugDump(
-            JSON.stringify(
-              {
-                code: code.trim(),
-                status: tracking.status,
-                events: tracking.events,
-                debugInfo,
-              },
-              null,
-              2
-            )
-          );
-          const totalParsed =
-            (debugInfo?.eventsFromApi ?? 0) +
-            (debugInfo?.eventsFromJson ?? 0) +
-            (debugInfo?.eventsFromText ?? 0) +
-            (debugInfo?.eventsFromLines ?? 0);
-          const hasRealEvents = Array.isArray(tracking.events) && tracking.events.some((ev: any) => !`${ev.id}`.endsWith('-fallback'));
-          if (debugInfo && totalParsed === 0) {
-            setWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
-            setWarningDebug(
-              `${buildDebugSummary(debugInfo)}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
-            );
+          const events = flattenAndreaniTimelines(tracking);
+          if (events.length === 0) {
+            setWarning('No encontramos eventos en la respuesta de Andreani. Revisá que el tracking tenga movimientos en la web.');
           }
           prefilled = {
             courier: Courier.ANDREANI,
-            status: tracking.status,
-            events: hasRealEvents ? tracking.events.filter((ev: any) => !`${ev.id}`.endsWith('-fallback')) : [],
-            origin: tracking.origin,
-            destination: tracking.destination,
-            eta: tracking.eta,
-            lastUpdated: tracking.lastUpdated,
+            status: mapAndreaniEstadoToStatus(tracking.estado),
+            events,
+            lastUpdated: tracking.fechaUltimoEvento ?? new Date().toISOString(),
           };
-          } catch (err) {
-            if (err instanceof AndreaniLookupError) {
-              const friendly =
-                err.kind === 'NOT_FOUND'
-                  ? err.message || 'No encontramos este envío en Andreani. Verificá el código.'
-                  : err.message || 'No pudimos consultar Andreani en este momento. Probá más tarde.';
-              const debugFromResponse = (err as any)?.debugInfo;
-              const debugDetails = debugFromResponse ? buildDebugSummary(debugFromResponse) : '';
-              setError(friendly);
-              setErrorDebug(err.details || debugDetails || `Status: ${err.status ?? 'n/d'}`);
-              console.error('Andreani lookup failed', { message: err.message, details: err.details, status: err.status });
-            } else {
-              setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
-              setErrorDebug((err as Error)?.message ?? '');
-              console.error('Andreani lookup failed', err);
+        } catch (err) {
+          if (err instanceof AndreaniLookupError) {
+            const friendly =
+              err.kind === 'NOT_FOUND'
+                ? err.message || 'No encontramos este envío en Andreani. Verificá el código.'
+                : err.message || 'No pudimos consultar Andreani en este momento. Probá más tarde.';
+            setError(friendly);
+            console.error('Andreani lookup failed', { message: err.message, status: err.status });
+          } else {
+            setError('No pudimos consultar Andreani en este momento. Probá más tarde.');
+            console.error('Andreani lookup failed', err);
           }
           setLoading(false);
           return;
@@ -205,7 +150,6 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           {error && (
             <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               <p>{error}</p>
-              {errorDebug && <p className="mt-1 text-xs text-slate-600">Detalle técnico: {errorDebug}</p>}
               <button
                 type="button"
                 className="font-semibold underline"
@@ -221,22 +165,9 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           {warning && (
             <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
               <p>{warning}</p>
-              {warningDebug && <p className="mt-1 text-xs text-slate-600">Detalle técnico: {warningDebug}</p>}
               <p className="mt-1 text-xs text-slate-600">
                 Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
               </p>
-              {debugDump && (
-                <div className="mt-2 space-y-1 text-xs">
-                  <button
-                    type="button"
-                    className="btn-secondary rounded-lg px-3 py-1 text-xs"
-                    onClick={() => navigator.clipboard.writeText(debugDump)}
-                  >
-                    Copiar dump de depuración
-                  </button>
-                  <pre className="max-h-40 overflow-auto rounded bg-slate-100 p-2 text-[11px] text-slate-700">{debugDump}</pre>
-                </div>
-              )}
             </div>
           )}
           <div className="flex justify-end gap-2">

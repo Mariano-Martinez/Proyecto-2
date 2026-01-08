@@ -4,6 +4,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { MobileNav } from '@/components/MobileNav';
 import { StatusBadge } from '@/components/StatusBadge';
 import { Timeline } from '@/components/Timeline';
+import { flattenAndreaniTimelines, mapAndreaniEstadoToStatus } from '@/lib/andreani/client';
 import { useAuthGuard } from '@/lib/hooks';
 import { detectCourier } from '@/lib/detection';
 import { applyPrefilledShipment, getShipments, simulateProgress } from '@/lib/storage';
@@ -31,27 +32,8 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const [shipment, setShipment] = useState<Shipment | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [syncError, setSyncError] = useState('');
-  const [syncDebug, setSyncDebug] = useState('');
   const [syncWarning, setSyncWarning] = useState('');
-  const [syncWarningDebug, setSyncWarningDebug] = useState('');
-  const [syncDump, setSyncDump] = useState('');
   const [autoSynced, setAutoSynced] = useState(false);
-
-  const buildDebugSummary = (debugInfo: any) => {
-    if (!debugInfo) return '';
-    const parts: string[] = [];
-    if (typeof debugInfo.eventsFromApi === 'number') parts.push(`eventsFromApi=${debugInfo.eventsFromApi}`);
-    if (typeof debugInfo.eventsFromJson === 'number') parts.push(`eventsFromJson=${debugInfo.eventsFromJson}`);
-    if (typeof debugInfo.eventsFromText === 'number') parts.push(`eventsFromText=${debugInfo.eventsFromText}`);
-    if (typeof debugInfo.eventsFromLines === 'number') parts.push(`eventsFromLines=${debugInfo.eventsFromLines}`);
-    if (typeof debugInfo.apiStatusV1 === 'number') parts.push(`apiStatusV1=${debugInfo.apiStatusV1}`);
-    if (typeof debugInfo.apiStatusV3 === 'number') parts.push(`apiStatusV3=${debugInfo.apiStatusV3}`);
-    if (typeof debugInfo.apiStatus === 'number') parts.push(`apiStatus=${debugInfo.apiStatus}`);
-    if (typeof debugInfo.apiPayloadFound === 'boolean') parts.push(`apiPayloadFound=${debugInfo.apiPayloadFound}`);
-    if (typeof debugInfo.apiCookieCaptured === 'boolean') parts.push(`apiCookieCaptured=${debugInfo.apiCookieCaptured}`);
-    if (debugInfo.apiError) parts.push(`apiError=${debugInfo.apiError}`);
-    return parts.join(', ');
-  };
 
   useEffect(() => {
     if (!ready) return;
@@ -60,23 +42,17 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   }, [params.id, ready]);
 
   const fetchAndreani = async (shipmentCode: string) => {
-    const response = await fetch('/api/track/andreani', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ code: shipmentCode }),
-    });
+    const response = await fetch(`/api/andreani/track?numero=${encodeURIComponent(shipmentCode)}`);
     const payload = await response.json().catch(() => ({}));
-    const debugInfo = payload?.debugInfo;
-    if (response.status === 404) {
-      const message = payload?.error ?? 'Envío no encontrado';
-      throw new AndreaniLookupError(message, 'NOT_FOUND', payload?.details, response.status, debugInfo);
+    if (response.status === 400) {
+      const message = payload?.error ?? 'Número inválido';
+      throw new AndreaniLookupError(message, 'NOT_FOUND', undefined, response.status);
     }
-    if (!response.ok) {
+    if (!response.ok || payload?.ok === false) {
       const message = payload?.error || 'No pudimos consultar Andreani';
-      const details = payload?.details || buildDebugSummary(debugInfo) || `HTTP ${response.status}`;
-      throw new AndreaniLookupError(message, 'FETCH_FAILED', details, response.status, debugInfo);
+      throw new AndreaniLookupError(message, 'FETCH_FAILED', undefined, response.status);
     }
-    return payload;
+    return payload?.data;
   };
 
   const handleSimulate = () => {
@@ -89,49 +65,20 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const handleSyncAndreani = async () => {
     if (!shipment) return;
     setSyncError('');
-    setSyncDebug('');
     setSyncWarning('');
-    setSyncWarningDebug('');
-    setSyncDump('');
     setSyncing(true);
     try {
       const tracking = await fetchAndreani(shipment.code);
-      const debugInfo = tracking?.debugInfo;
-      setSyncDump(
-        JSON.stringify(
-          {
-            code: shipment.code,
-            status: tracking.status,
-            events: tracking.events,
-            debugInfo,
-          },
-          null,
-          2
-        )
-      );
-      const totalParsed =
-        (debugInfo?.eventsFromApi ?? 0) +
-        (debugInfo?.eventsFromJson ?? 0) +
-        (debugInfo?.eventsFromText ?? 0) +
-        (debugInfo?.eventsFromLines ?? 0);
-      const filteredEvents = Array.isArray(tracking.events)
-        ? tracking.events.filter((ev: any) => !`${ev.id}`.endsWith('-fallback'))
-        : [];
-      const hasRealEvents = filteredEvents.length > 0;
-      if (debugInfo && (totalParsed === 0 || !hasRealEvents)) {
-        setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisa que el tracking muestre eventos en la web.');
-        setSyncWarningDebug(
-          `${buildDebugSummary(debugInfo)}, plainLength=${debugInfo.plainLength}, htmlLength=${debugInfo.htmlLength}, plainSample="${debugInfo.plainSample ?? ''}"`
-        );
+      const events = flattenAndreaniTimelines(tracking);
+      const hasRealEvents = events.length > 0;
+      if (!hasRealEvents) {
+        setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisá que el tracking muestre eventos en la web.');
       }
       const updated = applyPrefilledShipment(shipment.id, {
         courier: Courier.ANDREANI,
-        status: tracking.status,
-        events: hasRealEvents ? filteredEvents : undefined,
-        origin: tracking.origin,
-        destination: tracking.destination,
-        eta: tracking.eta,
-        lastUpdated: tracking.lastUpdated,
+        status: mapAndreaniEstadoToStatus(tracking.estado),
+        events: hasRealEvents ? events : undefined,
+        lastUpdated: tracking.fechaUltimoEvento ?? new Date().toISOString(),
       });
       if (updated) {
         setShipment(updated);
@@ -142,13 +89,10 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
           err.kind === 'NOT_FOUND'
             ? err.message || 'No encontramos este envío en Andreani.'
             : err.message || 'No pudimos actualizar desde Andreani. Probá más tarde.';
-        const debugFromResponse = err.debugInfo ? buildDebugSummary(err.debugInfo) : '';
         setSyncError(friendly);
-        setSyncDebug(err.details || debugFromResponse || `Status: ${err.status ?? 'n/d'}`);
-        console.error('Andreani sync failed', { message: err.message, details: err.details, status: err.status });
+        console.error('Andreani sync failed', { message: err.message, status: err.status });
       } else {
         setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');
-        setSyncDebug((err as Error)?.message ?? '');
         console.error('Andreani sync failed', err);
       }
     } finally {
@@ -234,28 +178,14 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   {syncError && (
                     <div className="text-sm text-amber-700">
                       <p>{syncError}</p>
-                      {syncDebug && <p className="text-xs text-slate-600">Detalle técnico: {syncDebug}</p>}
                     </div>
                   )}
                   {syncWarning && (
                     <div className="text-sm text-sky-700">
                       <p>{syncWarning}</p>
-                      {syncWarningDebug && <p className="text-xs text-slate-600">Detalle técnico: {syncWarningDebug}</p>}
                       <p className="text-xs text-slate-600">
                         Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
                       </p>
-                      {syncDump && (
-                        <div className="mt-2 space-y-1 text-xs">
-                          <button
-                            type="button"
-                            className="btn-secondary rounded-lg px-3 py-1 text-xs"
-                            onClick={() => navigator.clipboard.writeText(syncDump)}
-                          >
-                            Copiar dump de depuración
-                          </button>
-                          <pre className="max-h-40 overflow-auto rounded bg-slate-100 p-2 text-[11px] text-slate-700">{syncDump}</pre>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>

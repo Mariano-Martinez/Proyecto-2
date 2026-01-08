@@ -49,3 +49,39 @@ TrackHub AR es un mock de una aplicación Next.js (App Router) para unificar el 
 
 ## Nota sobre el mock
 Todo el contenido es estático o persistido en el navegador. No hay llamadas a APIs externas ni integraciones reales; la UI está lista para conectar servicios de correo más adelante.
+
+## Tracking Andreani (Playwright)
+Para evitar scraping HTML, el backend usa Playwright en servidor para abrir la página oficial y capturar la respuesta JSON interna de Andreani.
+
+### Cómo funciona
+- Navega a `https://www.andreani.com/envio/<numero>`.
+- Intercepta la XHR `tracking-api.andreani.com/api/v3/Tracking?payload=...`.
+- Normaliza y devuelve solo datos mínimos (estado, fecha y timeline).
+- Implementa caché en memoria con TTL (por defecto 10 minutos).
+
+### Setup local
+1. Instalar Playwright:
+   ```bash
+   npm install
+   npx playwright install chromium
+   ```
+2. Levantar la app:
+   ```bash
+   npm run dev
+   ```
+
+### Endpoint
+`GET /api/andreani/track?numero=...` (runtime Node.js, sin edge).
+
+### Smoke test
+```bash
+TRACKING_NUMBER=12345678 npm run andreani:smoke
+# o
+node scripts/andreani-smoke.js 12345678
+```
+
+### Configuración
+- `ANDREANI_CACHE_TTL_SECONDS`: TTL del caché en segundos (default: 600).
+
+### Notas de despliegue
+Esta integración requiere un entorno Node con Playwright y Chromium disponible. En plataformas serverless puede necesitar setup extra; para el MVP se recomienda un host Node tradicional (Railway/Render/VPS).

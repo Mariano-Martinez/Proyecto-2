@@ -7,7 +7,8 @@ import { TrackingEvent, TrackingNormalized, TrackingStatus } from '../types';
 import { TrackingProvider, TrackingProviderError } from './types';
 
 const CACHE_TTL_SECONDS_DEFAULT = 600;
-const PAGE_TIMEOUT_MS = 15000;
+const PAGE_TIMEOUT_MS = 45000;
+const REQUEST_TIMEOUT_MS = 30000;
 const USER_AGENT =
   process.env.URBANO_USER_AGENT ??
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123 Safari/537.36';
@@ -139,35 +140,55 @@ export const urbanoProvider: TrackingProvider = {
         locale: 'es-AR',
       });
       const page = await context.newPage();
+      page.setDefaultTimeout(PAGE_TIMEOUT_MS);
+      page.setDefaultNavigationTimeout(PAGE_TIMEOUT_MS);
       const resultUrl = buildTrackingUrl(trimmed);
 
-      const detalleResPromise = page.waitForResponse(
+      await page.goto(resultUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
+      const resultsTable = page.locator('table').filter({ hasText: 'Guía Impresa' }).first();
+      await resultsTable.waitFor({ timeout: REQUEST_TIMEOUT_MS });
+      const firstRow = resultsTable.locator('tbody tr').first();
+      await firstRow.waitFor({ timeout: REQUEST_TIMEOUT_MS });
+
+      const reqPromise = page.waitForRequest(
+        (request) =>
+          request.url().includes('/cespecifica/class/especifica_controller.php') && request.method() === 'POST',
+        { timeout: REQUEST_TIMEOUT_MS }
+      );
+      const resPromise = page.waitForResponse(
         (response) =>
           response.url().includes('/cespecifica/class/especifica_controller.php') && response.status() === 200,
-        { timeout: PAGE_TIMEOUT_MS }
+        { timeout: REQUEST_TIMEOUT_MS }
       );
 
-      await page.goto(resultUrl, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
+      const detalleAction = firstRow.locator('a:has-text("Detalle"), button:has-text("Detalle")').first();
+      if ((await detalleAction.count()) > 0) {
+        await detalleAction.click({ timeout: 5000 });
+      } else {
+        const fallbackAction = firstRow.locator('a, button, img').first();
+        await fallbackAction.click({ force: true, timeout: 5000 });
+      }
 
-      let clicked = false;
+      let detalleReq;
+      let detalleRes;
       try {
-        await page.getByText('Detalle', { exact: false }).first().click({ timeout: 5000 });
-        clicked = true;
+        [detalleReq, detalleRes] = await Promise.all([reqPromise, resPromise]);
       } catch (error) {
-        try {
-          await page.locator('img[src*="zoom"]').first().click({ timeout: 5000 });
-          clicked = true;
-        } catch (innerError) {
-          throw new TrackingProviderError('No se pudo abrir el detalle del seguimiento', 'UPSTREAM', innerError);
+        const snippet = await page.locator('body').innerText().catch(() => '');
+        if (process.env.NODE_ENV !== 'production') {
+          console.log('[urbano.provider] body snippet', snippet.slice(0, 800));
         }
+        throw new TrackingProviderError('No se pudo obtener el detalle del seguimiento', 'UPSTREAM', error);
       }
 
-      if (!clicked) {
-        throw new TrackingProviderError('No se pudo abrir el detalle del seguimiento', 'UPSTREAM');
-      }
-
-      const detalleRes = await detalleResPromise;
       const html = await detalleRes.text();
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[urbano.provider] detalle request fired', {
+          url: detalleReq.url(),
+          postData: detalleReq.postData()?.slice(0, 200),
+        });
+        console.log('[urbano.provider] detalle response length', html.length);
+      }
       const normalized = normalizeTracking(trimmed, html);
       setCached(trimmed, normalized);
       return normalized;

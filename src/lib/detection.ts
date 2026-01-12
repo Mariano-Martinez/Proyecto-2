@@ -9,6 +9,7 @@ export const detectCourier = (code: string): Courier => {
   if (/DHL/.test(value) || value.length === 10) return Courier.DHL;
   if (/FDX/.test(value) || value.length === 12) return Courier.FEDEX;
   if (/URB/.test(value)) return Courier.URBANO;
+  if (/^\d{20}$/.test(digitsOnly)) return Courier.URBANO;
   if (/AN/.test(value)) return Courier.ANDREANI;
   if (/^\d{14,16}$/.test(digitsOnly)) return Courier.ANDREANI;
   return Courier.UNKNOWN;

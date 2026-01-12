@@ -15,12 +15,12 @@ import {
   mapTrackingStatusToShipmentStatus,
 } from '@/lib/tracking/mapper';
 import { formatDateTimeEsAR } from '@/lib/tracking/dates';
-import { TrackingNormalized } from '@/lib/tracking/types';
+import { CarrierId, TrackingNormalized } from '@/lib/tracking/types';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-class AndreaniLookupError extends Error {
+class TrackingLookupError extends Error {
   constructor(
     message: string,
     public kind: 'NOT_FOUND' | 'FETCH_FAILED',
@@ -29,9 +29,23 @@ class AndreaniLookupError extends Error {
     public debugInfo?: any
   ) {
     super(message);
-    this.name = 'AndreaniLookupError';
+    this.name = 'TrackingLookupError';
   }
 }
+
+const carrierConfig: Record<Courier, { id: CarrierId; label: string } | null> = {
+  [Courier.ANDREANI]: { id: 'andreani', label: 'Andreani' },
+  [Courier.URBANO]: { id: 'urbano', label: 'Urbano' },
+  [Courier.OCA]: null,
+  [Courier.CORREO_ARGENTINO]: null,
+  [Courier.DHL]: null,
+  [Courier.FEDEX]: null,
+  [Courier.UPS]: null,
+  [Courier.UNKNOWN]: null,
+};
+
+const enableMockTracking =
+  process.env.NODE_ENV !== 'production' && process.env.NEXT_PUBLIC_ENABLE_MOCK_TRACKING === 'true';
 
 export default function ShipmentDetailPage({ params }: { params: { id: string } }) {
   const ready = useAuthGuard();
@@ -53,18 +67,18 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     setShipment(data);
   }, [params.id, ready]);
 
-  const fetchAndreani = async (shipmentCode: string): Promise<TrackingNormalized> => {
+  const fetchTracking = async (carrierId: CarrierId, shipmentCode: string): Promise<TrackingNormalized> => {
     const response = await fetch(
-      `/api/tracking/refresh?carrier=andreani&trackingNumber=${encodeURIComponent(shipmentCode)}`
+      `/api/tracking/refresh?carrier=${carrierId}&trackingNumber=${encodeURIComponent(shipmentCode)}`
     );
     const payload = await response.json().catch(() => ({}));
     if (response.status === 400) {
       const message = payload?.error ?? 'Número inválido';
-      throw new AndreaniLookupError(message, 'NOT_FOUND', undefined, response.status);
+      throw new TrackingLookupError(message, 'NOT_FOUND', undefined, response.status);
     }
     if (!response.ok || payload?.ok === false) {
-      const message = payload?.error || 'No pudimos consultar Andreani';
-      throw new AndreaniLookupError(message, 'FETCH_FAILED', undefined, response.status);
+      const message = payload?.error || 'No pudimos consultar el tracking';
+      throw new TrackingLookupError(message, 'FETCH_FAILED', undefined, response.status);
     }
     return payload?.data as TrackingNormalized;
   };
@@ -76,21 +90,27 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     setShipment(updated);
   };
 
-  const handleSyncAndreani = async () => {
+  const handleSync = async () => {
     if (!shipment) return;
+    const detectedCourier = detectCourier(shipment.code);
+    const resolvedCourier = carrierConfig[shipment.courier] ? shipment.courier : detectedCourier;
+    const carrierInfo = carrierConfig[resolvedCourier];
+    if (!carrierInfo) return;
     setSyncError('');
     setSyncWarning('');
     setSyncing(true);
     try {
-      const tracking = await fetchAndreani(shipment.code);
+      const tracking = await fetchTracking(carrierInfo.id, shipment.code);
       setTrackingData(tracking);
       const hasRealEvents = tracking.events.length > 0;
       if (!hasRealEvents) {
-        setSyncWarning('No encontramos eventos en la respuesta de Andreani. Revisá que el tracking muestre eventos en la web.');
+        setSyncWarning(
+          `No encontramos eventos en la respuesta de ${carrierInfo.label}. Revisá que el tracking muestre eventos en la web.`
+        );
       }
       const events = mapTrackingEventsToTimelineEvents(tracking.events, shipment.code);
       const updated = applyPrefilledShipment(shipment.id, {
-        courier: Courier.ANDREANI,
+        courier: resolvedCourier,
         status: mapTrackingStatusToShipmentStatus(tracking.status),
         events: hasRealEvents ? events : undefined,
         lastUpdated: getTrackingLastUpdated(tracking),
@@ -99,31 +119,32 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
         setShipment(updated);
       }
     } catch (err) {
-      if (err instanceof AndreaniLookupError) {
+      if (err instanceof TrackingLookupError) {
         const friendly =
           err.kind === 'NOT_FOUND'
-            ? err.message || 'No encontramos este envío en Andreani.'
-            : err.message || 'No pudimos actualizar desde Andreani. Probá más tarde.';
+            ? err.message || 'No encontramos este envío en el courier.'
+            : err.message || 'No pudimos actualizar el tracking. Probá más tarde.';
         setSyncError(friendly);
-        console.error('Andreani sync failed', { message: err.message, status: err.status });
+        console.error('Tracking sync failed', { message: err.message, status: err.status });
       } else {
-        setSyncError('No pudimos actualizar desde Andreani. Probá más tarde.');
-        console.error('Andreani sync failed', err);
+        setSyncError('No pudimos actualizar el tracking. Probá más tarde.');
+        console.error('Tracking sync failed', err);
       }
     } finally {
       setSyncing(false);
     }
   };
 
-  const canSyncAndreani =
-    shipment &&
-    (shipment.courier === Courier.ANDREANI || detectCourier(shipment.code) === Courier.ANDREANI);
+  const detectedCourier = shipment ? detectCourier(shipment.code) : Courier.UNKNOWN;
+  const resolvedCourier = shipment && carrierConfig[shipment.courier] ? shipment.courier : detectedCourier;
+  const carrierInfo = shipment ? carrierConfig[resolvedCourier] : null;
+  const canSyncCarrier = Boolean(shipment && carrierInfo);
 
   useEffect(() => {
-    if (!canSyncAndreani || autoSynced) return;
-    // Auto-intentar sincronizar apenas se detecte Andreani y no haya sincronizado aún.
-    handleSyncAndreani().finally(() => setAutoSynced(true));
-  }, [canSyncAndreani, autoSynced]);
+    if (!canSyncCarrier || autoSynced) return;
+    // Auto-intentar sincronizar apenas se detecte un courier con tracking real.
+    handleSync().finally(() => setAutoSynced(true));
+  }, [canSyncCarrier, autoSynced]);
 
   if (!ready) return null;
 
@@ -160,7 +181,11 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   <p className="text-sm font-semibold text-slate-600">{shipment.courier}</p>
                   <h1 className="text-2xl font-bold text-slate-900">{shipment.alias}</h1>
                   <p className="font-mono text-sm text-slate-700">{shipment.code}</p>
-                  {trackingData && <p className="text-sm text-slate-600">Estado Andreani: {trackingData.statusLabel}</p>}
+                  {trackingData && carrierInfo && (
+                    <p className="text-sm text-slate-600">
+                      Estado {carrierInfo.label}: {trackingData.statusLabel}
+                    </p>
+                  )}
                 </div>
                 <StatusBadge status={shipment.status} />
               </div>
@@ -182,14 +207,14 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   <p className="font-semibold">{formattedLastUpdated}</p>
                 </div>
               </div>
-              {canSyncAndreani ? (
+              {canSyncCarrier && carrierInfo ? (
                 <div className="mt-4 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
-                    <button onClick={handleSyncAndreani} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
+                    <button onClick={handleSync} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
                       <ArrowPathIcon className={`mr-1 inline h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />{' '}
-                      {syncing ? 'Actualizando...' : 'Actualizar desde Andreani'}
+                      {syncing ? 'Actualizando...' : `Actualizar desde ${carrierInfo.label}`}
                     </button>
-                    <p className="text-sm text-slate-600">Trae el estado real de Andreani para este envío.</p>
+                    <p className="text-sm text-slate-600">Trae el estado real de {carrierInfo.label} para este envío.</p>
                   </div>
                   {syncError && (
                     <div className="text-sm text-amber-700">
@@ -200,17 +225,21 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                     <div className="text-sm text-sky-700">
                       <p>{syncWarning}</p>
                       <p className="text-xs text-slate-600">
-                        Si la web de Andreani muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+                        Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
                       </p>
                     </div>
                   )}
                 </div>
-              ) : (
+              ) : enableMockTracking ? (
                 <div className="mt-4 flex items-center gap-3">
                   <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
                     <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
                   </button>
                   <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
+                </div>
+              ) : (
+                <div className="mt-4 text-sm text-slate-600">
+                  La actualización en línea no está disponible para este courier.
                 </div>
               )}
             </div>

@@ -130,6 +130,9 @@ export const urbanoProvider: TrackingProvider = {
 
     let browser;
     try {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log('[urbano.provider] fetching', trimmed);
+      }
       browser = await chromium.launch({ headless: true });
       const context = await browser.newContext({
         userAgent: USER_AGENT,

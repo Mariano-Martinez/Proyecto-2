@@ -26,6 +26,9 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('[tracking.refresh]', { carrier: carrierParam, trackingNumber });
+    }
     const data = await fetchTrackingByCarrier(carrierParam, trackingNumber);
     return NextResponse.json({ ok: true, data }, { status: 200, headers: noStoreHeaders });
   } catch (error) {

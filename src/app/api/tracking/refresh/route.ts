@@ -9,7 +9,7 @@ const noStoreHeaders = {
   'Cache-Control': 'no-store',
 };
 
-const carrierValues: CarrierId[] = ['andreani', 'oca', 'correo_argentino', 'dhl', 'fedex', 'ups', 'other'];
+const carrierValues: CarrierId[] = ['andreani', 'urbano', 'oca', 'correo_argentino', 'dhl', 'fedex', 'ups', 'other'];
 
 const isCarrierId = (value: string): value is CarrierId => carrierValues.includes(value as CarrierId);
 

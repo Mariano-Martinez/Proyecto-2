@@ -271,7 +271,6 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
               {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
-          {loading && <p className="text-xs text-slate-500">Consultando al courier…</p>}
           {!loading && pendingShipmentId && (
             <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
               <span>El envío quedó creado, pero aún no pudimos traer el estado.</span>

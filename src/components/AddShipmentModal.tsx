@@ -26,6 +26,7 @@ class TrackingLookupError extends Error {
 
 const carrierConfig: Record<Courier, { id: CarrierId; label: string } | null> = {
   [Courier.ANDREANI]: { id: 'andreani', label: 'Andreani' },
+  [Courier.VIA_CARGO]: { id: 'viacargo', label: 'Via Cargo' },
   [Courier.URBANO]: { id: 'urbano', label: 'Urbano' },
   [Courier.OCA]: null,
   [Courier.CORREO_ARGENTINO]: null,

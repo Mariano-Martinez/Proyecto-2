@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 248 249 252;
+  --foreground: 15 23 42;
+}
+
+body {
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-sky-200 hover:text-sky-700 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
+}
+
+.card {
+  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+}
+
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+}
+
+.input {
+  @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100;
+}
+
+.label {
+  @apply text-sm font-semibold text-slate-700;
+}
+
+.table-cell {
+  @apply px-3 py-2 text-sm text-slate-700;
+}
+
+.section-title {
+  @apply text-2xl font-bold text-slate-900;
+}
+
+.section-subtitle {
+  @apply mt-2 text-base text-slate-600;
+}
+
+@layer utilities {
+  .gradient-hero {
+    background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 35%),
+      radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12), transparent 30%),
+      linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(14, 165, 233, 0));
+  }
+
+  .gradient-page {
+    background: radial-gradient(circle at 18% 20%, rgba(244, 219, 255, 0.16), transparent 46%),
+      radial-gradient(circle at 82% 6%, rgba(255, 221, 246, 0.12), transparent 40%),
+      linear-gradient(180deg, rgba(248, 231, 255, 0.24), rgba(255, 255, 255, 0)),
+      rgb(var(--background));
+  }
+}

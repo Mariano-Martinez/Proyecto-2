@@ -102,6 +102,16 @@ const monthToNumber: Record<string, number> = {
   dic: 11,
 };
 
+const normalizeAndreaniEta = (eta?: string) => {
+  if (!eta) return eta;
+  const trimmed = eta.trim();
+  const match = trimmed.match(/(\d{1,2})[/-](\d{1,2})/);
+  if (!match) return trimmed;
+  const day = match[1].padStart(2, '0');
+  const month = match[2].padStart(2, '0');
+  return `${day}/${month}`;
+};
+
 const extractEventsFromUnknown = (value: unknown, code: string): ExtractedJsonResult | null => {
   const collected: TimelineEvent[] = [];
   let origin: string | undefined;
@@ -158,7 +168,7 @@ const extractEventsFromUnknown = (value: unknown, code: string): ExtractedJsonRe
       }
       if (!eta) {
         const etaKey = Object.keys(obj).find((k) => /eta|estimad/i.test(k));
-        if (etaKey && typeof obj[etaKey] === 'string') eta = (obj[etaKey] as string).trim();
+        if (etaKey && typeof obj[etaKey] === 'string') eta = normalizeAndreaniEta(obj[etaKey] as string);
       }
       Object.values(obj).forEach(walk);
       return;
@@ -173,7 +183,7 @@ const extractEventsFromUnknown = (value: unknown, code: string): ExtractedJsonRe
   if (collected.length === 0 && !origin && !destination && !eta) return null;
 
   const events = [...collected].sort((a, b) => (a.date < b.date ? 1 : -1));
-  return { events, origin, destination, eta, rawEventCount: collected.length };
+  return { events, origin, destination, eta: normalizeAndreaniEta(eta), rawEventCount: collected.length };
 };
 
 const maybeExtractJsonState = (html: string, code: string): ParsedFromJson | null => {

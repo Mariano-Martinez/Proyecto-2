@@ -7,7 +7,7 @@ import { Timeline } from '@/components/Timeline';
 import { useAuthGuard } from '@/lib/hooks';
 import { detectCourier } from '@/lib/detection';
 import { applyPrefilledShipment, getShipments, simulateProgress } from '@/lib/storage';
-import { Courier, Shipment } from '@/lib/types';
+import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import {
   getTrackingLastUpdated,
   mapTimelineEventsToTrackingEvents,
@@ -112,6 +112,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       const updated = applyPrefilledShipment(shipment.id, {
         courier: resolvedCourier,
         status: mapTrackingStatusToShipmentStatus(tracking.status),
+        eta: resolvedCourier === Courier.ANDREANI ? tracking.eta ?? undefined : undefined,
         events: hasRealEvents ? events : undefined,
         lastUpdated: getTrackingLastUpdated(tracking),
       });
@@ -139,6 +140,13 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   const resolvedCourier = shipment && carrierConfig[shipment.courier] ? shipment.courier : detectedCourier;
   const carrierInfo = shipment ? carrierConfig[resolvedCourier] : null;
   const canSyncCarrier = Boolean(shipment && carrierInfo);
+  const isAndreani = shipment?.courier === Courier.ANDREANI;
+  const etaFromTracking = trackingData?.eta ?? shipment?.eta;
+  const etaDisplay = isAndreani
+    ? shipment?.status === ShipmentStatus.DELIVERED || !etaFromTracking || etaFromTracking === 'Próximamente'
+      ? '-'
+      : etaFromTracking
+    : shipment?.eta ?? '';
 
   useEffect(() => {
     if (!canSyncCarrier || autoSynced) return;
@@ -200,7 +208,7 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                 </div>
                 <div>
                   <p className="text-xs uppercase text-slate-500">ETA</p>
-                  <p className="font-semibold">{shipment.eta}</p>
+                  <p className="font-semibold">{etaDisplay}</p>
                 </div>
                 <div>
                   <p className="text-xs uppercase text-slate-500">Última actualización</p>

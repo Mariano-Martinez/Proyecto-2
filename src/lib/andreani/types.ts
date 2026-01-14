@@ -14,5 +14,6 @@ export type AndreaniTrackingNormalized = {
   numeroAndreani: string | null;
   estado: string | null;
   fechaUltimoEvento: string | null;
+  fechaEstimadaEntrega: string | null;
   timelines: AndreaniTimeline[];
 };

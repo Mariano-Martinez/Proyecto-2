@@ -15,5 +15,6 @@ export interface TrackingNormalized {
   statusLabel: string;
   status: TrackingStatus;
   lastUpdated?: string | null;
+  eta?: string | null;
   events: TrackingEvent[];
 }

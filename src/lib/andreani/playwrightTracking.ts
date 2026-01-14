@@ -45,10 +45,20 @@ const setCached = (numero: string, data: AndreaniTrackingNormalized) => {
   cache.set(numero, { data, expiresAt: Date.now() + getCacheTtlMs() });
 };
 
+const normalizeAndreaniEta = (value?: string | null) => {
+  if (!value) return null;
+  const match = value.match(/(\d{1,2})[/-](\d{1,2})/);
+  if (!match) return null;
+  const day = match[1].padStart(2, '0');
+  const month = match[2].padStart(2, '0');
+  return `${day}/${month}`;
+};
+
 const normalizeTracking = (rawJson: any): AndreaniTrackingNormalized => ({
   numeroAndreani: rawJson?.numeroAndreani ?? null,
   estado: rawJson?.procesoActual?.titulo ?? null,
   fechaUltimoEvento: rawJson?.procesoActual?.fechaUltimoEvento ?? null,
+  fechaEstimadaEntrega: normalizeAndreaniEta(rawJson?.fechaEstimadaDeEntrega),
   timelines: Array.isArray(rawJson?.timelines)
     ? rawJson.timelines.map((timeline: any) => ({
         orden: timeline?.orden ?? null,

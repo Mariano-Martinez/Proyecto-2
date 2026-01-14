@@ -62,6 +62,7 @@ const normalizeAndreaniTracking = (tracking: Awaited<ReturnType<typeof getAndrea
     statusLabel,
     status: mapAndreaniStatusToEnum(statusLabel),
     lastUpdated: tracking.fechaUltimoEvento ?? events[0]?.timestamp ?? null,
+    eta: tracking.fechaEstimadaEntrega ?? null,
     events,
   } satisfies TrackingNormalized;
 };

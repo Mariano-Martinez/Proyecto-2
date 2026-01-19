@@ -18,6 +18,7 @@ export enum ShipmentStatus {
 
 export enum Courier {
   ANDREANI = 'Andreani',
+  VIA_CARGO = 'Via Cargo',
   OCA = 'OCA',
   CORREO_ARGENTINO = 'Correo Argentino',
   URBANO = 'Urbano',

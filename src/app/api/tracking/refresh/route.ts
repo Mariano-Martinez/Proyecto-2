@@ -9,7 +9,7 @@ const noStoreHeaders = {
   'Cache-Control': 'no-store',
 };
 
-const carrierValues: CarrierId[] = ['andreani', 'urbano', 'oca', 'correo_argentino', 'dhl', 'fedex', 'ups', 'other'];
+const carrierValues: CarrierId[] = ['andreani', 'urbano', 'viacargo', 'oca', 'correo_argentino', 'dhl', 'fedex', 'ups', 'other'];
 
 const isCarrierId = (value: string): value is CarrierId => carrierValues.includes(value as CarrierId);
 
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
           ? 400
           : error.code === 'NOT_FOUND'
             ? 404
-            : error.code === 'UPSTREAM'
+            : error.code === 'UPSTREAM' || error.code === 'UPSTREAM_ERROR' || error.code === 'NETWORK'
               ? 502
               : 500;
       return NextResponse.json({ ok: false, error: error.message }, { status, headers: noStoreHeaders });

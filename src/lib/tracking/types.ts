@@ -1,4 +1,4 @@
-export type CarrierId = 'andreani' | 'urbano' | 'oca' | 'correo_argentino' | 'dhl' | 'fedex' | 'ups' | 'other';
+export type CarrierId = 'andreani' | 'urbano' | 'viacargo' | 'oca' | 'correo_argentino' | 'dhl' | 'fedex' | 'ups' | 'other';
 
 export type TrackingStatus = 'unknown' | 'created' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'exception';
 
@@ -17,4 +17,12 @@ export interface TrackingNormalized {
   lastUpdated?: string | null;
   eta?: string | null;
   events: TrackingEvent[];
+  details?: {
+    service?: string;
+    pieces?: number;
+    weightKg?: number;
+    origin?: string;
+    destination?: string;
+    signedByMasked?: string | null;
+  };
 }

@@ -7,6 +7,7 @@ export const detectCourier = (code: string): Courier => {
   if (value.startsWith('OC')) return Courier.OCA;
   if (value.startsWith('AR')) return Courier.CORREO_ARGENTINO;
   if (/DHL/.test(value) || value.length === 10) return Courier.DHL;
+  if (/^999\d{9}$/.test(digitsOnly)) return Courier.VIA_CARGO;
   if (/FDX/.test(value) || value.length === 12) return Courier.FEDEX;
   if (/URB/.test(value)) return Courier.URBANO;
   if (/^\d{20}$/.test(digitsOnly)) return Courier.URBANO;

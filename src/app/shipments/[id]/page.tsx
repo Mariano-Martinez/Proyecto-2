@@ -35,6 +35,7 @@ class TrackingLookupError extends Error {
 
 const carrierConfig: Record<Courier, { id: CarrierId; label: string } | null> = {
   [Courier.ANDREANI]: { id: 'andreani', label: 'Andreani' },
+  [Courier.VIA_CARGO]: { id: 'viacargo', label: 'Via Cargo' },
   [Courier.URBANO]: { id: 'urbano', label: 'Urbano' },
   [Courier.OCA]: null,
   [Courier.CORREO_ARGENTINO]: null,
@@ -147,6 +148,20 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
       ? '-'
       : etaFromTracking
     : shipment?.eta ?? '';
+  const trackingDetails = trackingData?.details;
+  const detailItems = trackingDetails
+    ? [
+        { label: 'Servicio', value: trackingDetails.service },
+        { label: 'Piezas', value: trackingDetails.pieces?.toString() },
+        {
+          label: 'Peso (kg)',
+          value: trackingDetails.weightKg !== undefined && trackingDetails.weightKg !== null ? trackingDetails.weightKg.toString() : undefined,
+        },
+        { label: 'Origen (tracking)', value: trackingDetails.origin },
+        { label: 'Destino (tracking)', value: trackingDetails.destination },
+        { label: 'Firmado por', value: trackingDetails.signedByMasked ?? undefined },
+      ].filter((item) => item.value)
+    : [];
 
   useEffect(() => {
     if (!canSyncCarrier || autoSynced) return;
@@ -215,6 +230,16 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                   <p className="font-semibold">{formattedLastUpdated}</p>
                 </div>
               </div>
+              {detailItems.length > 0 && (
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-3">
+                  {detailItems.map((item) => (
+                    <div key={item.label}>
+                      <p className="text-xs uppercase text-slate-500">{item.label}</p>
+                      <p className="font-semibold">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
               {canSyncCarrier && carrierInfo ? (
                 <div className="mt-4 flex flex-col gap-2">
                   <div className="flex items-center gap-3">

@@ -11,13 +11,13 @@ export const statusLabels: Record<ShipmentStatus, string> = {
 };
 
 export const statusColors: Record<ShipmentStatus, string> = {
-  [ShipmentStatus.CREATED]: 'bg-slate-50 text-slate-700 ring-1 ring-slate-200',
-  [ShipmentStatus.DISPATCHED]: 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200',
-  [ShipmentStatus.IN_TRANSIT]: 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
-  [ShipmentStatus.OUT_FOR_DELIVERY]: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  [ShipmentStatus.DELIVERED]: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  [ShipmentStatus.CUSTOMS]: 'bg-violet-50 text-violet-700 ring-1 ring-violet-200',
-  [ShipmentStatus.ISSUE]: 'bg-rose-50 text-rose-700 ring-1 ring-rose-200',
+  [ShipmentStatus.CREATED]: 'bg-surface-1 text-default ring-1 ring-[hsl(var(--border))]',
+  [ShipmentStatus.DISPATCHED]: 'bg-[hsl(226_100%_95%/0.6)] text-[hsl(226_60%_42%)] ring-1 ring-[hsl(226_60%_55%/0.2)]',
+  [ShipmentStatus.IN_TRANSIT]: 'bg-[hsl(var(--primary)/0.12)] text-primary ring-1 ring-[hsl(var(--primary)/0.25)]',
+  [ShipmentStatus.OUT_FOR_DELIVERY]: 'bg-[hsl(var(--warning)/0.12)] text-[hsl(var(--warning))] ring-1 ring-[hsl(var(--warning)/0.25)]',
+  [ShipmentStatus.DELIVERED]: 'bg-[hsl(var(--success)/0.12)] text-[hsl(var(--success))] ring-1 ring-[hsl(var(--success)/0.25)]',
+  [ShipmentStatus.CUSTOMS]: 'bg-[hsl(264_85%_95%/0.6)] text-[hsl(264_60%_45%)] ring-1 ring-[hsl(264_60%_55%/0.2)]',
+  [ShipmentStatus.ISSUE]: 'bg-[hsl(var(--danger)/0.12)] text-[hsl(var(--danger))] ring-1 ring-[hsl(var(--danger)/0.25)]',
 };
 
 export const statusFlow: ShipmentStatus[] = [

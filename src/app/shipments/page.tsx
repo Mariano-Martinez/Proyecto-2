@@ -115,17 +115,19 @@ export default function ShipmentsPage() {
     <AppShell>
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm font-semibold text-sky-600">Gestión de envíos</p>
-          <h1 className="text-3xl font-black text-slate-900">Mis envíos</h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm font-semibold text-primary">Gestión de envíos</p>
+          <h1 className="text-3xl font-black text-default">Mis envíos</h1>
+          <p className="text-sm text-muted">
             Activos: {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+        <div className="flex items-center gap-2 rounded-full border border-subtle bg-surface-0 p-1 shadow-depth-sm">
           <button
             onClick={() => setView('cards')}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'cards' ? 'bg-sky-50 text-sky-700 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:bg-slate-50'
+              view === 'cards'
+                ? 'bg-[hsl(var(--primary)/0.12)] text-primary shadow-depth-sm ring-1 ring-[hsl(var(--primary)/0.25)]'
+                : 'text-muted hover:bg-surface-1'
             }`}
           >
             <Squares2X2Icon className="mr-1 inline h-4 w-4" /> Cards
@@ -133,7 +135,9 @@ export default function ShipmentsPage() {
           <button
             onClick={() => setView('table')}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'table' ? 'bg-sky-50 text-sky-700 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:bg-slate-50'
+              view === 'table'
+                ? 'bg-[hsl(var(--primary)/0.12)] text-primary shadow-depth-sm ring-1 ring-[hsl(var(--primary)/0.25)]'
+                : 'text-muted hover:bg-surface-1'
             }`}
           >
             <TableCellsIcon className="mr-1 inline h-4 w-4" /> Tabla
@@ -141,9 +145,9 @@ export default function ShipmentsPage() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-4 grid gap-4 rounded-2xl border border-subtle bg-surface-0 p-4 shadow-depth-sm sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Estado</p>
+          <p className="text-xs uppercase tracking-wide text-muted">Estado</p>
           <select className="input" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="all">Todos</option>
             {Object.values(ShipmentStatus).map((status) => (
@@ -154,7 +158,7 @@ export default function ShipmentsPage() {
           </select>
         </div>
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Courier</p>
+          <p className="text-xs uppercase tracking-wide text-muted">Courier</p>
           <select className="input" value={courier} onChange={(e) => setCourier(e.target.value)}>
             <option value="all">Todos</option>
             {Object.values(Courier).map((c) => (
@@ -165,7 +169,7 @@ export default function ShipmentsPage() {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Buscar</p>
+          <p className="text-xs uppercase tracking-wide text-muted">Buscar</p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               className="input"
@@ -173,7 +177,7 @@ export default function ShipmentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="hidden rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600 ring-1 ring-slate-200 sm:inline-flex">
+            <span className="hidden rounded-xl bg-surface-1 px-3 py-2 text-xs text-muted ring-1 ring-[hsl(var(--border))] shadow-inset sm:inline-flex">
               <FunnelIcon className="mr-1 h-4 w-4" /> Filtros móviles acá
             </span>
           </div>
@@ -181,12 +185,12 @@ export default function ShipmentsPage() {
       </div>
 
       {selected.size > 0 && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 shadow-sm">
-          <div className="text-sm font-semibold text-slate-800">{selected.size} seleccionados</div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[hsl(var(--primary)/0.2)] bg-[hsl(var(--primary)/0.12)] px-4 py-3 shadow-depth-sm">
+          <div className="text-sm font-semibold text-default">{selected.size} seleccionados</div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={exportSelected}
-              className="btn-secondary rounded-xl px-4 py-2 text-slate-800"
+              className="btn-secondary rounded-xl px-4 py-2"
               title="Exportar selección"
             >
               <ArrowDownTrayIcon className="mr-1 inline h-4 w-4" /> Exportar CSV
@@ -209,11 +213,11 @@ export default function ShipmentsPage() {
               onToggleSelect={toggleSelect}
               onCopy={handleCopy}
             />
-            <div className="mt-2 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <div className="mt-2 flex items-center justify-between rounded-xl border border-subtle bg-surface-0 px-4 py-3 text-sm text-muted shadow-depth-sm">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300"
+                  className="h-4 w-4 rounded border-subtle text-[hsl(var(--primary))] focus-visible:ring-[hsl(var(--ring)/0.35)]"
                   checked={selected.size === paginated.length && paginated.length > 0}
                   onChange={(e) => {
                     if (e.target.checked) {
@@ -223,21 +227,21 @@ export default function ShipmentsPage() {
                     }
                   }}
                 />
-                <span>Seleccionar todos</span>
+                <span className="text-muted">Seleccionar todos</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                  className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
                   Anterior
                 </button>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-muted">
                   Página {page} de {totalPages}
                 </span>
                 <button
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                  className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
@@ -252,25 +256,25 @@ export default function ShipmentsPage() {
               <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={handleCopy} />
             ))}
             {filtered.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600">
+              <div className="rounded-2xl border border-dashed border-subtle bg-surface-0 p-6 text-center text-sm text-muted">
                 No hay envíos con estos filtros.
               </div>
             )}
             {filtered.length > pageSize && (
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+              <div className="flex items-center justify-between rounded-xl border border-subtle bg-surface-0 px-4 py-3 text-sm text-muted shadow-depth-sm">
                 <div>
                   Página {page} de {totalPages}
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                    className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
                     Anterior
                   </button>
                   <button
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                    className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                   >

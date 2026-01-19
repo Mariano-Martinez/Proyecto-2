@@ -14,10 +14,10 @@ const nav = [
 export const MobileNav = () => {
   const pathname = usePathname();
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-slate-200 bg-white/95 backdrop-blur lg:hidden">
+    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-subtle bg-[hsl(var(--surface-0)/0.95)] backdrop-blur lg:hidden">
       <div className="mx-auto flex max-w-4xl items-center justify-around px-4 py-3">
-        <Link href="/dashboard" className="flex items-center gap-2 text-base font-bold text-slate-900">
-          <Squares2X2Icon className="h-6 w-6 text-sky-600" />
+        <Link href="/dashboard" className="flex items-center gap-2 text-base font-bold text-default">
+          <Squares2X2Icon className="h-6 w-6 text-primary" />
           TrackHub
         </Link>
         {nav.map((item) => {
@@ -28,7 +28,7 @@ export const MobileNav = () => {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center gap-1 text-xs font-semibold ${
-                active ? 'text-sky-600' : 'text-slate-600'
+                active ? 'text-primary' : 'text-muted'
               }`}
             >
               <item.icon className="h-5 w-5" />

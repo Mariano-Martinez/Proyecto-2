@@ -19,38 +19,38 @@ export const ShipmentCard = ({
     onCopy?.(code);
   };
   return (
-    <div className="card space-y-3 p-4">
+    <div className="card depth-hover space-y-3 p-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-semibold text-slate-900">{shipment.alias}</p>
-          <p className="text-xs text-slate-500">{shipment.courier}</p>
+          <p className="text-sm font-semibold text-default">{shipment.alias}</p>
+          <p className="text-xs text-muted">{shipment.courier}</p>
         </div>
         <StatusBadge status={shipment.status} />
       </div>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs text-slate-500">Código</p>
-          <p className="font-mono text-sm text-slate-800">{shipment.code}</p>
+          <p className="text-xs text-muted">Código</p>
+          <p className="font-mono text-sm text-default">{shipment.code}</p>
         </div>
         <button
           onClick={() => copy(shipment.code)}
-          className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+          className="rounded-lg p-2 text-muted transition hover:bg-surface-1 hover:text-default"
           title="Copiar código"
         >
           <ClipboardDocumentIcon className="h-4 w-4" />
         </button>
       </div>
-      <div className="flex items-center justify-between text-xs text-slate-600">
+      <div className="flex items-center justify-between text-xs text-muted">
         <span>Actualizado: {format(new Date(shipment.lastUpdated), 'dd MMM, HH:mm', { locale: es })}</span>
         <span>ETA: {shipment.eta}</span>
       </div>
       <div className="flex items-center justify-between">
-        <Link href={`/shipments/${shipment.id}`} className="text-sm font-semibold text-sky-600">
+        <Link href={`/shipments/${shipment.id}`} className="text-sm font-semibold text-primary">
           Ver detalle
         </Link>
         <button
           onClick={() => onDelete(shipment.id)}
-          className="text-sm font-semibold text-rose-600 transition hover:text-rose-700"
+          className="text-sm font-semibold text-[hsl(var(--danger))] transition hover:text-[hsl(var(--danger)/0.8)]"
           title="Eliminar"
         >
           <TrashIcon className="h-4 w-4" />

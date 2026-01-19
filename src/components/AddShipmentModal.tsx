@@ -201,11 +201,11 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4">
-      <div className="card w-full max-w-lg p-6">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[hsl(var(--bg-0)/0.7)] px-4 backdrop-blur-sm">
+      <div className="card w-full max-w-lg p-6 shadow-depth-lg">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900">Agregar tracking</h3>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100">
+          <h3 className="text-lg font-bold text-default">Agregar tracking</h3>
+          <button onClick={onClose} className="rounded-full p-2 text-muted hover:bg-surface-1">
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
@@ -213,7 +213,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           <div>
             <label className="label">Código de seguimiento</label>
             <input className="input mt-1" value={code} onChange={(e) => setCode(e.target.value)} required disabled={loading} />
-            <p className="mt-1 text-xs text-slate-500">Detectado: {detected}</p>
+            <p className="mt-1 text-xs text-muted">Detectado: {detected}</p>
           </div>
           <div>
             <label className="label">Alias</label>
@@ -242,7 +242,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </select>
           </div>
           {error && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <div className="rounded-xl border border-[hsl(var(--warning)/0.4)] bg-[hsl(var(--warning)/0.12)] px-3 py-2 text-sm text-[hsl(var(--warning))]">
               <p>{error}</p>
               <button
                 type="button"
@@ -257,9 +257,9 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </div>
           )}
           {warning && (
-            <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
+            <div className="rounded-xl border border-[hsl(var(--primary)/0.4)] bg-[hsl(var(--primary)/0.12)] px-3 py-2 text-sm text-primary">
               <p>{warning}</p>
-              <p className="mt-1 text-xs text-slate-600">
+              <p className="mt-1 text-xs text-muted">
                 Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
               </p>
             </div>
@@ -273,9 +273,9 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </button>
           </div>
           {!loading && pendingShipmentId && (
-            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            <div className="flex items-center justify-between rounded-xl border border-subtle bg-surface-1 px-3 py-2 text-xs text-muted shadow-inset">
               <span>El envío quedó creado, pero aún no pudimos traer el estado.</span>
-              <button type="button" className="font-semibold text-slate-900 underline" onClick={handleRetry}>
+              <button type="button" className="font-semibold text-default underline" onClick={handleRetry}>
                 Reintentar
               </button>
             </div>

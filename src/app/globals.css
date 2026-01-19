@@ -3,62 +3,260 @@
 @tailwind utilities;
 
 :root {
-  --background: 248 249 252;
-  --foreground: 15 23 42;
+  color-scheme: light dark;
+  --bg-0: 220 25% 92%;
+  --bg-1: 220 24% 94%;
+  --surface-0: 220 20% 96%;
+  --surface-1: 220 20% 98%;
+  --surface-2: 220 20% 100%;
+  --border: 220 16% 82%;
+  --text: 222 30% 18%;
+  --text-muted: 220 10% 45%;
+  --primary: 199 89% 55%;
+  --primary-contrast: 0 0% 100%;
+  --success: 142 72% 45%;
+  --warning: 36 92% 55%;
+  --danger: 0 72% 55%;
+  --shadow-color: 222 30% 20%;
+  --shadow-highlight: 0 0% 100%;
+  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.6), 0 6px 12px -8px hsl(var(--shadow-color) / 0.45);
+  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.7), 0 14px 28px -14px hsl(var(--shadow-color) / 0.5);
+  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.8), 0 26px 50px -18px hsl(var(--shadow-color) / 0.55);
+  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.3), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.7);
+  --ring: 199 89% 60%;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+}
+
+:root[data-theme='dark'] {
+  --bg-0: 222 32% 8%;
+  --bg-1: 222 28% 12%;
+  --surface-0: 222 24% 16%;
+  --surface-1: 222 22% 20%;
+  --surface-2: 222 20% 24%;
+  --border: 222 18% 28%;
+  --text: 210 40% 98%;
+  --text-muted: 215 15% 70%;
+  --primary: 199 89% 60%;
+  --primary-contrast: 222 30% 10%;
+  --success: 142 72% 48%;
+  --warning: 36 92% 60%;
+  --danger: 0 72% 60%;
+  --shadow-color: 220 50% 2%;
+  --shadow-highlight: 220 25% 50%;
+  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.2), 0 10px 16px -12px hsl(var(--shadow-color) / 0.9);
+  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.24), 0 18px 28px -14px hsl(var(--shadow-color) / 0.9);
+  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.3), 0 32px 50px -18px hsl(var(--shadow-color) / 0.9);
+  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.7), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.2);
+  --ring: 199 89% 60%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg-0: 222 32% 8%;
+    --bg-1: 222 28% 12%;
+    --surface-0: 222 24% 16%;
+    --surface-1: 222 22% 20%;
+    --surface-2: 222 20% 24%;
+    --border: 222 18% 28%;
+    --text: 210 40% 98%;
+    --text-muted: 215 15% 70%;
+    --primary: 199 89% 60%;
+    --primary-contrast: 222 30% 10%;
+    --success: 142 72% 48%;
+    --warning: 36 92% 60%;
+    --danger: 0 72% 60%;
+    --shadow-color: 220 50% 2%;
+    --shadow-highlight: 220 25% 50%;
+    --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.2), 0 10px 16px -12px hsl(var(--shadow-color) / 0.9);
+    --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.24), 0 18px 28px -14px hsl(var(--shadow-color) / 0.9);
+    --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.3), 0 32px 50px -18px hsl(var(--shadow-color) / 0.9);
+    --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.7), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.2);
+    --ring: 199 89% 60%;
+  }
 }
 
 body {
-  background: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background: hsl(var(--bg-0));
+  color: hsl(var(--text));
 }
 
-.btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
-}
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-4 py-2 text-sm font-semibold transition focus-visible:outline-none disabled:opacity-60;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-contrast));
+    box-shadow: var(--shadow-sm);
+  }
 
-.btn-secondary {
-  @apply inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-sky-200 hover:text-sky-700 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
-}
+  .btn-primary:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 
-.card {
-  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
-}
+  .btn-primary:focus-visible {
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35), var(--shadow-sm);
+  }
 
-.badge {
-  @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
-}
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none disabled:opacity-60;
+    background: hsl(var(--surface-1));
+    border-color: hsl(var(--border));
+    color: hsl(var(--text));
+    box-shadow: var(--shadow-sm);
+  }
 
-.input {
-  @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100;
-}
+  .btn-secondary:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    color: hsl(var(--primary));
+    box-shadow: var(--shadow-md);
+  }
 
-.label {
-  @apply text-sm font-semibold text-slate-700;
-}
+  .btn-secondary:focus-visible {
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35), var(--shadow-sm);
+  }
 
-.table-cell {
-  @apply px-3 py-2 text-sm text-slate-700;
-}
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm font-semibold transition focus-visible:outline-none;
+    color: hsl(var(--text));
+  }
 
-.section-title {
-  @apply text-2xl font-bold text-slate-900;
-}
+  .btn-ghost:hover {
+    background: hsl(var(--surface-1));
+  }
 
-.section-subtitle {
-  @apply mt-2 text-base text-slate-600;
+  .btn-ghost:focus-visible {
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35);
+  }
+
+  .card {
+    @apply rounded-[var(--radius-lg)] border transition;
+    background: hsl(var(--surface-0));
+    border-color: hsl(var(--border));
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card.depth-hover:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+    background: hsl(var(--surface-1));
+    color: hsl(var(--text));
+  }
+
+  .input {
+    @apply block w-full rounded-[var(--radius-md)] border px-3 py-2 text-sm transition focus-visible:outline-none;
+    background: hsl(var(--surface-1));
+    border-color: hsl(var(--border));
+    color: hsl(var(--text));
+    box-shadow: var(--shadow-inset);
+  }
+
+  .input::placeholder {
+    color: hsl(var(--text-muted));
+  }
+
+  .input:focus-visible {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35), var(--shadow-inset);
+  }
+
+  .label {
+    @apply text-sm font-semibold;
+    color: hsl(var(--text));
+  }
+
+  .table-cell {
+    @apply px-3 py-2 text-sm;
+    color: hsl(var(--text-muted));
+  }
+
+  .section-title {
+    @apply text-2xl font-bold;
+    color: hsl(var(--text));
+  }
+
+  .section-subtitle {
+    @apply mt-2 text-base;
+    color: hsl(var(--text-muted));
+  }
+
+  .shadow-depth-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-depth-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-depth-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  .shadow-inset {
+    box-shadow: var(--shadow-inset);
+  }
 }
 
 @layer utilities {
+  .bg-layer-0 {
+    background: hsl(var(--bg-0));
+  }
+
+  .bg-layer-1 {
+    background: hsl(var(--bg-1));
+  }
+
+  .bg-surface-0 {
+    background: hsl(var(--surface-0));
+  }
+
+  .bg-surface-1 {
+    background: hsl(var(--surface-1));
+  }
+
+  .bg-surface-2 {
+    background: hsl(var(--surface-2));
+  }
+
+  .border-subtle {
+    border-color: hsl(var(--border));
+  }
+
+  .text-muted {
+    color: hsl(var(--text-muted));
+  }
+
+  .text-default {
+    color: hsl(var(--text));
+  }
+
+  .text-primary {
+    color: hsl(var(--primary));
+  }
+
+  .depth-hover {
+    transition: box-shadow 180ms ease, transform 180ms ease;
+  }
+
+  .depth-hover:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
   .gradient-hero {
-    background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 35%),
-      radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12), transparent 30%),
-      linear-gradient(135deg, rgba(14, 165, 233, 0.05), rgba(14, 165, 233, 0));
+    background: radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.18), transparent 35%),
+      radial-gradient(circle at 80% 0%, hsl(var(--primary) / 0.12), transparent 30%),
+      linear-gradient(135deg, hsl(var(--primary) / 0.12), transparent);
   }
 
   .gradient-page {
-    background: radial-gradient(circle at 18% 20%, rgba(244, 219, 255, 0.16), transparent 46%),
-      radial-gradient(circle at 82% 6%, rgba(255, 221, 246, 0.12), transparent 40%),
-      linear-gradient(180deg, rgba(248, 231, 255, 0.24), rgba(255, 255, 255, 0)),
-      rgb(var(--background));
+    background: radial-gradient(circle at 18% 20%, hsl(var(--primary) / 0.12), transparent 46%),
+      radial-gradient(circle at 82% 6%, hsl(var(--primary) / 0.08), transparent 40%),
+      linear-gradient(180deg, hsl(var(--primary) / 0.08), transparent),
+      hsl(var(--bg-0));
   }
 }

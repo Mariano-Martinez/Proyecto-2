@@ -26,21 +26,27 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
         <div
           key={tier.id}
           className={`card flex h-full flex-col gap-4 p-5 ${
-            tier.id === Plan.PRO ? 'ring-1 ring-sky-100 shadow-md shadow-slate-900/5 bg-gradient-to-br from-sky-50/60 via-white to-white' : ''
+            tier.id === Plan.PRO
+              ? 'bg-[radial-gradient(circle_at_top,_hsl(var(--primary)/0.18),_transparent_55%)] ring-1 ring-[hsl(var(--primary)/0.2)] shadow-depth-md'
+              : ''
           } ${[Plan.FREE, Plan.BASIC, Plan.PRO].includes(tier.id) ? 'md:min-h-[420px]' : ''}`}
         >
           <div className="flex min-h-[48px] items-start justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase text-slate-500">{tier.name}</p>
-              <p className="mt-1 text-lg text-slate-700">{tier.description}</p>
+              <p className="text-sm font-semibold uppercase text-muted">{tier.name}</p>
+              <p className="mt-1 text-lg text-muted">{tier.description}</p>
             </div>
-            {tier.id === Plan.PRO && <span className="badge bg-sky-100 text-sky-700 ring-1 ring-sky-200">Popular</span>}
+            {tier.id === Plan.PRO && (
+              <span className="badge bg-[hsl(var(--primary)/0.18)] text-primary ring-1 ring-[hsl(var(--primary)/0.3)]">
+                Popular
+              </span>
+            )}
           </div>
-          <div className="text-3xl font-bold text-slate-900">
+          <div className="text-3xl font-bold text-default">
             {tier.id === Plan.ENTERPRISE ? 'Contactar' : `ARS ${annual ? tier.priceYearly : tier.priceMonthly}`}
-            <span className="text-base font-medium text-slate-500">/ {annual ? 'año' : 'mes'}</span>
+            <span className="text-base font-medium text-muted">/ {annual ? 'año' : 'mes'}</span>
           </div>
-          <p className="text-sm text-slate-600">Hasta {tier.limit === Infinity ? 'ilimitado' : `${tier.limit} envíos activos`}.</p>
+          <p className="text-sm text-muted">Hasta {tier.limit === Infinity ? 'ilimitado' : `${tier.limit} envíos activos`}.</p>
           <div className="mt-auto space-y-3">
             <button
               onClick={() => handleChoose(tier.id)}
@@ -48,18 +54,18 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
             >
               Elegir plan
             </button>
-            <div className="space-y-2 text-sm text-slate-700">
+            <div className="space-y-2 text-sm text-muted">
               {planFeatures.map((feature) => {
                 const available = isFeatureAvailable(tier.id, feature.availableFrom);
                 return (
                   <div key={feature.label} className="flex items-center gap-2">
                     {available ? (
-                      <CheckIcon className="h-4 w-4 text-sky-600" />
+                      <CheckIcon className="h-4 w-4 text-primary" />
                     ) : (
-                      <MinusIcon className="h-4 w-4 text-slate-400" />
+                      <MinusIcon className="h-4 w-4 text-muted" />
                     )}
-                    <span className={available ? '' : 'text-slate-400'}>
-                      {feature.label} {feature.note && <span className="text-xs text-slate-400">({feature.note})</span>}
+                    <span className={available ? 'text-default' : 'text-muted'}>
+                      {feature.label} {feature.note && <span className="text-xs text-muted">({feature.note})</span>}
                     </span>
                   </div>
                 );

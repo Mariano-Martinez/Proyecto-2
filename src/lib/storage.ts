@@ -11,6 +11,7 @@ const STORAGE_KEYS = {
   plan: 'trackhub_plan',
   redirect: 'trackhub_redirect',
   user: 'trackhub_user',
+  theme: 'trackhub_theme',
 };
 
 const nowISO = () => new Date().toISOString();
@@ -169,6 +170,11 @@ type StoredUser = {
 export const setUser = (user: StoredUser) => writeLocal(STORAGE_KEYS.user, user);
 export const getUser = (): StoredUser | null => readLocal<StoredUser>(STORAGE_KEYS.user);
 export const clearUser = () => writeLocal(STORAGE_KEYS.user, '');
+
+export type ThemeMode = 'light' | 'dark';
+
+export const setTheme = (theme: ThemeMode) => writeLocal(STORAGE_KEYS.theme, theme);
+export const getTheme = (): ThemeMode | null => readLocal<ThemeMode>(STORAGE_KEYS.theme);
 
 export const getUsage = () => {
   const shipments = getShipments();

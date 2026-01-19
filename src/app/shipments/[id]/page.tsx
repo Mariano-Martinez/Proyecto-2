@@ -173,14 +173,14 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
 
   if (!shipment) {
     return (
-      <div className="min-h-screen bg-slate-50">
+      <div className="min-h-screen bg-layer-0">
         <div className="lg:flex lg:min-h-screen">
           <Sidebar />
           <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
-            <button onClick={() => router.back()} className="btn-secondary mb-4 rounded-xl px-4 py-2">
+            <button onClick={() => router.back()} className="btn-secondary">
               <ArrowLeftIcon className="mr-1 inline h-4 w-4" /> Volver
             </button>
-            <div className="card p-6 text-sm text-slate-700">Envío no encontrado.</div>
+            <div className="card mt-4 text-sm text-muted">Envío no encontrado.</div>
           </main>
         </div>
         <MobileNav />
@@ -189,53 +189,53 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-layer-0">
       <div className="lg:flex lg:min-h-screen">
         <Sidebar />
         <main className="flex-1 px-4 pb-24 pt-6 lg:px-8 lg:pb-12">
-          <button onClick={() => router.back()} className="btn-secondary mb-4 rounded-xl px-4 py-2">
+          <button onClick={() => router.back()} className="btn-secondary">
             <ArrowLeftIcon className="mr-1 inline h-4 w-4" /> Volver
           </button>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div className="card space-y-3 p-5 lg:col-span-2">
+          <div className="mt-4 grid gap-4 lg:grid-cols-3">
+            <div className="card space-y-3 lg:col-span-2">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-sm font-semibold text-slate-600">{shipment.courier}</p>
-                  <h1 className="text-2xl font-bold text-slate-900">{shipment.alias}</h1>
-                  <p className="font-mono text-sm text-slate-700">{shipment.code}</p>
+                  <p className="text-sm font-semibold text-muted">{shipment.courier}</p>
+                  <h1 className="text-2xl font-bold text-strong">{shipment.alias}</h1>
+                  <p className="font-mono text-sm text-muted">{shipment.code}</p>
                   {trackingData && carrierInfo && (
-                    <p className="text-sm text-slate-600">
+                    <p className="text-sm text-muted">
                       Estado {carrierInfo.label}: {trackingData.statusLabel}
                     </p>
                   )}
                 </div>
                 <StatusBadge status={shipment.status} />
               </div>
-              <div className="grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 text-sm text-muted sm:grid-cols-4">
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Origen</p>
-                  <p className="font-semibold">{shipment.origin}</p>
+                  <p className="text-xs uppercase text-muted">Origen</p>
+                  <p className="font-semibold text-strong">{shipment.origin}</p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Destino</p>
-                  <p className="font-semibold">{shipment.destination}</p>
+                  <p className="text-xs uppercase text-muted">Destino</p>
+                  <p className="font-semibold text-strong">{shipment.destination}</p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase text-slate-500">ETA</p>
-                  <p className="font-semibold">{etaDisplay}</p>
+                  <p className="text-xs uppercase text-muted">ETA</p>
+                  <p className="font-semibold text-strong">{etaDisplay}</p>
                 </div>
                 <div>
-                  <p className="text-xs uppercase text-slate-500">Última actualización</p>
-                  <p className="font-semibold">{formattedLastUpdated}</p>
+                  <p className="text-xs uppercase text-muted">Última actualización</p>
+                  <p className="font-semibold text-strong">{formattedLastUpdated}</p>
                 </div>
               </div>
               {detailItems.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-3">
+                <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-muted sm:grid-cols-3">
                   {detailItems.map((item) => (
                     <div key={item.label}>
-                      <p className="text-xs uppercase text-slate-500">{item.label}</p>
-                      <p className="font-semibold">{item.value}</p>
+                      <p className="text-xs uppercase text-muted">{item.label}</p>
+                      <p className="font-semibold text-strong">{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -243,21 +243,21 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
               {canSyncCarrier && carrierInfo ? (
                 <div className="mt-4 flex flex-col gap-2">
                   <div className="flex items-center gap-3">
-                    <button onClick={handleSync} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
+                    <button onClick={handleSync} className="btn-primary btn-primary--hero btn-primary--emphasis" disabled={syncing}>
                       <ArrowPathIcon className={`mr-1 inline h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />{' '}
                       {syncing ? 'Actualizando...' : `Actualizar desde ${carrierInfo.label}`}
                     </button>
-                    <p className="text-sm text-slate-600">Trae el estado real de {carrierInfo.label} para este envío.</p>
+                    <p className="text-sm text-muted">Trae el estado real de {carrierInfo.label} para este envío.</p>
                   </div>
                   {syncError && (
-                    <div className="text-sm text-amber-700">
+                    <div className="rounded-xl border border-[rgba(255,184,0,0.35)] bg-[rgba(255,184,0,0.12)] px-3 py-2 text-sm text-[rgba(255,184,0,0.95)]">
                       <p>{syncError}</p>
                     </div>
                   )}
                   {syncWarning && (
-                    <div className="text-sm text-sky-700">
+                    <div className="rounded-xl border border-[rgba(0,115,255,0.3)] bg-[rgba(0,115,255,0.12)] px-3 py-2 text-sm text-primary">
                       <p>{syncWarning}</p>
-                      <p className="text-xs text-slate-600">
+                      <p className="text-xs text-muted">
                         Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
                       </p>
                     </div>
@@ -265,20 +265,18 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
                 </div>
               ) : enableMockTracking ? (
                 <div className="mt-4 flex items-center gap-3">
-                  <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
+                  <button onClick={handleSimulate} className="btn-primary btn-primary--hero btn-primary--emphasis">
                     <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
                   </button>
-                  <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
+                  <p className="text-sm text-muted">Cada click avanza el estado y agrega un evento.</p>
                 </div>
               ) : (
-                <div className="mt-4 text-sm text-slate-600">
-                  La actualización en línea no está disponible para este courier.
-                </div>
+                <div className="mt-4 text-sm text-muted">La actualización en línea no está disponible para este courier.</div>
               )}
             </div>
 
-            <div className="card p-5">
-              <h3 className="text-lg font-bold text-slate-900">Timeline</h3>
+            <div className="card">
+              <h3 className="text-lg font-bold text-strong">Timeline</h3>
               <Timeline events={trackingData?.events ?? mapTimelineEventsToTrackingEvents(shipment.events)} />
             </div>
           </div>

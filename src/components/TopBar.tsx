@@ -10,7 +10,7 @@ export const TopBar = () => {
     <div className="flex items-center gap-3">
       <button
         onClick={() => router.push('/notifications')}
-        className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:text-sky-600"
+        className="flex h-10 w-10 items-center justify-center rounded-full border border-subtle bg-[rgba(0,0,0,0.4)] text-muted transition hover:bg-[rgba(255,255,255,0.08)] focus-visible:focus-ring"
         aria-label="Notificaciones"
       >
         <BellIcon className="h-5 w-5" />

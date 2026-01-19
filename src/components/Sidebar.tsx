@@ -15,12 +15,17 @@ const nav = [
 export const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:min-h-screen lg:flex-col lg:border-r lg:border-slate-200 lg:bg-white lg:p-6 lg:shadow-sm">
-      <div className="flex items-center gap-2 text-xl font-bold text-slate-900">
-        <Squares2X2Icon className="h-6 w-6 text-sky-600" />
-        TrackHub AR
+    <aside className="hidden lg:flex lg:w-72 lg:min-h-screen lg:flex-col lg:border-r lg:border-subtle lg:bg-[rgba(0,0,0,0.6)] lg:p-6">
+      <div className="flex items-center gap-3 rounded-2xl border border-subtle bg-[rgba(0,0,0,0.4)] px-4 py-3 shadow-depth-sm">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[rgb(0,115,255)] text-white shadow-depth-sm">
+          <Squares2X2Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-strong">TrackHub AR</p>
+          <p className="text-xs text-muted">Logística inteligente</p>
+        </div>
       </div>
-      <nav className="mt-8 flex-1 space-y-1">
+      <nav className="mt-8 flex-1 space-y-2">
         {nav.map((item) => {
           const activePath = item.href.split('#')[0];
           const active = pathname.startsWith(activePath);
@@ -28,19 +33,27 @@ export const Sidebar = () => {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition hover:bg-slate-100 ${
-                active ? 'bg-sky-50 text-sky-700' : 'text-slate-700'
+              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition hover-lift ${
+                active ? 'bg-[rgba(0,115,255,0.12)] text-strong' : 'text-muted'
               }`}
             >
-              <item.icon className="h-5 w-5" />
+              <span
+                className={`flex h-9 w-9 items-center justify-center rounded-xl border transition ${
+                  active
+                    ? 'border-[rgba(0,115,255,0.4)] text-primary'
+                    : 'border-subtle text-muted'
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+              </span>
               {item.label}
             </Link>
           );
         })}
       </nav>
-      <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
-        <p className="font-semibold text-slate-900">Panel</p>
-        <p className="mt-1 text-slate-600">Accedé con tu cuenta para gestionar envíos y planes.</p>
+      <div className="rounded-2xl border border-subtle bg-[rgba(0,0,0,0.35)] p-4 text-sm text-muted">
+        <p className="font-semibold text-strong">Panel</p>
+        <p className="mt-1">Accedé con tu cuenta para gestionar envíos y planes.</p>
       </div>
     </aside>
   );

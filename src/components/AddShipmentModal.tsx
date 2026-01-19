@@ -201,11 +201,11 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4">
-      <div className="card w-full max-w-lg p-6">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+      <div className="card card-lg w-full max-w-lg border-subtle bg-[rgba(0,0,0,0.6)] shadow-depth-lg">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900">Agregar tracking</h3>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100">
+          <h3 className="text-lg font-bold text-strong">Agregar tracking</h3>
+          <button onClick={onClose} className="rounded-full p-2 text-muted hover:bg-[rgba(255,255,255,0.08)] focus-visible:focus-ring">
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
@@ -213,7 +213,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
           <div>
             <label className="label">Código de seguimiento</label>
             <input className="input mt-1" value={code} onChange={(e) => setCode(e.target.value)} required disabled={loading} />
-            <p className="mt-1 text-xs text-slate-500">Detectado: {detected}</p>
+            <p className="mt-1 text-xs text-muted">Detectado: {detected}</p>
           </div>
           <div>
             <label className="label">Alias</label>
@@ -242,7 +242,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </select>
           </div>
           {error && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <div className="rounded-xl border border-[rgba(255,184,0,0.35)] bg-[rgba(255,184,0,0.12)] px-3 py-2 text-sm text-[rgba(255,184,0,0.95)]">
               <p>{error}</p>
               <button
                 type="button"
@@ -257,25 +257,25 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </div>
           )}
           {warning && (
-            <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
+            <div className="rounded-xl border border-[rgba(0,115,255,0.3)] bg-[rgba(0,115,255,0.12)] px-3 py-2 text-sm text-primary">
               <p>{warning}</p>
-              <p className="mt-1 text-xs text-slate-600">
+              <p className="mt-1 text-xs text-muted">
                 Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
               </p>
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="btn-secondary rounded-xl px-4 py-2" disabled={loading}>
+            <button type="button" onClick={onClose} className="btn-secondary" disabled={loading}>
               Cancelar
             </button>
-            <button type="submit" className="btn-primary rounded-xl px-4 py-2" disabled={loading}>
+            <button type="submit" className="btn-primary btn-primary--hero btn-primary--emphasis" disabled={loading}>
               {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
           {!loading && pendingShipmentId && (
-            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+            <div className="flex items-center justify-between rounded-xl border border-subtle bg-[rgba(0,0,0,0.45)] px-3 py-2 text-xs text-muted">
               <span>El envío quedó creado, pero aún no pudimos traer el estado.</span>
-              <button type="button" className="font-semibold text-slate-900 underline" onClick={handleRetry}>
+              <button type="button" className="font-semibold text-strong underline" onClick={handleRetry}>
                 Reintentar
               </button>
             </div>

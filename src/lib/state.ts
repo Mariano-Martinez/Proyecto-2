@@ -11,13 +11,13 @@ export const statusLabels: Record<ShipmentStatus, string> = {
 };
 
 export const statusColors: Record<ShipmentStatus, string> = {
-  [ShipmentStatus.CREATED]: 'bg-slate-50 text-slate-700 ring-1 ring-slate-200',
-  [ShipmentStatus.DISPATCHED]: 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200',
-  [ShipmentStatus.IN_TRANSIT]: 'bg-sky-50 text-sky-700 ring-1 ring-sky-200',
-  [ShipmentStatus.OUT_FOR_DELIVERY]: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  [ShipmentStatus.DELIVERED]: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  [ShipmentStatus.CUSTOMS]: 'bg-violet-50 text-violet-700 ring-1 ring-violet-200',
-  [ShipmentStatus.ISSUE]: 'bg-rose-50 text-rose-700 ring-1 ring-rose-200',
+  [ShipmentStatus.CREATED]: 'badge-info',
+  [ShipmentStatus.DISPATCHED]: 'badge-info',
+  [ShipmentStatus.IN_TRANSIT]: 'badge-info',
+  [ShipmentStatus.OUT_FOR_DELIVERY]: 'badge-warning',
+  [ShipmentStatus.DELIVERED]: 'badge-success',
+  [ShipmentStatus.CUSTOMS]: 'badge-info',
+  [ShipmentStatus.ISSUE]: 'badge-danger',
 };
 
 export const statusFlow: ShipmentStatus[] = [

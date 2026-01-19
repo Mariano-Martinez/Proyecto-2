@@ -29,7 +29,7 @@ const carrierConfig: Record<Courier, { id: CarrierId; label: string } | null> = 
   [Courier.VIA_CARGO]: { id: 'viacargo', label: 'Via Cargo' },
   [Courier.URBANO]: { id: 'urbano', label: 'Urbano' },
   [Courier.OCA]: null,
-  [Courier.CORREO_ARGENTINO]: null,
+  [Courier.CORREO_ARGENTINO]: { id: 'correoargentino', label: 'Correo Argentino' },
   [Courier.DHL]: null,
   [Courier.FEDEX]: null,
   [Courier.UPS]: null,

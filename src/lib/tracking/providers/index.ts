@@ -3,6 +3,7 @@ import { TrackingProvider, TrackingProviderError } from './types';
 import { andreaniProvider } from './andreani';
 import { urbanoProvider } from './urbano';
 import { viacargoProvider } from './viacargo';
+import { correoArgentinoProvider } from './correoArgentino';
 
 const unsupportedProvider = (carrier: CarrierId): TrackingProvider => ({
   carrier,
@@ -17,6 +18,7 @@ export const trackingProviders: Record<CarrierId, TrackingProvider> = {
   viacargo: viacargoProvider,
   oca: unsupportedProvider('oca'),
   correo_argentino: unsupportedProvider('correo_argentino'),
+  correoargentino: correoArgentinoProvider,
   dhl: unsupportedProvider('dhl'),
   fedex: unsupportedProvider('fedex'),
   ups: unsupportedProvider('ups'),

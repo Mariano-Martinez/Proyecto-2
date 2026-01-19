@@ -1,4 +1,14 @@
-export type CarrierId = 'andreani' | 'urbano' | 'viacargo' | 'oca' | 'correo_argentino' | 'dhl' | 'fedex' | 'ups' | 'other';
+export type CarrierId =
+  | 'andreani'
+  | 'urbano'
+  | 'viacargo'
+  | 'oca'
+  | 'correo_argentino'
+  | 'correoargentino'
+  | 'dhl'
+  | 'fedex'
+  | 'ups'
+  | 'other';
 
 export type TrackingStatus = 'unknown' | 'created' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'exception';
 

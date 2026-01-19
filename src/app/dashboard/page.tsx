@@ -57,48 +57,48 @@ export default function DashboardPage() {
     <AppShell>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <p className="text-sm font-semibold text-sky-600">Resumen</p>
-          <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-600">Seguimiento rápido de tu operación y próximos pasos.</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">Resumen</p>
+          <h1 className="text-3xl font-black text-strong">Dashboard</h1>
+          <p className="text-sm text-muted">Seguimiento rápido de tu operación y próximos pasos.</p>
         </div>
 
-        <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-3 rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50/80 via-white to-white p-4 shadow-sm">
+        <div className="card grid gap-4 bg-layer-1 p-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="flex flex-col gap-3 rounded-2xl border border-subtle bg-[hsl(var(--surface-1))] p-4 shadow-depth-sm hover-lift">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-slate-700">Plan actual</p>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-100">
+              <p className="text-sm font-semibold text-muted">Plan actual</p>
+              <span className="rounded-full border border-subtle bg-layer-0 px-3 py-1 text-xs font-semibold text-primary shadow-inset">
                 Uso
               </span>
             </div>
-            <p className="text-xl font-bold text-slate-900">{usage.plan}</p>
-            <div className="h-2 w-full rounded-full bg-slate-200">
+            <p className="text-xl font-bold text-strong">{usage.plan}</p>
+            <div className="h-2 w-full rounded-full bg-[hsl(var(--border))]">
               <div
-                className="h-2 rounded-full bg-sky-500 transition-all"
+                className="h-2 rounded-full bg-[hsl(var(--primary))] transition-all"
                 style={{ width: `${Math.min((usage.active / usage.limit) * 100, 100)}%` }}
               />
             </div>
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-muted">
               {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit} envíos activos
             </p>
-            <Link href="/pricing" className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-sky-700 hover:text-sky-800">
+            <Link href="/pricing" className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-primary">
               Ver planes
             </Link>
           </div>
           {metricOrder.map((metric) => (
-            <div key={metric.key} className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
+            <div key={metric.key} className="flex flex-col justify-between rounded-2xl border border-subtle bg-layer-0 p-4 shadow-depth-sm hover-lift">
               <div>
-                <p className="text-xs uppercase tracking-wide text-slate-500">{metric.label}</p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">{metrics[metric.key] || 0}</p>
+                <p className="text-xs uppercase tracking-wide text-muted">{metric.label}</p>
+                <p className="mt-2 text-3xl font-bold text-strong">{metrics[metric.key] || 0}</p>
               </div>
-              <p className="text-xs font-medium text-slate-500">Últimos 7 días</p>
+              <p className="text-xs font-medium text-muted">Últimos 7 días</p>
             </div>
           ))}
         </div>
 
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Mis envíos</h2>
-            <p className="text-sm text-slate-600">Vista tabla en desktop y cards en mobile.</p>
+            <h2 className="text-xl font-bold text-strong">Mis envíos</h2>
+            <p className="text-sm text-muted">Vista tabla en desktop y cards en mobile.</p>
           </div>
           <button onClick={() => setOpen(true)} className="btn-primary rounded-xl px-4 py-2">
             Agregar tracking
@@ -113,7 +113,7 @@ export default function DashboardPage() {
             <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => showToast('Código copiado')} />
           ))}
           {shipments.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600">
+            <div className="rounded-2xl border border-dashed border-subtle bg-layer-1 p-6 text-center text-sm text-muted">
               No tenés envíos todavía. Cargá tu primer tracking.
             </div>
           )}

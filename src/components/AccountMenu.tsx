@@ -57,18 +57,18 @@ export const AccountMenu = () => {
     <div ref={containerRef} className="relative">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+        className="flex items-center gap-2 rounded-2xl border border-subtle bg-layer-1 px-3 py-2 text-sm font-semibold text-strong shadow-depth-sm transition hover-lift focus-visible:focus-ring"
       >
         Hola, {displayName}
         <ChevronDownIcon className={`h-4 w-4 transition ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 mt-2 w-48 rounded-2xl border border-subtle bg-layer-1 py-1 shadow-depth-lg">
           <button
             onClick={logout}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="flex w-full items-center gap-2 px-4 py-2 text-sm font-semibold text-muted transition hover:bg-layer-0 hover:text-strong"
           >
-            <ArrowRightOnRectangleIcon className="h-4 w-4 text-red-600" />
+            <ArrowRightOnRectangleIcon className="h-4 w-4 text-[hsl(var(--danger))]" />
             <span>Cerrar sesión</span>
           </button>
         </div>

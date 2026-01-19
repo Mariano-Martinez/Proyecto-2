@@ -36,7 +36,7 @@ export default function PricingPage() {
               Cambiá entre mensual/anual, simulá upgrades y guardamos tu elección en localStorage.
             </p>
           </div>
-          <div className="flex items-center gap-3 rounded-full border border-subtle bg-surface-0 px-3 py-2 shadow-depth-sm">
+          <div className="flex items-center gap-3 rounded-full border border-subtle bg-[hsl(var(--surface-0)/0.9)] px-3 py-2 shadow-depth-sm">
             <span className={!annual ? 'font-semibold text-default' : 'text-muted'}>Mensual</span>
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" checked={annual} onChange={(e) => setAnnual(e.target.checked)} />
@@ -58,7 +58,7 @@ export default function PricingPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-default">Comparativa de features</h2>
-            <button onClick={() => router.push('/login')} className="btn-secondary rounded-xl px-4 py-2">
+            <button onClick={() => router.push('/login')} className="btn-secondary rounded-full px-4 py-2">
               Probar ahora
             </button>
           </div>
@@ -96,7 +96,7 @@ export default function PricingPage() {
             <h3 className="text-xl font-bold text-default">Elegí un plan y probá TrackHub AR</h3>
             <p className="text-sm text-muted">Podés cambiar de plan luego desde Configuración.</p>
           </div>
-          <button onClick={() => router.push('/login')} className="btn-primary rounded-xl px-4 py-2">
+          <button onClick={() => router.push('/login')} className="btn-primary rounded-full px-4 py-2">
             Probar ahora
           </button>
         </div>

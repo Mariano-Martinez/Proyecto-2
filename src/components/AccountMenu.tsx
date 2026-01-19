@@ -57,13 +57,13 @@ export const AccountMenu = () => {
     <div ref={containerRef} className="relative">
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-xl border border-subtle bg-surface-1 px-3 py-2 text-sm font-semibold text-default shadow-depth-sm transition hover:shadow-depth-md"
+        className="flex items-center gap-2 rounded-full border border-subtle bg-surface-1 px-4 py-2 text-sm font-semibold text-default shadow-depth-sm transition hover:-translate-y-0.5 hover:shadow-depth-md"
       >
         Hola, {displayName}
         <ChevronDownIcon className={`h-4 w-4 transition ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-44 rounded-xl border border-subtle bg-surface-0 py-1 shadow-depth-lg">
+        <div className="absolute right-0 mt-3 w-48 rounded-2xl border border-subtle bg-[hsl(var(--surface-0)/0.98)] py-2 shadow-depth-lg backdrop-blur">
           <button
             onClick={logout}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm font-semibold text-muted transition hover:bg-surface-1 hover:text-default"

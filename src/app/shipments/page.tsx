@@ -121,7 +121,7 @@ export default function ShipmentsPage() {
             Activos: {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-subtle bg-surface-0 p-1 shadow-depth-sm">
+        <div className="flex items-center gap-2 rounded-full border border-subtle bg-[hsl(var(--surface-0)/0.9)] p-1 shadow-depth-sm">
           <button
             onClick={() => setView('cards')}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
@@ -145,7 +145,7 @@ export default function ShipmentsPage() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 rounded-2xl border border-subtle bg-surface-0 p-4 shadow-depth-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-4 grid gap-4 rounded-2xl border border-subtle bg-[hsl(var(--surface-0)/0.96)] p-4 shadow-depth-sm sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-1">
           <p className="text-xs uppercase tracking-wide text-muted">Estado</p>
           <select className="input" value={status} onChange={(e) => setStatus(e.target.value)}>
@@ -190,12 +190,12 @@ export default function ShipmentsPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={exportSelected}
-              className="btn-secondary rounded-xl px-4 py-2"
+              className="btn-secondary rounded-full px-4 py-2"
               title="Exportar selección"
             >
               <ArrowDownTrayIcon className="mr-1 inline h-4 w-4" /> Exportar CSV
             </button>
-            <button onClick={bulkDelete} className="btn-primary rounded-xl px-4 py-2">
+            <button onClick={bulkDelete} className="btn-primary rounded-full px-4 py-2">
               <TrashIcon className="mr-1 inline h-4 w-4" /> Eliminar
             </button>
           </div>
@@ -231,7 +231,7 @@ export default function ShipmentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
+                  className="rounded-full border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
@@ -241,7 +241,7 @@ export default function ShipmentsPage() {
                   Página {page} de {totalPages}
                 </span>
                 <button
-                  className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
+                  className="rounded-full border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
@@ -267,14 +267,14 @@ export default function ShipmentsPage() {
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
+                    className="rounded-full border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
                     Anterior
                   </button>
                   <button
-                    className="rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
+                    className="rounded-full border border-subtle bg-surface-1 px-3 py-2 text-xs font-semibold text-muted transition hover:text-primary disabled:opacity-50"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                   >

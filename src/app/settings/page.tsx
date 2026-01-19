@@ -1,14 +1,15 @@
 'use client';
 
 import { useAuthGuard } from '@/lib/hooks';
-import { getPlan, getUsage, getTheme, setTheme, ThemeMode } from '@/lib/storage';
+import { getPlan, getUsage } from '@/lib/storage';
 import { useEffect, useState } from 'react';
 import { AppShell } from '@/components/AppShell';
 import { Toast, useToast } from '@/components/Toast';
+import { useThemeMode } from '@/lib/useThemeMode';
 
 export default function SettingsPage() {
   const ready = useAuthGuard();
-  const [theme, setThemeState] = useState<ThemeMode>('light');
+  const { theme, setTheme } = useThemeMode();
   const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
   const [saved, setSaved] = useState(false);
   const { toast, showToast, clearToast } = useToast();
@@ -17,15 +18,6 @@ export default function SettingsPage() {
     if (!ready) return;
     const u = getUsage();
     setUsage({ ...u, plan: getPlan() });
-    if (typeof window !== 'undefined') {
-      const storedTheme = getTheme();
-      const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
-      const nextTheme = storedTheme ?? (systemDark ? 'dark' : 'light');
-      setThemeState(nextTheme);
-      if (storedTheme) {
-        document.documentElement.dataset.theme = storedTheme;
-      }
-    }
   }, [ready]);
 
   const handleSave = () => {
@@ -78,9 +70,7 @@ export default function SettingsPage() {
                   checked={theme === 'dark'}
                   onChange={(e) => {
                     const next = e.target.checked ? 'dark' : 'light';
-                    setThemeState(next);
                     setTheme(next);
-                    document.documentElement.dataset.theme = next;
                   }}
                 />
                 <div className="peer h-6 w-11 rounded-full bg-[hsl(var(--border))] after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-surface-0 after:transition peer-checked:bg-[hsl(var(--primary))] peer-checked:after:translate-x-full" />
@@ -89,7 +79,7 @@ export default function SettingsPage() {
             </div>
           </div>
           <div className="flex justify-end">
-            <button onClick={handleSave} className="btn-primary rounded-xl px-4 py-2">
+            <button onClick={handleSave} className="btn-primary rounded-full px-4 py-2">
               Guardar cambios
             </button>
           </div>
@@ -113,11 +103,11 @@ export default function SettingsPage() {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <a href="/pricing" className="btn-secondary inline-flex w-fit rounded-xl px-4 py-2">
+            <a href="/pricing" className="btn-secondary inline-flex w-fit rounded-full px-4 py-2">
               Ver planes
             </a>
-            <button className="btn-secondary inline-flex w-fit rounded-xl px-4 py-2">Administrar plan</button>
-            <button className="btn-secondary inline-flex w-fit rounded-xl px-4 py-2">Ver facturas</button>
+            <button className="btn-secondary inline-flex w-fit rounded-full px-4 py-2">Administrar plan</button>
+            <button className="btn-secondary inline-flex w-fit rounded-full px-4 py-2">Ver facturas</button>
           </div>
         </div>
       </div>

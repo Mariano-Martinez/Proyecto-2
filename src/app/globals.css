@@ -4,39 +4,39 @@
 
 :root {
   color-scheme: light dark;
-  --bg-0: 220 25% 92%;
-  --bg-1: 220 24% 94%;
-  --surface-0: 220 20% 96%;
-  --surface-1: 220 20% 98%;
-  --surface-2: 220 20% 100%;
-  --border: 220 16% 82%;
-  --text: 222 30% 18%;
-  --text-muted: 220 10% 45%;
+  --bg-0: 220 32% 95%;
+  --bg-1: 220 28% 97%;
+  --surface-0: 0 0% 100%;
+  --surface-1: 220 22% 98%;
+  --surface-2: 220 18% 96%;
+  --border: 220 16% 84%;
+  --text: 222 32% 14%;
+  --text-muted: 220 12% 42%;
   --primary: 199 89% 55%;
   --primary-contrast: 0 0% 100%;
-  --success: 142 72% 45%;
-  --warning: 36 92% 55%;
-  --danger: 0 72% 55%;
-  --shadow-color: 222 30% 20%;
+  --success: 142 72% 42%;
+  --warning: 36 92% 52%;
+  --danger: 0 72% 52%;
+  --shadow-color: 222 28% 18%;
   --shadow-highlight: 0 0% 100%;
-  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.6), 0 6px 12px -8px hsl(var(--shadow-color) / 0.45);
-  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.7), 0 14px 28px -14px hsl(var(--shadow-color) / 0.5);
-  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.8), 0 26px 50px -18px hsl(var(--shadow-color) / 0.55);
-  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.3), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.7);
+  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.6), 0 6px 18px -12px hsl(var(--shadow-color) / 0.35);
+  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.7), 0 14px 30px -14px hsl(var(--shadow-color) / 0.45);
+  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.85), 0 32px 60px -20px hsl(var(--shadow-color) / 0.5);
+  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.2), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.8);
   --ring: 199 89% 60%;
-  --radius-lg: 16px;
+  --radius-lg: 18px;
   --radius-md: 12px;
 }
 
 :root[data-theme='dark'] {
-  --bg-0: 222 32% 8%;
-  --bg-1: 222 28% 12%;
-  --surface-0: 222 24% 16%;
-  --surface-1: 222 22% 20%;
+  --bg-0: 222 35% 6%;
+  --bg-1: 222 30% 10%;
+  --surface-0: 222 26% 14%;
+  --surface-1: 222 24% 18%;
   --surface-2: 222 20% 24%;
-  --border: 222 18% 28%;
+  --border: 222 18% 26%;
   --text: 210 40% 98%;
-  --text-muted: 215 15% 70%;
+  --text-muted: 215 18% 72%;
   --primary: 199 89% 60%;
   --primary-contrast: 222 30% 10%;
   --success: 142 72% 48%;
@@ -44,10 +44,10 @@
   --danger: 0 72% 60%;
   --shadow-color: 220 50% 2%;
   --shadow-highlight: 220 25% 50%;
-  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.2), 0 10px 16px -12px hsl(var(--shadow-color) / 0.9);
-  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.24), 0 18px 28px -14px hsl(var(--shadow-color) / 0.9);
-  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.3), 0 32px 50px -18px hsl(var(--shadow-color) / 0.9);
-  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.7), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.2);
+  --shadow-sm: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.18), 0 12px 20px -16px hsl(var(--shadow-color) / 0.9);
+  --shadow-md: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.24), 0 24px 36px -18px hsl(var(--shadow-color) / 0.92);
+  --shadow-lg: inset 0 1px 0 hsl(var(--shadow-highlight) / 0.3), 0 40px 60px -22px hsl(var(--shadow-color) / 0.9);
+  --shadow-inset: inset 0 2px 4px hsl(var(--shadow-color) / 0.6), inset 0 -1px 0 hsl(var(--shadow-highlight) / 0.25);
   --ring: 199 89% 60%;
 }
 
@@ -79,11 +79,14 @@
 body {
   background: hsl(var(--bg-0));
   color: hsl(var(--text));
+  min-height: 100%;
+  font-feature-settings: 'ss01', 'ss02';
+  transition: background-color 200ms ease, color 200ms ease;
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-4 py-2 text-sm font-semibold transition focus-visible:outline-none disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-4 py-2 text-sm font-semibold transition-all focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed;
     background: hsl(var(--primary));
     color: hsl(var(--primary-contrast));
     box-shadow: var(--shadow-sm);
@@ -91,7 +94,11 @@ body {
 
   .btn-primary:hover {
     box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    transform: translateY(-1px) scale(1.01);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0) scale(0.99);
   }
 
   .btn-primary:focus-visible {
@@ -99,7 +106,7 @@ body {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border px-4 py-2 text-sm font-semibold transition focus-visible:outline-none disabled:opacity-60;
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] border px-4 py-2 text-sm font-semibold transition-all focus-visible:outline-none disabled:opacity-60 disabled:cursor-not-allowed;
     background: hsl(var(--surface-1));
     border-color: hsl(var(--border));
     color: hsl(var(--text));
@@ -110,6 +117,11 @@ body {
     border-color: hsl(var(--primary) / 0.4);
     color: hsl(var(--primary));
     box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary:active {
+    transform: translateY(0) scale(0.99);
   }
 
   .btn-secondary:focus-visible {
@@ -117,12 +129,17 @@ body {
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm font-semibold transition focus-visible:outline-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-sm font-semibold transition-all focus-visible:outline-none;
     color: hsl(var(--text));
   }
 
   .btn-ghost:hover {
     background: hsl(var(--surface-1));
+    transform: translateY(-1px);
+  }
+
+  .btn-ghost:active {
+    transform: translateY(0) scale(0.98);
   }
 
   .btn-ghost:focus-visible {
@@ -130,26 +147,26 @@ body {
   }
 
   .card {
-    @apply rounded-[var(--radius-lg)] border transition;
-    background: hsl(var(--surface-0));
+    @apply rounded-[var(--radius-lg)] border transition-all;
+    background: linear-gradient(180deg, hsl(var(--surface-0)) 0%, hsl(var(--surface-1)) 100%);
     border-color: hsl(var(--border));
     box-shadow: var(--shadow-sm);
   }
 
   .card.depth-hover:hover {
     box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.01);
   }
 
   .badge {
-    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold;
+    @apply inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold shadow-inset;
     background: hsl(var(--surface-1));
     color: hsl(var(--text));
   }
 
   .input {
-    @apply block w-full rounded-[var(--radius-md)] border px-3 py-2 text-sm transition focus-visible:outline-none;
-    background: hsl(var(--surface-1));
+    @apply block w-full rounded-[var(--radius-md)] border px-3 py-2 text-sm transition-all focus-visible:outline-none;
+    background: hsl(var(--surface-0));
     border-color: hsl(var(--border));
     color: hsl(var(--text));
     box-shadow: var(--shadow-inset);
@@ -159,9 +176,13 @@ body {
     color: hsl(var(--text-muted));
   }
 
+  .input:hover {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+
   .input:focus-visible {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.35), var(--shadow-inset);
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.3), var(--shadow-inset);
   }
 
   .label {
@@ -198,6 +219,33 @@ body {
 
   .shadow-inset {
     box-shadow: var(--shadow-inset);
+  }
+
+  .glass-panel {
+    @apply rounded-[var(--radius-lg)] border;
+    background: linear-gradient(135deg, hsl(var(--surface-0) / 0.9), hsl(var(--surface-1) / 0.7));
+    border-color: hsl(var(--border));
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(16px);
+  }
+
+  .card-border-glow {
+    @apply relative overflow-hidden;
+  }
+
+  .card-border-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px solid hsl(var(--primary) / 0.2);
+    opacity: 0;
+    transition: opacity 200ms ease;
+    pointer-events: none;
+  }
+
+  .card-border-glow:hover::after {
+    opacity: 1;
   }
 }
 
@@ -248,15 +296,94 @@ body {
   }
 
   .gradient-hero {
-    background: radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.18), transparent 35%),
-      radial-gradient(circle at 80% 0%, hsl(var(--primary) / 0.12), transparent 30%),
-      linear-gradient(135deg, hsl(var(--primary) / 0.12), transparent);
+    background: radial-gradient(circle at 20% 20%, hsl(var(--primary) / 0.2), transparent 38%),
+      radial-gradient(circle at 80% 0%, hsl(var(--primary) / 0.14), transparent 32%),
+      linear-gradient(135deg, hsl(var(--primary) / 0.14), transparent);
   }
 
   .gradient-page {
-    background: radial-gradient(circle at 18% 20%, hsl(var(--primary) / 0.12), transparent 46%),
-      radial-gradient(circle at 82% 6%, hsl(var(--primary) / 0.08), transparent 40%),
-      linear-gradient(180deg, hsl(var(--primary) / 0.08), transparent),
+    background: radial-gradient(circle at 18% 20%, hsl(var(--primary) / 0.12), transparent 44%),
+      radial-gradient(circle at 82% 6%, hsl(var(--primary) / 0.08), transparent 42%),
+      linear-gradient(180deg, hsl(var(--primary) / 0.1), transparent 60%),
       hsl(var(--bg-0));
+  }
+
+  .app-shell-bg {
+    background: radial-gradient(circle at 20% -10%, hsl(var(--primary) / 0.12), transparent 50%),
+      radial-gradient(circle at 80% 0%, hsl(var(--primary) / 0.08), transparent 45%),
+      hsl(var(--bg-0));
+  }
+
+  .animate-page {
+    animation: page-fade 260ms ease;
+  }
+
+  .animate-float {
+    animation: float-in 320ms ease;
+  }
+
+  .animate-toast {
+    animation: toast-in 240ms ease;
+  }
+
+  .animate-modal {
+    animation: modal-in 220ms ease;
+  }
+
+  .animate-backdrop {
+    animation: backdrop-in 200ms ease;
+  }
+}
+
+@keyframes page-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

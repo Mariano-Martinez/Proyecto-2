@@ -40,7 +40,7 @@ export const Toast = ({ toast, onClose }: { toast: ToastMessage | null; onClose:
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <div className="flex items-center gap-3 rounded-xl border border-subtle bg-surface-0 px-4 py-3 shadow-depth-lg">
+      <div className="flex items-center gap-3 rounded-2xl border border-subtle bg-[hsl(var(--surface-0)/0.96)] px-4 py-3 shadow-depth-lg backdrop-blur animate-toast">
         {icon}
         <span className="text-sm font-semibold text-default">{toast.message}</span>
         <button

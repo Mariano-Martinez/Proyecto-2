@@ -19,7 +19,7 @@ export const ShipmentCard = ({
     onCopy?.(code);
   };
   return (
-    <div className="card depth-hover space-y-3 p-4">
+    <div className="card depth-hover space-y-3 p-4 card-border-glow">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-default">{shipment.alias}</p>

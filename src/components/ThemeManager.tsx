@@ -6,9 +6,9 @@ import { getTheme } from '@/lib/storage';
 export const ThemeManager = () => {
   useEffect(() => {
     const stored = getTheme();
-    if (stored) {
-      document.documentElement.dataset.theme = stored;
-    }
+    const systemDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    const next = stored ?? (systemDark ? 'dark' : 'light');
+    document.documentElement.dataset.theme = next;
   }, []);
 
   return null;

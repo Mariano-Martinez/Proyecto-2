@@ -25,9 +25,9 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
       {pricingTiers.map((tier) => (
         <div
           key={tier.id}
-          className={`card flex h-full flex-col gap-4 p-5 ${
+          className={`card card-border-glow depth-hover flex h-full flex-col gap-5 p-6 ${
             tier.id === Plan.PRO
-              ? 'bg-[radial-gradient(circle_at_top,_hsl(var(--primary)/0.18),_transparent_55%)] ring-1 ring-[hsl(var(--primary)/0.2)] shadow-depth-md'
+              ? 'bg-[radial-gradient(circle_at_top,_hsl(var(--primary)/0.2),_transparent_60%)] ring-1 ring-[hsl(var(--primary)/0.25)] shadow-depth-md'
               : ''
           } ${[Plan.FREE, Plan.BASIC, Plan.PRO].includes(tier.id) ? 'md:min-h-[420px]' : ''}`}
         >
@@ -50,7 +50,7 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
           <div className="mt-auto space-y-3">
             <button
               onClick={() => handleChoose(tier.id)}
-              className="btn-primary w-full justify-center rounded-xl px-4 py-2"
+              className="btn-primary w-full justify-center rounded-full px-4 py-2"
             >
               Elegir plan
             </button>

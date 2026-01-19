@@ -201,11 +201,11 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[hsl(var(--bg-0)/0.7)] px-4 backdrop-blur-sm">
-      <div className="card w-full max-w-lg p-6 shadow-depth-lg">
+    <div className="fixed inset-0 z-40 flex items-center justify-center bg-[hsl(var(--bg-0)/0.7)] px-4 backdrop-blur-sm animate-backdrop">
+      <div className="card w-full max-w-lg p-6 shadow-depth-lg animate-modal">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-default">Agregar tracking</h3>
-          <button onClick={onClose} className="rounded-full p-2 text-muted hover:bg-surface-1">
+          <button onClick={onClose} className="rounded-full p-2 text-muted transition hover:bg-surface-1 hover:text-default">
             <XMarkIcon className="h-5 w-5" />
           </button>
         </div>
@@ -265,10 +265,10 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
             </div>
           )}
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="btn-secondary rounded-xl px-4 py-2" disabled={loading}>
+            <button type="button" onClick={onClose} className="btn-secondary rounded-full px-4 py-2" disabled={loading}>
               Cancelar
             </button>
-            <button type="submit" className="btn-primary rounded-xl px-4 py-2" disabled={loading}>
+            <button type="submit" className="btn-primary rounded-full px-4 py-2" disabled={loading}>
               {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>

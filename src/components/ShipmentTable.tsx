@@ -21,9 +21,9 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-subtle bg-surface-0 shadow-depth-sm">
+    <div className="overflow-hidden rounded-2xl border border-subtle bg-[hsl(var(--surface-0)/0.95)] shadow-depth-sm">
       <table className="min-w-full">
-        <thead className="sticky top-0 z-10 bg-layer-1 text-left text-xs uppercase text-muted shadow-inset">
+        <thead className="sticky top-0 z-10 bg-[hsl(var(--bg-1)/0.9)] text-left text-xs uppercase text-muted shadow-inset backdrop-blur">
           <tr>
             {selectable && <th className="table-cell w-12">Sel.</th>}
             <th className="table-cell w-44">Alias</th>
@@ -36,7 +36,7 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
         </thead>
         <tbody className="divide-y divide-[hsl(var(--border))]">
           {shipments.map((shipment) => (
-            <tr key={shipment.id} className="transition hover:bg-surface-1">
+            <tr key={shipment.id} className="transition hover:bg-[hsl(var(--surface-1)/0.7)]">
               {selectable && (
                 <td className="table-cell align-middle">
                   <input

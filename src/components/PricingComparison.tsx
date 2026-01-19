@@ -4,9 +4,9 @@ import { CheckIcon, MinusIcon } from '@heroicons/react/24/outline';
 
 export const PricingComparison = () => {
   return (
-    <div className="overflow-hidden rounded-2xl border border-subtle bg-surface-0 shadow-depth-sm">
+    <div className="overflow-hidden rounded-2xl border border-subtle bg-[hsl(var(--surface-0)/0.96)] shadow-depth-sm">
       <table className="min-w-full text-left text-sm">
-        <thead className="bg-layer-1 text-xs uppercase text-muted shadow-inset">
+        <thead className="bg-[hsl(var(--bg-1)/0.9)] text-xs uppercase text-muted shadow-inset backdrop-blur">
           <tr>
             <th className="px-4 py-3">Feature</th>
             {pricingTiers.map((tier) => (
@@ -20,7 +20,7 @@ export const PricingComparison = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-t border-subtle">
+          <tr className="border-t border-subtle transition hover:bg-[hsl(var(--surface-1)/0.6)]">
             <td className="px-4 py-3 font-semibold text-default">Límite de envíos</td>
             {pricingTiers.map((tier) => (
               <td
@@ -32,7 +32,7 @@ export const PricingComparison = () => {
             ))}
           </tr>
           {planFeatures.map((feature) => (
-            <tr key={feature.label} className="border-t border-subtle">
+            <tr key={feature.label} className="border-t border-subtle transition hover:bg-[hsl(var(--surface-1)/0.6)]">
               <td className="px-4 py-3 text-default">{feature.label}</td>
               {pricingTiers.map((tier) => (
                 <td

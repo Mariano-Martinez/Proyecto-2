@@ -2,10 +2,11 @@ import { Courier } from './types';
 
 export const detectCourier = (code: string): Courier => {
   const value = code.trim().toUpperCase();
+  const normalized = value.replace(/[^A-Z0-9]/g, '');
   const digitsOnly = value.replace(/[^0-9]/g, '');
   if (value.startsWith('1Z')) return Courier.UPS;
   if (value.startsWith('OC')) return Courier.OCA;
-  if (value.startsWith('AR')) return Courier.CORREO_ARGENTINO;
+  if (/^[A-Z]{2}\d{9}AR$/.test(normalized)) return Courier.CORREO_ARGENTINO;
   if (/DHL/.test(value) || value.length === 10) return Courier.DHL;
   if (/^999\d{9}$/.test(digitsOnly)) return Courier.VIA_CARGO;
   if (/FDX/.test(value) || value.length === 12) return Courier.FEDEX;

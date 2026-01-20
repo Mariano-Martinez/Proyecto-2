@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Bell, Menu, Plus, Search } from 'lucide-react';
+import { Bell, LogOut, Menu, Plus, Search } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { clearAuth } from '@/lib/storage';
+import { useRouter } from 'next/navigation';
 
 type TopHeaderProps = {
   onMenu: () => void;
@@ -12,7 +14,13 @@ type TopHeaderProps = {
 };
 
 export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primaryActionHref }: TopHeaderProps) => {
+  const router = useRouter();
   const actionLabel = primaryActionLabel ?? 'Agregar Tracking';
+
+  const handleLogout = () => {
+    clearAuth();
+    router.push('/');
+  };
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-[rgb(var(--panel-border))] bg-[rgb(var(--background))]/90 backdrop-blur">
@@ -64,7 +72,15 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
               <span className="hidden sm:inline">{actionLabel}</span>
             </button>
           ) : null}
-          <p className="hidden text-sm font-semibold text-[rgb(var(--foreground))] md:block">Hola, Maria</p>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition hover:text-sky-400 md:inline-flex"
+            aria-label="Cerrar sesión"
+          >
+            <span>Hola, Maria</span>
+            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+          </button>
         </div>
       </div>
     </header>

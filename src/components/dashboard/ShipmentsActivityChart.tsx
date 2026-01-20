@@ -29,7 +29,7 @@ export const ShipmentsActivityChart = () => {
           <h3 className="text-lg font-semibold text-[rgb(var(--foreground))]">Actividad de Envíos</h3>
           <p className="mt-1 text-sm text-[rgb(var(--muted-foreground))]">Frecuencia de entregas vs tránsitos</p>
         </div>
-        <select className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] outline-none transition hover:border-[rgb(var(--panel-hover-border))] focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20">
+        <select className="ui-transition ui-focus-ring rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] hover:border-[rgb(var(--panel-hover-border))] focus:border-sky-400">
           <option>Últimos 7 días</option>
         </select>
       </div>

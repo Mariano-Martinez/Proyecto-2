@@ -19,11 +19,14 @@ export const PlanCard = ({ plan, active, limit }: PlanCardProps) => {
         {active}/{limit === Infinity ? '∞' : limit} envíos activos
       </p>
       <div className="mt-3 h-2 w-full rounded-full bg-[rgb(var(--muted))]">
-        <div className="h-2 rounded-full bg-sky-400 transition-all" style={{ width: `${progress}%` }} />
+        <div
+          className="h-2 rounded-full bg-sky-400"
+          style={{ width: `${progress}%`, transition: 'width var(--motion-base) var(--ease-standard)' }}
+        />
       </div>
       <Link
         href="/pricing"
-        className="mt-4 inline-flex w-full items-center justify-center rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-500 px-3 py-2 text-xs font-semibold text-white transition active:scale-95"
+        className="ui-transition ui-press ui-focus-ring mt-4 inline-flex w-full items-center justify-center rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-500 px-3 py-2 text-xs font-semibold text-white hover:translate-y-[-1px] motion-reduce:transform-none"
       >
         Actualizar
       </Link>

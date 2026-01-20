@@ -8,6 +8,8 @@ import { CarrierId, TrackingNormalized } from '@/lib/tracking/types';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useMemo, useState } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { AnimatePresence, motion } from 'framer-motion';
+import { motionTransitions } from '@/lib/motion';
 
 const courierOptions = Object.values(Courier);
 
@@ -48,8 +50,6 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   const [pendingCourier, setPendingCourier] = useState<Courier | null>(null);
 
   const detected = useMemo(() => detectCourier(code), [code]);
-
-  if (!open) return null;
 
   const fetchTracking = async (carrierId: CarrierId, shipmentCode: string): Promise<TrackingNormalized> => {
     const response = await fetch(
@@ -201,87 +201,101 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4">
-      <div className="card w-full max-w-lg p-6">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-900">Agregar tracking</h3>
-          <button onClick={onClose} className="rounded-full p-2 text-slate-500 hover:bg-slate-100">
-            <XMarkIcon className="h-5 w-5" />
-          </button>
-        </div>
-        <form className="mt-4 space-y-4" onSubmit={submit}>
-          <div>
-            <label className="label">Código de seguimiento</label>
-            <input className="input mt-1" value={code} onChange={(e) => setCode(e.target.value)} required disabled={loading} />
-            <p className="mt-1 text-xs text-slate-500">Detectado: {detected}</p>
-          </div>
-          <div>
-            <label className="label">Alias</label>
-            <input
-              className="input mt-1"
-              placeholder="Ej: Compra ML"
-              value={alias}
-              onChange={(e) => setAlias(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-          <div>
-            <label className="label">Courier</label>
-            <select
-              className="input mt-1"
-              value={courier}
-              onChange={(e) => setCourier(e.target.value as Courier | 'auto')}
-              disabled={loading}
-            >
-              <option value="auto">Auto-detectar</option>
-              {courierOptions.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-          {error && (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-              <p>{error}</p>
-              <button
-                type="button"
-                className="font-semibold underline"
-                onClick={() => {
-                  setRedirectPath('/dashboard');
-                  router.push('/pricing');
-                }}
-              >
-                Ver planes
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: motionTransitions.base }}
+          exit={{ opacity: 0, transition: motionTransitions.fast }}
+        >
+          <motion.div
+            className="card w-full max-w-lg p-6"
+            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1, transition: motionTransitions.slow }}
+            exit={{ opacity: 0, y: 8, scale: 0.98, transition: motionTransitions.fast }}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Agregar tracking</h3>
+              <button onClick={onClose} className="ui-transition ui-icon-press ui-focus-ring rounded-full p-2 text-slate-500 hover:bg-slate-100">
+                <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
-          )}
-          {warning && (
-            <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
-              <p>{warning}</p>
-              <p className="mt-1 text-xs text-slate-600">
-                Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
-              </p>
-            </div>
-          )}
-          <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="btn-secondary rounded-xl px-4 py-2" disabled={loading}>
-              Cancelar
-            </button>
-            <button type="submit" className="btn-primary rounded-xl px-4 py-2" disabled={loading}>
-              {loading ? 'Guardando...' : 'Guardar'}
-            </button>
-          </div>
-          {!loading && pendingShipmentId && (
-            <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-              <span>El envío quedó creado, pero aún no pudimos traer el estado.</span>
-              <button type="button" className="font-semibold text-slate-900 underline" onClick={handleRetry}>
-                Reintentar
-              </button>
-            </div>
-          )}
-        </form>
-      </div>
-    </div>
+            <form className="mt-4 space-y-4" onSubmit={submit}>
+              <div>
+                <label className="label">Código de seguimiento</label>
+                <input className="input mt-1" value={code} onChange={(e) => setCode(e.target.value)} required disabled={loading} />
+                <p className="mt-1 text-xs text-slate-500">Detectado: {detected}</p>
+              </div>
+              <div>
+                <label className="label">Alias</label>
+                <input
+                  className="input mt-1"
+                  placeholder="Ej: Compra ML"
+                  value={alias}
+                  onChange={(e) => setAlias(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <label className="label">Courier</label>
+                <select
+                  className="input mt-1"
+                  value={courier}
+                  onChange={(e) => setCourier(e.target.value as Courier | 'auto')}
+                  disabled={loading}
+                >
+                  <option value="auto">Auto-detectar</option>
+                  {courierOptions.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {error && (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  <p>{error}</p>
+                  <button
+                    type="button"
+                    className="font-semibold underline"
+                    onClick={() => {
+                      setRedirectPath('/dashboard');
+                      router.push('/pricing');
+                    }}
+                  >
+                    Ver planes
+                  </button>
+                </div>
+              )}
+              {warning && (
+                <div className="rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-800">
+                  <p>{warning}</p>
+                  <p className="mt-1 text-xs text-slate-600">
+                    Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+                  </p>
+                </div>
+              )}
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={onClose} className="btn-secondary rounded-xl px-4 py-2" disabled={loading}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-primary rounded-xl px-4 py-2" disabled={loading}>
+                  {loading ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+              {!loading && pendingShipmentId && (
+                <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                  <span>El envío quedó creado, pero aún no pudimos traer el estado.</span>
+                  <button type="button" className="font-semibold text-slate-900 underline" onClick={handleRetry}>
+                    Reintentar
+                  </button>
+                </div>
+              )}
+            </form>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };

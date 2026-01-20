@@ -25,7 +25,7 @@ export const PricingCard = ({ annual }: { annual: boolean }) => {
       {pricingTiers.map((tier) => (
         <div
           key={tier.id}
-          className={`card flex h-full flex-col gap-4 p-5 ${
+          className={`card ui-hover-lift flex h-full flex-col gap-4 p-5 ${
             tier.id === Plan.PRO
               ? 'ring-1 ring-sky-500/20 shadow-md shadow-slate-900/10 bg-gradient-to-br from-sky-500/10 via-transparent to-transparent'
               : ''

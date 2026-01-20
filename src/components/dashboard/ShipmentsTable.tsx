@@ -29,7 +29,10 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
           </thead>
           <tbody className="divide-y divide-[rgb(var(--panel-border))]">
             {shipments.map((shipment) => (
-              <tr key={shipment.id} className="text-[rgb(var(--foreground))] transition hover:bg-slate-50 dark:hover:bg-white/5">
+              <tr
+                key={shipment.id}
+                className="ui-row-hover text-[rgb(var(--foreground))] hover:bg-slate-50 dark:hover:bg-white/5"
+              >
                 <td className="px-4 py-4">
                   <div className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-sky-400" />
@@ -46,7 +49,7 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
                   <div className="inline-flex items-center gap-2">
                     <Link
                       href={`/shipments/${shipment.id}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      className="ui-transition ui-icon-press ui-focus-ring flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400"
                       aria-label="Ver envío"
                     >
                       <ArrowUpRight className="h-4 w-4" />
@@ -54,7 +57,7 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
                     <button
                       type="button"
                       onClick={() => onCopy(shipment.code)}
-                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      className="ui-transition ui-icon-press ui-focus-ring flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400"
                       aria-label="Copiar código"
                     >
                       <Copy className="h-4 w-4" />
@@ -62,7 +65,7 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
                     <button
                       type="button"
                       onClick={() => onDelete(shipment.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-rose-400 active:scale-95"
+                      className="ui-transition ui-icon-press ui-focus-ring flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-rose-400"
                       aria-label="Eliminar envío"
                     >
                       <Trash2 className="h-4 w-4" />

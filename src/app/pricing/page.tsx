@@ -5,6 +5,8 @@ import { PricingCard } from '@/components/PricingCard';
 import { PricingComparison } from '@/components/PricingComparison';
 import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
+import { motion } from 'framer-motion';
+import { fadeInUp, listStagger } from '@/lib/motion';
 
 const faqs = [
   {
@@ -27,8 +29,8 @@ export default function PricingPage() {
 
   return (
     <AppShell>
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-12">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <motion.div className="mx-auto flex w-full max-w-6xl flex-col gap-12" variants={listStagger} initial="initial" animate="animate">
+        <motion.div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between" variants={fadeInUp}>
           <div>
             <p className="text-sm font-semibold text-sky-600">Planes</p>
             <h1 className="text-4xl font-black text-slate-900">Precios pensados para crecer</h1>
@@ -49,13 +51,13 @@ export default function PricingPage() {
               </span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <section id="planes" className="scroll-mt-10 space-y-4">
+        <motion.section id="planes" className="scroll-mt-10 space-y-4" variants={fadeInUp}>
           <PricingCard annual={annual} />
-        </section>
+        </motion.section>
 
-        <div className="space-y-4">
+        <motion.div className="space-y-4" variants={fadeInUp}>
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-slate-900">Comparativa de features</h2>
             <button onClick={() => router.push('/login')} className="btn-secondary rounded-xl px-4 py-2">
@@ -63,14 +65,14 @@ export default function PricingPage() {
             </button>
           </div>
           <PricingComparison />
-        </div>
+        </motion.div>
 
-        <section className="grid gap-4 lg:grid-cols-3">
+        <motion.section className="grid gap-4 lg:grid-cols-3" variants={fadeInUp}>
           <div className="card p-5 lg:col-span-2">
             <h3 className="text-xl font-bold text-slate-900">Preguntas frecuentes</h3>
             <div className="mt-4 space-y-3">
               {faqs.map((item) => (
-                <div key={item.q} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
+                <div key={item.q} className="ui-transition rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
                   <p className="font-semibold text-slate-900">{item.q}</p>
                   <p className="text-sm text-slate-600">{item.a}</p>
                 </div>
@@ -88,9 +90,9 @@ export default function PricingPage() {
               Conecta tu backend cuando quieras: reemplazá el almacenamiento local por tus endpoints.
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        <div className="card mt-4 flex flex-col items-start gap-3 p-6 text-left sm:flex-row sm:items-center sm:justify-between">
+        <motion.div className="card mt-4 flex flex-col items-start gap-3 p-6 text-left sm:flex-row sm:items-center sm:justify-between" variants={fadeInUp}>
           <div>
             <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">¿Listo para empezar?</p>
             <h3 className="text-xl font-bold text-slate-900">Elegí un plan y probá TrackHub AR</h3>
@@ -99,8 +101,8 @@ export default function PricingPage() {
           <button onClick={() => router.push('/login')} className="btn-primary rounded-xl px-4 py-2">
             Probar ahora
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }

@@ -43,7 +43,7 @@ export const Timeline = ({ events, dateVariant = 'short', initialVisible = 6, cl
       {sortedEvents.length > initialVisible && (
         <button
           type="button"
-          className="mt-3 text-sm font-semibold text-sky-600 hover:text-sky-700"
+          className="ui-transition ui-focus-ring mt-3 text-sm font-semibold text-sky-600 hover:text-sky-500"
           onClick={() => setExpanded((prev) => !prev)}
         >
           {expanded ? 'Mostrar menos' : 'Mostrar más'}

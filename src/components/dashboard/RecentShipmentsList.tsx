@@ -46,7 +46,7 @@ export const RecentShipmentsList = ({ shipments }: { shipments: Shipment[] }) =>
             <Link
               key={item.id}
               href={`/shipments/${item.id}`}
-              className="panel flex items-center justify-between bg-[rgb(var(--muted))] px-4 py-3 transition hover:border-[rgb(var(--panel-hover-border))] hover:shadow-[0_8px_18px_rgba(0,0,0,0.2)]"
+              className="panel ui-hover-lift ui-focus-ring flex items-center justify-between bg-[rgb(var(--muted))] px-4 py-3"
               aria-label={`Ver envío ${item.alias}`}
             >
               <div className="flex items-center gap-3">

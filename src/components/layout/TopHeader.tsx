@@ -28,7 +28,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
         <button
           type="button"
           onClick={onMenu}
-          className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95 lg:hidden"
+          className="ui-transition ui-icon-press ui-focus-ring flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 lg:hidden"
           aria-label="Abrir menú"
         >
           <Menu className="h-5 w-5" />
@@ -40,7 +40,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
             <input
               type="search"
               placeholder="Buscar envíos por alias o tracking…"
-              className="w-full rounded-[10px] border border-[rgb(var(--input-border))] bg-[rgb(var(--input-bg))] py-2 pl-10 pr-4 text-sm text-[rgb(var(--foreground))] outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20"
+              className="input pl-10 pr-4"
             />
           </div>
         </div>
@@ -48,7 +48,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+            className="ui-transition ui-icon-press ui-focus-ring flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400"
             aria-label="Notificaciones"
           >
             <Bell className="h-5 w-5" />
@@ -57,7 +57,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           {primaryActionHref ? (
             <Link
               href={primaryActionHref}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
+              className="ui-transition ui-press ui-focus-ring inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white hover:translate-y-[-1px] motion-reduce:transform-none"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>
@@ -66,7 +66,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
             <button
               type="button"
               onClick={onPrimaryAction}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
+              className="ui-transition ui-press ui-focus-ring inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white hover:translate-y-[-1px] motion-reduce:transform-none"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>
@@ -75,11 +75,11 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           <button
             type="button"
             onClick={handleLogout}
-            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition hover:text-sky-400 md:inline-flex"
+            className="ui-transition group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] hover:text-sky-400 md:inline-flex"
             aria-label="Cerrar sesión"
           >
             <span>Hola, Maria</span>
-            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+            <LogOut className="ui-transition h-4 w-4 opacity-0 group-hover:opacity-100" />
           </button>
         </div>
       </div>

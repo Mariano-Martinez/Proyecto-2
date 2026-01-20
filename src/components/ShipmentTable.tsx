@@ -36,7 +36,7 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
         </thead>
         <tbody className="divide-y divide-[rgb(var(--border))]">
           {shipments.map((shipment) => (
-            <tr key={shipment.id} className="transition hover:bg-[rgb(var(--muted))]">
+            <tr key={shipment.id} className="ui-row-hover hover:bg-[rgb(var(--muted))]">
               {selectable && (
                 <td className="table-cell align-middle">
                   <input
@@ -56,7 +56,7 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
                   </span>
                   <button
                     onClick={() => copy(shipment.code)}
-                    className="rounded-lg p-1 text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
+                    className="ui-transition ui-icon-press ui-focus-ring rounded-lg p-1 text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
                     aria-label="Copiar código"
                     title="Copiar código"
                   >
@@ -74,20 +74,20 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
                 <div className="flex justify-end gap-2">
                   <Link
                     href={`/shipments/${shipment.id}`}
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-sky-600 transition hover:bg-sky-500/10 hover:text-sky-400"
+                    className="ui-transition ui-focus-ring rounded-lg px-2 py-1 text-xs font-semibold text-sky-600 hover:bg-sky-500/10 hover:text-sky-400"
                     title="Ver detalle"
                   >
                     Ver
                   </Link>
                   <button
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
+                    className="ui-transition ui-icon-press ui-focus-ring rounded-lg px-2 py-1 text-xs font-semibold text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
                     title="Editar"
                   >
                     <PencilIcon className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => onDelete(shipment.id)}
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-500 transition hover:bg-rose-500/10 hover:text-rose-400"
+                    className="ui-transition ui-icon-press ui-focus-ring rounded-lg px-2 py-1 text-xs font-semibold text-rose-500 hover:bg-rose-500/10 hover:text-rose-400"
                     title="Eliminar"
                   >
                     <TrashIcon className="h-4 w-4" />

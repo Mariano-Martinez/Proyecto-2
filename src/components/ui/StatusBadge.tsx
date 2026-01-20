@@ -38,7 +38,7 @@ export const StatusBadge = ({ status, className }: { status: ShipmentStatus; cla
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold',
+        'badge border',
         statusStyles[status].className,
         className
       )}

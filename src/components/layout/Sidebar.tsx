@@ -38,7 +38,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
             key={item.href}
             href={item.href}
             className={clsx(
-              'group flex items-center gap-3 rounded-[10px] px-4 py-3 text-sm font-semibold transition',
+              'group ui-transition ui-focus-ring flex items-center gap-3 rounded-[10px] px-4 py-3 text-sm font-semibold',
               active
                 ? 'bg-sky-500/15 text-sky-400 shadow-[0_0_0_1px_rgba(56,189,248,0.3)]'
                 : 'text-[rgb(var(--muted-foreground))] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-[rgb(var(--foreground))]'
@@ -46,7 +46,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
           >
             <item.icon
               className={clsx(
-                'h-5 w-5 transition',
+                'ui-transition h-5 w-5',
                 active ? 'text-sky-400' : 'text-[rgb(var(--muted-foreground))] group-hover:text-sky-400'
               )}
             />
@@ -97,7 +97,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+            className="ui-transition ui-icon-press ui-focus-ring flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400"
             aria-label="Cerrar menú"
           >
             <X className="h-4 w-4" />

@@ -18,6 +18,8 @@ import { CarrierId, TrackingNormalized } from '@/lib/tracking/types';
 import { ArrowLeftIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { fadeInUp, listStagger } from '@/lib/motion';
 
 class TrackingLookupError extends Error {
   constructor(
@@ -183,93 +185,97 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
 
   return (
     <AppShell>
-      <button onClick={() => router.back()} className="btn-secondary mb-4 rounded-xl px-4 py-2">
-        <ArrowLeftIcon className="mr-1 inline h-4 w-4" /> Volver
-      </button>
+      <motion.div className="space-y-4" variants={listStagger} initial="initial" animate="animate">
+        <motion.div variants={fadeInUp}>
+          <button onClick={() => router.back()} className="btn-secondary mb-4 rounded-xl px-4 py-2">
+            <ArrowLeftIcon className="mr-1 inline h-4 w-4" /> Volver
+          </button>
+        </motion.div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <div className="card space-y-3 p-5 lg:col-span-2">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold text-slate-600">{shipment.courier}</p>
-              <h1 className="text-2xl font-bold text-slate-900">{shipment.alias}</h1>
-              <p className="font-mono text-sm text-slate-700">{shipment.code}</p>
-              {trackingData && carrierInfo && (
-                <p className="text-sm text-slate-600">
-                  Estado {carrierInfo.label}: {trackingData.statusLabel}
-                </p>
-              )}
-            </div>
-            <StatusBadge status={shipment.status} />
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
-            <div>
-              <p className="text-xs uppercase text-slate-500">Origen</p>
-              <p className="font-semibold">{shipment.origin}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-slate-500">Destino</p>
-              <p className="font-semibold">{shipment.destination}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-slate-500">ETA</p>
-              <p className="font-semibold">{etaDisplay}</p>
-            </div>
-            <div>
-              <p className="text-xs uppercase text-slate-500">Última actualización</p>
-              <p className="font-semibold">{formattedLastUpdated}</p>
-            </div>
-          </div>
-          {detailItems.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-3">
-              {detailItems.map((item) => (
-                <div key={item.label}>
-                  <p className="text-xs uppercase text-slate-500">{item.label}</p>
-                  <p className="font-semibold">{item.value}</p>
-                </div>
-              ))}
-            </div>
-          )}
-          {canSyncCarrier && carrierInfo ? (
-            <div className="mt-4 flex flex-col gap-2">
-              <div className="flex items-center gap-3">
-                <button onClick={handleSync} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
-                  <ArrowPathIcon className={`mr-1 inline h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />{' '}
-                  {syncing ? 'Actualizando...' : `Actualizar desde ${carrierInfo.label}`}
-                </button>
-                <p className="text-sm text-slate-600">Trae el estado real de {carrierInfo.label} para este envío.</p>
-              </div>
-              {syncError && (
-                <div className="text-sm text-amber-700">
-                  <p>{syncError}</p>
-                </div>
-              )}
-              {syncWarning && (
-                <div className="text-sm text-sky-700">
-                  <p>{syncWarning}</p>
-                  <p className="text-xs text-slate-600">
-                    Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+        <motion.div className="grid gap-4 lg:grid-cols-3" variants={fadeInUp}>
+          <div className="card space-y-3 p-5 lg:col-span-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-slate-600">{shipment.courier}</p>
+                <h1 className="text-2xl font-bold text-slate-900">{shipment.alias}</h1>
+                <p className="font-mono text-sm text-slate-700">{shipment.code}</p>
+                {trackingData && carrierInfo && (
+                  <p className="text-sm text-slate-600">
+                    Estado {carrierInfo.label}: {trackingData.statusLabel}
                   </p>
+                )}
+              </div>
+              <StatusBadge status={shipment.status} />
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-4">
+              <div>
+                <p className="text-xs uppercase text-slate-500">Origen</p>
+                <p className="font-semibold">{shipment.origin}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase text-slate-500">Destino</p>
+                <p className="font-semibold">{shipment.destination}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase text-slate-500">ETA</p>
+                <p className="font-semibold">{etaDisplay}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase text-slate-500">Última actualización</p>
+                <p className="font-semibold">{formattedLastUpdated}</p>
+              </div>
+            </div>
+            {detailItems.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 gap-4 text-sm text-slate-700 sm:grid-cols-3">
+                {detailItems.map((item) => (
+                  <div key={item.label}>
+                    <p className="text-xs uppercase text-slate-500">{item.label}</p>
+                    <p className="font-semibold">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+            {canSyncCarrier && carrierInfo ? (
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="flex items-center gap-3">
+                  <button onClick={handleSync} className="btn-primary rounded-xl px-4 py-2" disabled={syncing}>
+                    <ArrowPathIcon className={`mr-1 inline h-4 w-4 ${syncing ? 'animate-spin' : ''}`} />{' '}
+                    {syncing ? 'Actualizando...' : `Actualizar desde ${carrierInfo.label}`}
+                  </button>
+                  <p className="text-sm text-slate-600">Trae el estado real de {carrierInfo.label} para este envío.</p>
                 </div>
-              )}
-            </div>
-          ) : enableMockTracking ? (
-            <div className="mt-4 flex items-center gap-3">
-              <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
-                <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
-              </button>
-              <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
-            </div>
-          ) : (
-            <div className="mt-4 text-sm text-slate-600">La actualización en línea no está disponible para este courier.</div>
-          )}
-        </div>
+                {syncError && (
+                  <div className="text-sm text-amber-700">
+                    <p>{syncError}</p>
+                  </div>
+                )}
+                {syncWarning && (
+                  <div className="text-sm text-sky-700">
+                    <p>{syncWarning}</p>
+                    <p className="text-xs text-slate-600">
+                      Si la web del courier muestra eventos y acá no, abrí la consola (F12) y copiá el HTML/XHR que trae los datos para ajustar el parser.
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : enableMockTracking ? (
+              <div className="mt-4 flex items-center gap-3">
+                <button onClick={handleSimulate} className="btn-primary rounded-xl px-4 py-2">
+                  <ArrowPathIcon className="mr-1 inline h-4 w-4" /> Simular actualización
+                </button>
+                <p className="text-sm text-slate-600">Cada click avanza el estado y agrega un evento.</p>
+              </div>
+            ) : (
+              <div className="mt-4 text-sm text-slate-600">La actualización en línea no está disponible para este courier.</div>
+            )}
+          </div>
 
-        <div className="card p-5">
-          <h3 className="text-lg font-bold text-slate-900">Timeline</h3>
-          <Timeline events={trackingData?.events ?? mapTimelineEventsToTrackingEvents(shipment.events)} />
-        </div>
-      </div>
+          <div className="card p-5">
+            <h3 className="text-lg font-bold text-slate-900">Timeline</h3>
+            <Timeline events={trackingData?.events ?? mapTimelineEventsToTrackingEvents(shipment.events)} />
+          </div>
+        </motion.div>
+      </motion.div>
     </AppShell>
   );
 }

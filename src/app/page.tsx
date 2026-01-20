@@ -4,8 +4,10 @@ import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan, setUser } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { ArrowRightIcon, CheckBadgeIcon, EyeIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motionTransitions } from '@/lib/motion';
 
 const couriers: { name: Courier; logo: string }[] = [
   { name: Courier.OCA, logo: '/images/oca.svg' },
@@ -18,31 +20,22 @@ const couriers: { name: Courier; logo: string }[] = [
 
 const RevealSection = ({ children, className }: { children: React.ReactNode; className?: string }) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 }
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
+  const reduceMotion = useReducedMotion();
+  const isInView = useInView(ref, { once: true, margin: '-10% 0px' });
 
   return (
-    <div
+    <motion.div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${className ?? ''}`}
+      className={className}
+      initial="hidden"
+      animate={isInView ? 'visible' : 'hidden'}
+      variants={{
+        hidden: { opacity: 0, y: reduceMotion ? 0 : 6 },
+        visible: { opacity: 1, y: 0, transition: motionTransitions.slow },
+      }}
     >
       {children}
-    </div>
+    </motion.div>
   );
 };
 
@@ -69,7 +62,7 @@ export default function HomePage() {
   };
 
   const providerBtn =
-    'flex h-12 w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-semibold text-white shadow-sm transition hover:border-white/30 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500';
+    'ui-transition ui-press ui-focus-ring flex h-12 w-full items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-4 text-sm font-semibold text-white shadow-sm hover:border-white/30 hover:bg-white/10';
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#101827,_#05060a_60%)] text-white">
@@ -102,7 +95,7 @@ export default function HomePage() {
                   { title: 'Visibilidad total', description: 'Seguí cada paso de tu paquete desde un solo panel.', icon: EyeIcon },
                   { title: 'Límite controlado', description: 'Hasta 3 envíos activos, perfecto para uso personal.', icon: CheckBadgeIcon },
                 ].map((feature) => (
-                  <div key={feature.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div key={feature.title} className="ui-hover-lift rounded-2xl border border-white/10 bg-white/5 p-4">
                     <div className="flex items-center gap-3">
                       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-300">
                         <feature.icon className="h-5 w-5" />
@@ -163,7 +156,7 @@ export default function HomePage() {
                 <button
                   type="button"
                   onClick={() => handleSocial('Google')}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px]"
+                  className="ui-transition ui-press ui-focus-ring flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-4 py-3 text-sm font-semibold text-white hover:translate-y-[-1px] motion-reduce:transform-none"
                 >
                   Continuar con Email
                   <ArrowRightIcon className="h-4 w-4" />
@@ -183,7 +176,7 @@ export default function HomePage() {
             { title: 'Seguí en tiempo real', copy: 'Recibí notificaciones automáticas en cada actualización del envío.' },
             { title: 'Administrá todo', copy: 'Visualizá todos tus paquetes en un solo lugar organizado.' },
           ].map((step, index) => (
-            <div key={step.title} className="relative rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div key={step.title} className="ui-hover-lift relative rounded-2xl border border-white/10 bg-white/5 p-6">
               <span className="absolute -top-5 left-6 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 to-indigo-500 text-sm font-semibold">
                 {index + 1}
               </span>
@@ -203,7 +196,7 @@ export default function HomePage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {couriers.map((courier) => (
-              <div key={courier.name} className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
+              <div key={courier.name} className="ui-hover-lift rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
                   <Image src={courier.logo} alt={courier.name} width={40} height={24} className="h-6 w-auto object-contain" />
                 </div>
@@ -222,7 +215,7 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => handleSocial('Google')}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white transition hover:translate-y-[-1px]"
+              className="ui-transition ui-press ui-focus-ring inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 px-6 py-3 text-sm font-semibold text-white hover:translate-y-[-1px] motion-reduce:transform-none"
             >
               Comenzar gratis
               <ArrowRightOnRectangleIcon className="h-4 w-4" />

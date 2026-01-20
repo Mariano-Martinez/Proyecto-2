@@ -22,7 +22,7 @@ export const PricingComparison = () => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-t border-[rgb(var(--border))]">
+          <tr className="ui-row-hover border-t border-[rgb(var(--border))]">
             <td className="px-4 py-3 font-semibold text-[rgb(var(--foreground))]">Límite de envíos</td>
             {pricingTiers.map((tier) => (
               <td
@@ -36,7 +36,7 @@ export const PricingComparison = () => {
             ))}
           </tr>
           {planFeatures.map((feature) => (
-            <tr key={feature.label} className="border-t border-[rgb(var(--border))]">
+            <tr key={feature.label} className="ui-row-hover border-t border-[rgb(var(--border))]">
               <td className="px-4 py-3 text-[rgb(var(--foreground))]">{feature.label}</td>
               {pricingTiers.map((tier) => (
                 <td

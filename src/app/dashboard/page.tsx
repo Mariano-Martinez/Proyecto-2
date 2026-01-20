@@ -13,6 +13,8 @@ import { RecentShipmentsList } from '@/components/dashboard/RecentShipmentsList'
 import { ShipmentsTable } from '@/components/dashboard/ShipmentsTable';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { AlertTriangle, CheckCircle2, Clock, Layers, Truck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { fadeInUp, listStagger } from '@/lib/motion';
 
 const metricOrder: { key: ShipmentStatus; label: string }[] = [
   { key: ShipmentStatus.IN_TRANSIT, label: 'En Tránsito' },
@@ -91,49 +93,49 @@ export default function DashboardPage() {
 
   return (
     <AppShell onPrimaryAction={() => setOpen(true)} primaryActionLabel="Agregar Tracking">
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+      <motion.div className="flex flex-col gap-8" variants={listStagger} initial="initial" animate="animate">
+        <motion.div className="flex flex-wrap items-start justify-between gap-4" variants={fadeInUp}>
           <div>
             <h1 className="text-[30px] font-bold leading-[36px] tracking-[-0.75px] text-[rgb(var(--foreground))]">
               Panel Operativo
             </h1>
           </div>
-          <div className="flex items-center gap-2 rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))]">
+          <div className="ui-transition flex items-center gap-2 rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] hover:border-[rgb(var(--panel-hover-border))]">
             <Clock className="h-4 w-4" />
             Actualizado hace 5 minutos
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <motion.div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" variants={fadeInUp}>
           {kpiConfigs.map((kpi) => (
             <KpiCard key={kpi.title} {...kpi} />
           ))}
-        </div>
+        </motion.div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+        <motion.div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" variants={fadeInUp}>
           <ShipmentsActivityChart />
           <RecentShipmentsList shipments={shipments} />
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <motion.div className="flex flex-wrap items-center justify-between gap-4" variants={fadeInUp}>
           <div>
             <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Mis envíos</h2>
             <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+            <button className="ui-transition ui-press ui-focus-ring rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400">
               Exportar CSV
             </button>
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+            <button className="ui-transition ui-press ui-focus-ring rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400">
               Filtrar
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="hidden lg:block">
+        <motion.div className="hidden lg:block" variants={fadeInUp}>
           <ShipmentsTable shipments={shipments} onDelete={handleDelete} onCopy={handleCopy} />
-        </div>
-        <div className="space-y-4 lg:hidden">
+        </motion.div>
+        <motion.div className="space-y-4 lg:hidden" variants={fadeInUp}>
           {shipments.map((shipment) => (
             <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => handleCopy(shipment.code)} />
           ))}
@@ -142,8 +144,8 @@ export default function DashboardPage() {
               No tenés envíos todavía. Cargá tu primer tracking.
             </div>
           )}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       <AddShipmentModal open={open} onClose={() => setOpen(false)} onCreated={refresh} />
       <Toast toast={toast} onClose={clearToast} />
     </AppShell>

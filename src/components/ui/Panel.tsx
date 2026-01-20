@@ -11,7 +11,7 @@ type PanelProps = {
 
 export const Panel = ({ children, className, interactive }: PanelProps) => {
   return (
-    <div className={clsx('panel', interactive && 'panel-hover', className)}>
+    <div className={clsx('panel', interactive && 'ui-hover-lift', className)}>
       {children}
     </div>
   );

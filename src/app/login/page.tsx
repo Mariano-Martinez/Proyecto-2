@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setAuth, setPlan, getPlan, consumeRedirectPath, setRedirectPath, setUser } from '@/lib/storage';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { fadeInUp } from '@/lib/motion';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,11 +36,11 @@ export default function LoginPage() {
   };
 
   const providerBtn =
-    'flex h-12 w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500';
+    'ui-transition ui-press ui-focus-ring flex h-12 w-full items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-900 shadow-sm hover:border-slate-300 hover:bg-slate-50';
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="card w-full max-w-md space-y-4 p-6">
+      <motion.div className="card w-full max-w-md space-y-4 p-6" variants={fadeInUp} initial="initial" animate="animate">
         <div>
           <p className="text-xs font-semibold uppercase text-slate-500">Accedé ahora</p>
           <h1 className="text-2xl font-bold text-slate-900">Continuar gratis</h1>
@@ -72,7 +74,7 @@ export default function LoginPage() {
         <button onClick={() => router.replace('/')} className="btn-secondary w-full justify-center rounded-xl px-4 py-2">
           Cancelar y volver
         </button>
-      </div>
+      </motion.div>
     </main>
   );
 }

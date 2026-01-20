@@ -19,7 +19,7 @@ export const ShipmentCard = ({
     onCopy?.(code);
   };
   return (
-    <div className="card panel-hover space-y-3 p-4">
+    <div className="card ui-hover-lift space-y-3 p-4">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-[rgb(var(--foreground))]">{shipment.alias}</p>
@@ -34,7 +34,7 @@ export const ShipmentCard = ({
         </div>
         <button
           onClick={() => copy(shipment.code)}
-          className="rounded-lg p-2 text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
+          className="ui-transition ui-icon-press ui-focus-ring rounded-lg p-2 text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
           title="Copiar código"
         >
           <Copy className="h-4 w-4" />
@@ -45,12 +45,15 @@ export const ShipmentCard = ({
         <span>ETA: {shipment.eta}</span>
       </div>
       <div className="flex items-center justify-between">
-        <Link href={`/shipments/${shipment.id}`} className="text-sm font-semibold text-sky-600">
+        <Link
+          href={`/shipments/${shipment.id}`}
+          className="ui-transition ui-focus-ring text-sm font-semibold text-sky-600 hover:text-sky-500"
+        >
           Ver detalle
         </Link>
         <button
           onClick={() => onDelete(shipment.id)}
-          className="text-sm font-semibold text-rose-600 transition hover:text-rose-700"
+          className="ui-transition ui-focus-ring text-sm font-semibold text-rose-600 hover:text-rose-500"
           title="Eliminar"
         >
           <Trash2 className="h-4 w-4" />

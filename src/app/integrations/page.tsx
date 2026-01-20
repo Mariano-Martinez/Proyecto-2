@@ -5,7 +5,7 @@ import { useAuthGuard } from '@/lib/hooks';
 import { getPlan } from '@/lib/storage';
 import { Plan } from '@/lib/types';
 import { ArrowUpRightIcon, LockClosedIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 
 const integrations = [
   { name: 'MercadoLibre', description: 'Sincronizá ventas e importá trackings.', plan: Plan.BUSINESS, status: 'Beta' },

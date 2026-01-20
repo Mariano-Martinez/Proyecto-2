@@ -17,8 +17,11 @@
     "clsx": "2.1.1",
     "@heroicons/react": "2.1.5",
     "cheerio": "1.0.0",
+    "lucide-react": "0.451.0",
     "date-fns": "4.1.0",
-    "playwright": "1.47.2"
+    "next-themes": "0.3.0",
+    "playwright": "1.47.2",
+    "recharts": "2.12.7"
   },
   "devDependencies": {
     "@types/node": "22.7.4",

@@ -27,9 +27,6 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
         </button>
 
         <div className="flex flex-1 items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-sky-400">
-            <div className="h-5 w-5 rounded-md border border-sky-400/40" />
-          </div>
           <div className="relative w-full max-w-xl">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[rgb(var(--muted-foreground))]" />
             <input

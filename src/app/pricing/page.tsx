@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PricingCard } from '@/components/PricingCard';
 import { PricingComparison } from '@/components/PricingComparison';
 import { useRouter } from 'next/navigation';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 
 const faqs = [
   {

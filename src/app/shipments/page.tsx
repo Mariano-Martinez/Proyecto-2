@@ -7,7 +7,7 @@ import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { ShipmentTable } from '@/components/ShipmentTable';
 import { ArrowDownTrayIcon, FunnelIcon, Squares2X2Icon, TableCellsIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
 
 export default function ShipmentsPage() {

@@ -1,20 +1,23 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ShipmentTable } from '@/components/ShipmentTable';
-import { ShipmentCard } from '@/components/ShipmentCard';
 import { AddShipmentModal } from '@/components/AddShipmentModal';
 import { useAuthGuard } from '@/lib/hooks';
-import { deleteShipment, getShipments, getUsage } from '@/lib/storage';
+import { deleteShipment, getShipments } from '@/lib/storage';
 import { Shipment, ShipmentStatus } from '@/lib/types';
-import Link from 'next/link';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
+import { KpiCard } from '@/components/dashboard/KpiCard';
+import { ShipmentsActivityChart } from '@/components/dashboard/ShipmentsActivityChart';
+import { RecentShipmentsList } from '@/components/dashboard/RecentShipmentsList';
+import { ShipmentsTable } from '@/components/dashboard/ShipmentsTable';
+import { ShipmentCard } from '@/components/ShipmentCard';
+import { AlertTriangle, CheckCircle2, Clock, Layers, Truck } from 'lucide-react';
 
 const metricOrder: { key: ShipmentStatus; label: string }[] = [
-  { key: ShipmentStatus.IN_TRANSIT, label: 'En tránsito' },
-  { key: ShipmentStatus.DELIVERED, label: 'Entregado' },
-  { key: ShipmentStatus.CUSTOMS, label: 'En aduana' },
+  { key: ShipmentStatus.IN_TRANSIT, label: 'En Tránsito' },
+  { key: ShipmentStatus.DELIVERED, label: 'Entregados' },
+  { key: ShipmentStatus.CUSTOMS, label: 'En Aduana' },
   { key: ShipmentStatus.ISSUE, label: 'Problemas' },
 ];
 
@@ -22,18 +25,15 @@ export default function DashboardPage() {
   const ready = useAuthGuard();
   const [shipments, setShipments] = useState<Shipment[]>([]);
   const [open, setOpen] = useState(false);
-  const [usage, setUsage] = useState<{ active: number; limit: number; plan: string }>({ active: 0, limit: 3, plan: 'FREE' });
   const { toast, showToast, clearToast } = useToast();
 
   useEffect(() => {
     if (!ready) return;
     setShipments(getShipments());
-    setUsage(getUsage());
   }, [ready]);
 
   const refresh = () => {
     setShipments(getShipments());
-    setUsage(getUsage());
   };
 
   const handleDelete = (id: string) => {
@@ -43,77 +43,102 @@ export default function DashboardPage() {
     showToast('Envío eliminado');
   };
 
+  const handleCopy = (code: string) => {
+    navigator.clipboard.writeText(code).catch(() => null);
+    showToast('Código copiado');
+  };
+
   const metrics = useMemo(() => {
     const counts: Record<string, number> = {};
-    shipments.forEach((s) => {
-      counts[s.status] = (counts[s.status] || 0) + 1;
+    shipments.forEach((shipment) => {
+      counts[shipment.status] = (counts[shipment.status] || 0) + 1;
     });
     return counts;
   }, [shipments]);
 
   if (!ready) return null;
 
+  const kpiConfigs = [
+    {
+      title: metricOrder[0].label,
+      value: metrics[ShipmentStatus.IN_TRANSIT] || 0,
+      trend: '↗ +12% vs última semana',
+      icon: Truck,
+      accentClass: 'bg-sky-500/15 text-sky-500 dark:text-sky-300',
+    },
+    {
+      title: metricOrder[1].label,
+      value: metrics[ShipmentStatus.DELIVERED] || 0,
+      trend: '↗ +12% vs última semana',
+      icon: CheckCircle2,
+      accentClass: 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-300',
+    },
+    {
+      title: metricOrder[2].label,
+      value: metrics[ShipmentStatus.CUSTOMS] || 0,
+      trend: '↗ +12% vs última semana',
+      icon: Layers,
+      accentClass: 'bg-amber-500/15 text-amber-500 dark:text-amber-300',
+    },
+    {
+      title: metricOrder[3].label,
+      value: metrics[ShipmentStatus.ISSUE] || 0,
+      trend: '↗ +12% vs última semana',
+      icon: AlertTriangle,
+      accentClass: 'bg-rose-500/15 text-rose-500 dark:text-rose-300',
+    },
+  ];
+
   return (
-    <AppShell>
+    <AppShell onPrimaryAction={() => setOpen(true)} primaryActionLabel="+ Agregar Tracking">
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-3">
-          <p className="text-sm font-semibold text-sky-600">Resumen</p>
-          <h1 className="text-3xl font-black text-slate-900">Dashboard</h1>
-          <p className="text-sm text-slate-600">Seguimiento rápido de tu operación y próximos pasos.</p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-[30px] font-bold leading-[36px] tracking-[-0.75px] text-[rgb(var(--foreground))]">
+              Panel Operativo
+            </h1>
+          </div>
+          <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))]">
+            <Clock className="h-4 w-4" />
+            Actualizado hace 5 minutos
+          </div>
         </div>
 
-        <div className="card grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-3 rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50/80 via-white to-white p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-slate-700">Plan actual</p>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-sky-700 ring-1 ring-sky-100">
-                Uso
-              </span>
-            </div>
-            <p className="text-xl font-bold text-slate-900">{usage.plan}</p>
-            <div className="h-2 w-full rounded-full bg-slate-200">
-              <div
-                className="h-2 rounded-full bg-sky-500 transition-all"
-                style={{ width: `${Math.min((usage.active / usage.limit) * 100, 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-slate-600">
-              {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit} envíos activos
-            </p>
-            <Link href="/pricing" className="inline-flex w-fit items-center gap-1 text-sm font-semibold text-sky-700 hover:text-sky-800">
-              Ver planes
-            </Link>
-          </div>
-          {metricOrder.map((metric) => (
-            <div key={metric.key} className="flex flex-col justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
-              <div>
-                <p className="text-xs uppercase tracking-wide text-slate-500">{metric.label}</p>
-                <p className="mt-2 text-3xl font-bold text-slate-900">{metrics[metric.key] || 0}</p>
-              </div>
-              <p className="text-xs font-medium text-slate-500">Últimos 7 días</p>
-            </div>
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {kpiConfigs.map((kpi) => (
+            <KpiCard key={kpi.title} {...kpi} />
           ))}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <ShipmentsActivityChart />
+          <RecentShipmentsList />
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Mis envíos</h2>
-            <p className="text-sm text-slate-600">Vista tabla en desktop y cards en mobile.</p>
+            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Mis envíos</h2>
+            <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
           </div>
-          <button onClick={() => setOpen(true)} className="btn-primary rounded-xl px-4 py-2">
-            Agregar tracking
-          </button>
+          <div className="flex items-center gap-2">
+            <button className="rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+              Exportar CSV
+            </button>
+            <button className="rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+              Filtrar
+            </button>
+          </div>
         </div>
 
         <div className="hidden lg:block">
-          <ShipmentTable shipments={shipments} onDelete={handleDelete} onCopy={() => showToast('Código copiado')} />
+          <ShipmentsTable shipments={shipments} onDelete={handleDelete} onCopy={handleCopy} />
         </div>
-        <div className="space-y-3 lg:hidden">
+        <div className="space-y-4 lg:hidden">
           {shipments.map((shipment) => (
-            <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => showToast('Código copiado')} />
+            <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => handleCopy(shipment.code)} />
           ))}
           {shipments.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600">
+            <div className="panel p-6 text-center text-sm text-[rgb(var(--muted-foreground))]">
               No tenés envíos todavía. Cargá tu primer tracking.
             </div>
           )}

@@ -3,7 +3,7 @@
 import { useAuthGuard } from '@/lib/hooks';
 import { getPlan, getUsage } from '@/lib/storage';
 import { useEffect, useState } from 'react';
-import { AppShell } from '@/components/AppShell';
+import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
 
 export default function SettingsPage() {

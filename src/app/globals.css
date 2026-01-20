@@ -3,8 +3,41 @@
 @tailwind utilities;
 
 :root {
-  --background: 248 249 252;
+  --background: 243 244 246;
   --foreground: 15 23 42;
+  --muted: 229 231 235;
+  --muted-foreground: 107 114 128;
+  --border: 209 213 219;
+  --accent: 37 99 235;
+  --accent-foreground: 255 255 255;
+  --panel-bg: 255 255 255;
+  --panel-border: 209 213 219;
+  --panel-hover-border: 148 163 184;
+  --panel-radius: 10px;
+  --panel-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --panel-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  --input-bg: 255 255 255;
+  --input-border: 209 213 219;
+  --focus-ring: 37 99 235;
+}
+
+.dark {
+  --background: 8 12 18;
+  --foreground: 226 232 240;
+  --muted: 14 18 26;
+  --muted-foreground: 148 163 184;
+  --border: 30 41 59;
+  --accent: 56 189 248;
+  --accent-foreground: 8 15 26;
+  --panel-bg: 22 27 34;
+  --panel-border: 48 54 61;
+  --panel-hover-border: 68 76 86;
+  --panel-radius: 10px;
+  --panel-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --panel-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+  --input-bg: 16 20 27;
+  --input-border: 48 54 61;
+  --focus-ring: 56 189 248;
 }
 
 body {
@@ -12,16 +45,31 @@ body {
   color: rgb(var(--foreground));
 }
 
+@layer base {
+  .dark .text-slate-900,
+  .dark .text-slate-800,
+  .dark .text-slate-700 {
+    color: rgb(var(--foreground));
+  }
+
+  .dark .text-slate-600,
+  .dark .text-slate-500 {
+    color: rgb(var(--muted-foreground));
+  }
+}
+
 .btn-primary {
-  @apply inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
+  @apply inline-flex items-center justify-center rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-500 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
 }
 
 .btn-secondary {
-  @apply inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:border-sky-200 hover:text-sky-700 hover:shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
+  @apply inline-flex items-center justify-center rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-sm font-semibold text-[rgb(var(--foreground))] transition hover:border-sky-200 hover:text-sky-700 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:opacity-60;
 }
 
 .card {
-  @apply rounded-2xl border border-slate-200 bg-white shadow-sm;
+  @apply border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))];
+  border-radius: var(--panel-radius);
+  transition: var(--panel-transition);
 }
 
 .badge {
@@ -29,26 +77,63 @@ body {
 }
 
 .input {
-  @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm shadow-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-100;
+  @apply block w-full rounded-xl border border-[rgb(var(--input-border))] bg-[rgb(var(--input-bg))] px-3 py-2 text-sm focus:border-sky-400 focus:outline-none focus:ring-2 focus:ring-sky-400/20;
+  box-shadow: 0 0 0 1px rgba(var(--focus-ring), 0);
 }
 
 .label {
-  @apply text-sm font-semibold text-slate-700;
+  @apply text-sm font-semibold text-[rgb(var(--foreground))];
 }
 
 .table-cell {
-  @apply px-3 py-2 text-sm text-slate-700;
+  @apply px-3 py-2 text-sm text-[rgb(var(--foreground))];
 }
 
 .section-title {
-  @apply text-2xl font-bold text-slate-900;
+  @apply text-2xl font-bold text-[rgb(var(--foreground))];
 }
 
 .section-subtitle {
-  @apply mt-2 text-base text-slate-600;
+  @apply mt-2 text-base text-[rgb(var(--muted-foreground))];
 }
 
 @layer utilities {
+  .panel {
+    background: rgb(var(--panel-bg));
+    border: 1px solid rgb(var(--panel-border));
+    border-radius: var(--panel-radius);
+    transition: var(--panel-transition);
+  }
+
+  .panel-hover {
+    transition: var(--panel-transition);
+  }
+
+  .panel-hover:hover {
+    border-color: rgb(var(--panel-hover-border));
+    transform: translateY(-1px);
+    box-shadow: var(--panel-shadow);
+  }
+
+  .panel-hover:active {
+    transform: scale(0.99);
+  }
+
+  .icon-badge {
+    border-radius: 10px;
+    border: 1px solid rgba(var(--panel-border), 0.8);
+    transition: var(--panel-transition);
+  }
+
+  .focus-ring {
+    box-shadow: 0 0 0 2px rgba(var(--focus-ring), 0.2);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  }
+
   .gradient-hero {
     background: radial-gradient(circle at 20% 20%, rgba(14, 165, 233, 0.12), transparent 35%),
       radial-gradient(circle at 80% 0%, rgba(56, 189, 248, 0.12), transparent 30%),

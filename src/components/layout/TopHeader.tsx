@@ -12,7 +12,7 @@ type TopHeaderProps = {
 };
 
 export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primaryActionHref }: TopHeaderProps) => {
-  const actionLabel = primaryActionLabel ?? '+ Agregar Tracking';
+  const actionLabel = primaryActionLabel ?? 'Agregar Tracking';
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-[rgb(var(--panel-border))] bg-[rgb(var(--background))]/90 backdrop-blur">

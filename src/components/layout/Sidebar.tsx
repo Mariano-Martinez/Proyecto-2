@@ -59,7 +59,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
 
   return (
     <>
-      <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-[rgb(var(--panel-border))] lg:bg-[rgb(var(--background))] lg:px-6 lg:py-8 lg:text-[rgb(var(--foreground))]">
+      <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-[rgb(var(--panel-border))] lg:bg-[rgb(var(--background))] lg:px-6 lg:py-8 lg:text-[rgb(var(--foreground))] lg:shadow-[0_0_30px_rgba(0,0,0,0.15)] lg:overflow-y-auto">
         <div className="flex items-center gap-3 text-lg font-semibold text-[rgb(var(--foreground))]">
           <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-sky-500 to-blue-600 shadow-sm shadow-sky-500/30">
             <LayoutGrid className="h-5 w-5 text-white" />

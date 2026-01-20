@@ -1,9 +1,10 @@
 'use client';
 
 import { Shipment } from '@/lib/types';
-import { Copy, MoreHorizontal, Trash2 } from 'lucide-react';
+import { ArrowUpRight, Copy, Trash2 } from 'lucide-react';
 import { Panel } from '@/components/ui/Panel';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import Link from 'next/link';
 
 type ShipmentsTableProps = {
   shipments: Shipment[];
@@ -43,10 +44,17 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
                 <td className="px-4 py-4 text-[rgb(var(--muted-foreground))]">{shipment.updatedAt}</td>
                 <td className="px-4 py-4 text-right">
                   <div className="inline-flex items-center gap-2">
+                    <Link
+                      href={`/shipments/${shipment.id}`}
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      aria-label="Ver envío"
+                    >
+                      <ArrowUpRight className="h-4 w-4" />
+                    </Link>
                     <button
                       type="button"
                       onClick={() => onCopy(shipment.code)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
                       aria-label="Copiar código"
                     >
                       <Copy className="h-4 w-4" />
@@ -54,17 +62,10 @@ export const ShipmentsTable = ({ shipments, onDelete, onCopy }: ShipmentsTablePr
                     <button
                       type="button"
                       onClick={() => onDelete(shipment.id)}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-rose-400 active:scale-95"
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-rose-400 active:scale-95"
                       aria-label="Eliminar envío"
                     >
                       <Trash2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      type="button"
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
-                      aria-label="Más opciones"
-                    >
-                      <MoreHorizontal className="h-4 w-4" />
                     </button>
                   </div>
                 </td>

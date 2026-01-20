@@ -102,7 +102,7 @@ export default function DashboardPage() {
               Panel Operativo
             </h1>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))]">
+          <div className="flex items-center gap-2 rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))]">
             <Clock className="h-4 w-4" />
             Actualizado hace 5 minutos
           </div>
@@ -125,10 +125,10 @@ export default function DashboardPage() {
             <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
           </div>
           <div className="flex items-center gap-2">
-            <button className="rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
               Exportar CSV
             </button>
-            <button className="rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
+            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
               Filtrar
             </button>
           </div>

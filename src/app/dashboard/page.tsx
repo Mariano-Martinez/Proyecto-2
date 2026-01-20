@@ -90,7 +90,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <AppShell onPrimaryAction={() => setOpen(true)} primaryActionLabel="+ Agregar Tracking">
+    <AppShell onPrimaryAction={() => setOpen(true)} primaryActionLabel="Agregar Tracking">
       <div className="flex flex-col gap-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

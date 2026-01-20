@@ -1,14 +1,7 @@
 'use client';
 
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Panel } from '@/components/ui/Panel';
 
 // Mock dataset for UI preview (replace with real analytics data when available).
 const chartData = [
@@ -22,21 +15,21 @@ const chartData = [
 ];
 
 const tooltipStyles = {
-  backgroundColor: 'rgba(15, 23, 42, 0.9)',
-  border: '1px solid rgba(148, 163, 184, 0.2)',
-  borderRadius: '12px',
+  backgroundColor: 'rgba(17, 24, 39, 0.9)',
+  border: '1px solid rgba(148, 163, 184, 0.25)',
+  borderRadius: '10px',
   padding: '8px 12px',
 };
 
 export const ShipmentsActivityChart = () => {
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-sm dark:shadow-[0_20px_40px_rgba(0,0,0,0.3)]">
+    <Panel interactive className="flex h-full flex-col p-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h3 className="text-lg font-semibold text-[rgb(var(--foreground))]">Actividad de Envíos</h3>
           <p className="mt-1 text-sm text-[rgb(var(--muted-foreground))]">Frecuencia de entregas vs tránsitos</p>
         </div>
-        <select className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] outline-none">
+        <select className="rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] outline-none transition hover:border-[rgb(var(--panel-hover-border))] focus:border-sky-400 focus:ring-2 focus:ring-sky-400/20">
           <option>Últimos 7 días</option>
         </select>
       </div>
@@ -54,8 +47,8 @@ export const ShipmentsActivityChart = () => {
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 6" stroke="rgba(148, 163, 184, 0.2)" vertical={false} />
-            <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'rgba(148, 163, 184, 0.8)', fontSize: 12 }} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'rgba(148, 163, 184, 0.8)', fontSize: 12 }} />
+            <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'rgb(var(--muted-foreground))', fontSize: 12 }} />
+            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'rgb(var(--muted-foreground))', fontSize: 12 }} />
             <Tooltip contentStyle={tooltipStyles} labelStyle={{ color: '#e2e8f0' }} />
             <Area
               type="monotone"
@@ -78,6 +71,6 @@ export const ShipmentsActivityChart = () => {
           </AreaChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </Panel>
   );
 };

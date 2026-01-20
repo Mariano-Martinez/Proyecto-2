@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { StatusBadge } from './StatusBadge';
 import { Shipment } from '@/lib/types';
-import { ClipboardDocumentIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Copy, Trash2 } from 'lucide-react';
 
 export const ShipmentCard = ({
   shipment,
@@ -19,7 +19,7 @@ export const ShipmentCard = ({
     onCopy?.(code);
   };
   return (
-    <div className="card space-y-3 p-4">
+    <div className="card panel-hover space-y-3 p-4">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-semibold text-[rgb(var(--foreground))]">{shipment.alias}</p>
@@ -37,7 +37,7 @@ export const ShipmentCard = ({
           className="rounded-lg p-2 text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
           title="Copiar código"
         >
-          <ClipboardDocumentIcon className="h-4 w-4" />
+          <Copy className="h-4 w-4" />
         </button>
       </div>
       <div className="flex items-center justify-between text-xs text-[rgb(var(--muted-foreground))]">
@@ -53,7 +53,7 @@ export const ShipmentCard = ({
           className="text-sm font-semibold text-rose-600 transition hover:text-rose-700"
           title="Eliminar"
         >
-          <TrashIcon className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </button>
       </div>
     </div>

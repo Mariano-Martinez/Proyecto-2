@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
-import { CreditCard, LayoutGrid, Package, Puzzle, Settings, X } from 'lucide-react';
+import { CreditCard, LayoutGrid, Package, PlugZap, Settings, X } from 'lucide-react';
 import { PlanCard } from '@/components/dashboard/PlanCard';
 import { getUsage } from '@/lib/storage';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { href: '/shipments', label: 'Mis Envíos', icon: Package },
-  { href: '/integrations', label: 'Integraciones', icon: Puzzle },
+  { href: '/integrations', label: 'Integraciones', icon: PlugZap },
   { href: '/pricing', label: 'Planes', icon: CreditCard },
   { href: '/settings', label: 'Configuración', icon: Settings },
 ];
@@ -38,13 +38,18 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
             key={item.href}
             href={item.href}
             className={clsx(
-              'group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition',
+              'group flex items-center gap-3 rounded-[10px] px-4 py-3 text-sm font-semibold transition',
               active
-                ? 'bg-sky-500/15 text-sky-500 shadow-[0_0_0_1px_rgba(56,189,248,0.35)] dark:text-sky-300'
-                : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))] dark:hover:bg-white/5 dark:hover:text-white'
+                ? 'bg-sky-500/15 text-sky-400 shadow-[0_0_0_1px_rgba(56,189,248,0.3)]'
+                : 'text-[rgb(var(--muted-foreground))] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-[rgb(var(--foreground))]'
             )}
           >
-            <item.icon className="h-5 w-5" />
+            <item.icon
+              className={clsx(
+                'h-5 w-5 transition',
+                active ? 'text-sky-400' : 'text-[rgb(var(--muted-foreground))] group-hover:text-sky-400'
+              )}
+            />
             {item.label}
           </Link>
         );
@@ -54,9 +59,9 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
 
   return (
     <>
-      <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-[rgb(var(--border))] lg:bg-[rgb(var(--card))] lg:px-6 lg:py-8 lg:text-[rgb(var(--foreground))] dark:lg:bg-[rgba(9,12,18,0.95)]">
+      <aside className="hidden lg:flex lg:w-72 lg:flex-col lg:border-r lg:border-[rgb(var(--panel-border))] lg:bg-[rgb(var(--background))] lg:px-6 lg:py-8 lg:text-[rgb(var(--foreground))]">
         <div className="flex items-center gap-3 text-lg font-semibold text-[rgb(var(--foreground))]">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-lg shadow-sky-500/30">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-sky-500 to-blue-600 shadow-sm shadow-sky-500/30">
             <LayoutGrid className="h-5 w-5 text-white" />
           </div>
           TrackHub AR
@@ -78,13 +83,13 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
 
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-[rgb(var(--card))] px-6 py-6 text-[rgb(var(--foreground))] shadow-2xl transition-transform lg:hidden',
+          'fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-[rgb(var(--background))] px-6 py-6 text-[rgb(var(--foreground))] shadow-2xl transition-transform lg:hidden',
           open ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 text-lg font-semibold">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 shadow-lg shadow-sky-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-gradient-to-br from-sky-500 to-blue-600 shadow-sm shadow-sky-500/30">
               <LayoutGrid className="h-5 w-5 text-white" />
             </div>
             TrackHub AR
@@ -92,7 +97,7 @@ export const Sidebar = ({ open, onClose }: SidebarProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--border))]"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
             aria-label="Cerrar menú"
           >
             <X className="h-4 w-4" />

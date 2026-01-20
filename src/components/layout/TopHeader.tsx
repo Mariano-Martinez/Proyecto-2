@@ -12,7 +12,7 @@ type TopHeaderProps = {
 };
 
 export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primaryActionHref }: TopHeaderProps) => {
-  const actionLabel = primaryActionLabel ?? '+ Agregar Tracking';
+  const actionLabel = primaryActionLabel ?? 'Agregar Tracking';
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-[rgb(var(--panel-border))] bg-[rgb(var(--background))]/90 backdrop-blur">
@@ -27,9 +27,6 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
         </button>
 
         <div className="flex flex-1 items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-sky-400">
-            <div className="h-5 w-5 rounded-md border border-sky-400/40" />
-          </div>
           <div className="relative w-full max-w-xl">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[rgb(var(--muted-foreground))]" />
             <input
@@ -43,7 +40,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
         <div className="flex items-center gap-3">
           <button
             type="button"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
             aria-label="Notificaciones"
           >
             <Bell className="h-5 w-5" />
@@ -52,7 +49,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           {primaryActionHref ? (
             <Link
               href={primaryActionHref}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(56,189,248,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_24px_rgba(56,189,248,0.45)] active:scale-95"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>
@@ -61,7 +58,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
             <button
               type="button"
               onClick={onPrimaryAction}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(56,189,248,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_24px_rgba(56,189,248,0.45)] active:scale-95"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>

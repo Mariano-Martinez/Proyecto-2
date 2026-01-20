@@ -16,9 +16,9 @@ export const AppShell = ({ children, onPrimaryAction, primaryActionLabel, primar
 
   return (
     <div className="min-h-screen bg-[rgb(var(--background))] text-[rgb(var(--foreground))]">
-      <div className="flex min-h-screen">
+      <div className="relative min-h-screen">
         <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col lg:pl-72">
           <TopHeader
             onMenu={() => setSidebarOpen(true)}
             onPrimaryAction={onPrimaryAction}

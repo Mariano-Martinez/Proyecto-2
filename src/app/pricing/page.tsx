@@ -36,15 +36,15 @@ export default function PricingPage() {
               Cambiá entre mensual/anual, simulá upgrades y guardamos tu elección en localStorage.
             </p>
           </div>
-          <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
-            <span className={!annual ? 'font-semibold text-slate-900' : 'text-slate-500'}>Mensual</span>
+          <div className="panel flex items-center gap-3 rounded-full px-3 py-2">
+            <span className={!annual ? 'font-semibold text-[rgb(var(--foreground))]' : 'text-[rgb(var(--muted-foreground))]'}>Mensual</span>
             <label className="relative inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" checked={annual} onChange={(e) => setAnnual(e.target.checked)} />
-              <div className="peer h-6 w-11 rounded-full bg-slate-200 after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:bg-sky-500 peer-checked:after:translate-x-full" />
+              <div className="peer h-6 w-11 rounded-full bg-[rgb(var(--muted))] after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-[rgb(var(--panel-bg))] after:transition peer-checked:bg-sky-500 peer-checked:after:translate-x-full" />
             </label>
             <div className="flex items-center gap-1">
-              <span className={annual ? 'font-semibold text-slate-900' : 'text-slate-500'}>Anual</span>
-              <span className="rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold uppercase text-emerald-700 ring-1 ring-emerald-100">
+              <span className={annual ? 'font-semibold text-[rgb(var(--foreground))]' : 'text-[rgb(var(--muted-foreground))]'}>Anual</span>
+              <span className="rounded-full bg-emerald-500/10 px-2 py-1 text-[10px] font-bold uppercase text-emerald-400 ring-1 ring-emerald-500/20">
                 Ahorra 15%
               </span>
             </div>
@@ -70,7 +70,7 @@ export default function PricingPage() {
             <h3 className="text-xl font-bold text-slate-900">Preguntas frecuentes</h3>
             <div className="mt-4 space-y-3">
               {faqs.map((item) => (
-                <div key={item.q} className="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                <div key={item.q} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
                   <p className="font-semibold text-slate-900">{item.q}</p>
                   <p className="text-sm text-slate-600">{item.a}</p>
                 </div>
@@ -84,7 +84,7 @@ export default function PricingPage() {
               <li>• Persistencia local lista para conectarse a tus APIs.</li>
               <li>• Flujo de upgrade guiado desde el panel.</li>
             </ul>
-            <div className="rounded-xl bg-sky-50 p-4 text-sky-700">
+            <div className="rounded-xl bg-sky-500/10 p-4 text-sky-400">
               Conecta tu backend cuando quieras: reemplazá el almacenamiento local por tus endpoints.
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function PricingPage() {
 
         <div className="card mt-4 flex flex-col items-start gap-3 p-6 text-left sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs uppercase text-slate-500">¿Listo para empezar?</p>
+            <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">¿Listo para empezar?</p>
             <h3 className="text-xl font-bold text-slate-900">Elegí un plan y probá TrackHub AR</h3>
             <p className="text-sm text-slate-600">Podés cambiar de plan luego desde Configuración.</p>
           </div>

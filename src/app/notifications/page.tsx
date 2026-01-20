@@ -1,10 +1,24 @@
+'use client';
+
+import { AppShell } from '@/components/layout/AppShell';
+import { useAuthGuard } from '@/lib/hooks';
+
 export default function NotificationsPage() {
+  const ready = useAuthGuard();
+
+  if (!ready) return null;
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="card max-w-lg p-6 text-center">
-        <p className="text-lg font-bold text-slate-900">Notificaciones</p>
-        <p className="text-sm text-slate-600">Este apartado es un placeholder. Configurá alertas desde el dashboard.</p>
+    <AppShell>
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-4 rounded-2xl border border-dashed border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] p-10 text-center">
+        <p className="text-lg font-bold text-[rgb(var(--foreground))]">Notificaciones</p>
+        <p className="text-sm text-[rgb(var(--muted-foreground))]">
+          Este apartado es un placeholder. Configurá alertas desde el dashboard.
+        </p>
+        <div className="mt-2 rounded-xl bg-sky-500/10 px-4 py-2 text-xs font-semibold text-sky-400">
+          Próximamente vas a poder activar reglas, canales y alertas personalizadas.
+        </div>
       </div>
-    </main>
+    </AppShell>
   );
 }

@@ -121,11 +121,13 @@ export default function ShipmentsPage() {
             Activos: {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit}
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+        <div className="panel flex items-center gap-2 rounded-full p-1">
           <button
             onClick={() => setView('cards')}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'cards' ? 'bg-sky-50 text-sky-700 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:bg-slate-50'
+              view === 'cards'
+                ? 'bg-[rgb(var(--muted))] text-[rgb(var(--foreground))] shadow-sm ring-1 ring-[rgb(var(--border))]'
+                : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))]'
             }`}
           >
             <Squares2X2Icon className="mr-1 inline h-4 w-4" /> Cards
@@ -133,7 +135,9 @@ export default function ShipmentsPage() {
           <button
             onClick={() => setView('table')}
             className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'table' ? 'bg-sky-50 text-sky-700 shadow-sm ring-1 ring-sky-100' : 'text-slate-600 hover:bg-slate-50'
+              view === 'table'
+                ? 'bg-[rgb(var(--muted))] text-[rgb(var(--foreground))] shadow-sm ring-1 ring-[rgb(var(--border))]'
+                : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))]'
             }`}
           >
             <TableCellsIcon className="mr-1 inline h-4 w-4" /> Tabla
@@ -141,9 +145,9 @@ export default function ShipmentsPage() {
         </div>
       </div>
 
-      <div className="mt-4 grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div className="panel mt-4 grid gap-4 rounded-2xl p-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Estado</p>
+          <p className="text-xs uppercase tracking-wide text-[rgb(var(--muted-foreground))]">Estado</p>
           <select className="input" value={status} onChange={(e) => setStatus(e.target.value)}>
             <option value="all">Todos</option>
             {Object.values(ShipmentStatus).map((status) => (
@@ -154,7 +158,7 @@ export default function ShipmentsPage() {
           </select>
         </div>
         <div className="space-y-1">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Courier</p>
+          <p className="text-xs uppercase tracking-wide text-[rgb(var(--muted-foreground))]">Courier</p>
           <select className="input" value={courier} onChange={(e) => setCourier(e.target.value)}>
             <option value="all">Todos</option>
             {Object.values(Courier).map((c) => (
@@ -165,7 +169,7 @@ export default function ShipmentsPage() {
           </select>
         </div>
         <div className="sm:col-span-2">
-          <p className="text-xs uppercase tracking-wide text-slate-500">Buscar</p>
+          <p className="text-xs uppercase tracking-wide text-[rgb(var(--muted-foreground))]">Buscar</p>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             <input
               className="input"
@@ -173,7 +177,7 @@ export default function ShipmentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="hidden rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-600 ring-1 ring-slate-200 sm:inline-flex">
+            <span className="hidden rounded-xl bg-[rgb(var(--muted))] px-3 py-2 text-xs text-[rgb(var(--muted-foreground))] ring-1 ring-[rgb(var(--border))] sm:inline-flex">
               <FunnelIcon className="mr-1 h-4 w-4" /> Filtros móviles acá
             </span>
           </div>
@@ -181,12 +185,12 @@ export default function ShipmentsPage() {
       </div>
 
       {selected.size > 0 && (
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3 shadow-sm">
-          <div className="text-sm font-semibold text-slate-800">{selected.size} seleccionados</div>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sky-500/20 bg-sky-500/10 px-4 py-3">
+          <div className="text-sm font-semibold text-[rgb(var(--foreground))]">{selected.size} seleccionados</div>
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={exportSelected}
-              className="btn-secondary rounded-xl px-4 py-2 text-slate-800"
+              className="btn-secondary rounded-xl px-4 py-2"
               title="Exportar selección"
             >
               <ArrowDownTrayIcon className="mr-1 inline h-4 w-4" /> Exportar CSV
@@ -209,11 +213,11 @@ export default function ShipmentsPage() {
               onToggleSelect={toggleSelect}
               onCopy={handleCopy}
             />
-            <div className="mt-2 flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+            <div className="panel mt-2 flex items-center justify-between rounded-xl px-4 py-3 text-sm text-[rgb(var(--muted-foreground))]">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  className="h-4 w-4 rounded border-slate-300"
+                  className="h-4 w-4 rounded border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] text-sky-500"
                   checked={selected.size === paginated.length && paginated.length > 0}
                   onChange={(e) => {
                     if (e.target.checked) {
@@ -227,17 +231,17 @@ export default function ShipmentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                  className="rounded-lg border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-sky-400/60 hover:text-sky-300 disabled:opacity-50"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
                   Anterior
                 </button>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-[rgb(var(--muted-foreground))]">
                   Página {page} de {totalPages}
                 </span>
                 <button
-                  className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                  className="rounded-lg border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-sky-400/60 hover:text-sky-300 disabled:opacity-50"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
@@ -252,25 +256,25 @@ export default function ShipmentsPage() {
               <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={handleCopy} />
             ))}
             {filtered.length === 0 && (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-600">
+              <div className="rounded-2xl border border-dashed border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] p-6 text-center text-sm text-[rgb(var(--muted-foreground))]">
                 No hay envíos con estos filtros.
               </div>
             )}
             {filtered.length > pageSize && (
-              <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
+              <div className="panel flex items-center justify-between rounded-xl px-4 py-3 text-sm text-[rgb(var(--muted-foreground))]">
                 <div>
                   Página {page} de {totalPages}
                 </div>
                 <div className="flex gap-2">
                   <button
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                    className="rounded-lg border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-sky-400/60 hover:text-sky-300 disabled:opacity-50"
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                     disabled={page === 1}
                   >
                     Anterior
                   </button>
                   <button
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-sky-200 hover:text-sky-800 disabled:opacity-50"
+                    className="rounded-lg border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-sky-400/60 hover:text-sky-300 disabled:opacity-50"
                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                   >

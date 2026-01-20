@@ -43,12 +43,12 @@ export default function IntegrationsPage() {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <span
-                  className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold text-slate-900 ring-1 ring-slate-200 ${
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl text-sm font-bold ring-1 ${
                     item.name === 'MercadoLibre'
-                      ? 'bg-amber-50 text-amber-700 ring-amber-100'
+                      ? 'bg-amber-500/10 text-amber-400 ring-amber-500/30'
                       : item.name === 'Gmail'
-                        ? 'bg-rose-50 text-rose-700 ring-rose-100'
-                        : 'bg-emerald-50 text-emerald-700 ring-emerald-100'
+                        ? 'bg-rose-500/10 text-rose-400 ring-rose-500/30'
+                        : 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/30'
                   }`}
                   aria-hidden
                 >
@@ -59,11 +59,13 @@ export default function IntegrationsPage() {
                   <p className="text-xs text-slate-500">Sincronización segura</p>
                 </div>
               </div>
-              <span className="badge bg-slate-50 text-slate-700 ring-1 ring-slate-200">{item.status}</span>
+              <span className="badge bg-[rgb(var(--muted))] text-[rgb(var(--muted-foreground))] ring-1 ring-[rgb(var(--border))]">
+                {item.status}
+              </span>
             </div>
             <p className="text-sm text-slate-600">{item.description}</p>
-            <div className="flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 ring-1 ring-slate-200">
-              <LockClosedIcon className="h-4 w-4 text-slate-400" /> Disponible en Business+
+            <div className="flex items-center gap-2 rounded-xl bg-[rgb(var(--muted))] px-3 py-2 text-xs font-semibold text-[rgb(var(--muted-foreground))] ring-1 ring-[rgb(var(--border))]">
+              <LockClosedIcon className="h-4 w-4 text-[rgb(var(--muted-foreground))]" /> Disponible en Business+
             </div>
             <div className="flex flex-1 items-end justify-between gap-2">
               <button
@@ -78,23 +80,23 @@ export default function IntegrationsPage() {
       </div>
 
       {selectedIntegration && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4">
-          <div className="card w-full max-w-lg p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4">
+          <div className="card glass-card w-full max-w-lg p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase text-slate-500">Integración</p>
+                <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">Integración</p>
                 <h3 className="text-xl font-bold text-slate-900">{selectedIntegration.name}</h3>
               </div>
               <button
                 onClick={() => setSelectedIntegration(null)}
-                className="rounded-lg p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+                className="rounded-lg p-1 text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
                 aria-label="Cerrar"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
             </div>
             <p className="mt-2 text-sm text-slate-600">{selectedIntegration.description}</p>
-            <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-slate-700">
+            <ul className="mt-4 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--muted-foreground))]">
               <li>Resumen de datos sincronizados y próximos pasos.</li>
               <li>Requiere plan Business+ para habilitar conexiones.</li>
               <li>Configuración guiada y auditoría de permisos.</li>

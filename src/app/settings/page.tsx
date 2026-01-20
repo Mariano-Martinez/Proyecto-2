@@ -45,23 +45,23 @@ export default function SettingsPage() {
 
         <div className="card space-y-4 p-5">
           <h3 className="text-lg font-bold text-slate-900">Preferencias</h3>
-          <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
+          <div className="flex items-center justify-between rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
             <div>
               <p className="text-sm font-semibold text-slate-900">Notificaciones</p>
-              <p className="text-xs text-slate-500">Email y push</p>
+              <p className="text-xs text-[rgb(var(--muted-foreground))]">Email y push</p>
             </div>
             <label className="inline-flex cursor-pointer items-center">
               <input type="checkbox" className="peer sr-only" defaultChecked />
-              <div className="h-6 w-11 rounded-full bg-slate-300 after:ml-[2px] after:block after:h-5 after:w-5 after:rounded-full after:bg-white after:transition peer-checked:bg-sky-500" />
+              <div className="h-6 w-11 rounded-full bg-[rgb(var(--border))] after:ml-[2px] after:block after:h-5 after:w-5 after:rounded-full after:bg-[rgb(var(--panel-bg))] after:transition peer-checked:bg-sky-500" />
             </label>
           </div>
-          <div className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4">
+          <div className="flex items-center justify-between rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
             <div>
               <p className="text-sm font-semibold text-slate-900">Tema</p>
-              <p className="text-xs text-slate-500">Claro/Oscuro</p>
+              <p className="text-xs text-[rgb(var(--muted-foreground))]">Claro/Oscuro</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-600">Claro</span>
+              <span className="text-xs font-semibold text-[rgb(var(--muted-foreground))]">Claro</span>
               <label className="relative inline-flex cursor-pointer items-center">
                 <input
                   type="checkbox"
@@ -69,9 +69,9 @@ export default function SettingsPage() {
                   checked={theme === 'dark'}
                   onChange={(e) => setTheme(e.target.checked ? 'dark' : 'light')}
                 />
-                <div className="peer h-6 w-11 rounded-full bg-slate-300 after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition peer-checked:bg-sky-500 peer-checked:after:translate-x-full" />
+                <div className="peer h-6 w-11 rounded-full bg-[rgb(var(--border))] after:absolute after:left-[4px] after:top-[4px] after:h-4 after:w-4 after:rounded-full after:bg-[rgb(var(--panel-bg))] after:transition peer-checked:bg-sky-500 peer-checked:after:translate-x-full" />
               </label>
-              <span className="text-xs font-semibold text-slate-600">Oscuro</span>
+              <span className="text-xs font-semibold text-[rgb(var(--muted-foreground))]">Oscuro</span>
             </div>
           </div>
           <div className="flex justify-end">
@@ -85,17 +85,17 @@ export default function SettingsPage() {
         <div className="card space-y-3 p-5 lg:col-span-2">
           <h3 className="text-lg font-bold text-slate-900">Plan y facturación</h3>
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-xl bg-sky-50 p-4">
-              <p className="text-xs uppercase text-slate-500">Plan actual</p>
-              <p className="text-xl font-bold text-slate-900">{usage.plan}</p>
+            <div className="rounded-xl border border-sky-500/20 bg-sky-500/10 p-4">
+              <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">Plan actual</p>
+              <p className="text-xl font-bold text-[rgb(var(--foreground))]">{usage.plan}</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs uppercase text-slate-500">Envíos activos</p>
-              <p className="text-xl font-bold text-slate-900">{usage.active}</p>
+            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
+              <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">Envíos activos</p>
+              <p className="text-xl font-bold text-[rgb(var(--foreground))]">{usage.active}</p>
             </div>
-            <div className="rounded-xl bg-slate-50 p-4">
-              <p className="text-xs uppercase text-slate-500">Límite</p>
-              <p className="text-xl font-bold text-slate-900">{usage.limit === Infinity ? '∞' : usage.limit}</p>
+            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--muted))] p-4">
+              <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">Límite</p>
+              <p className="text-xl font-bold text-[rgb(var(--foreground))]">{usage.limit === Infinity ? '∞' : usage.limit}</p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">

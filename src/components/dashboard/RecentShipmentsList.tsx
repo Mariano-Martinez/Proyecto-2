@@ -23,7 +23,7 @@ const formatRelativeTime = (timestamp: string) => {
 export const RecentShipmentsList = ({ shipments }: { shipments: Shipment[] }) => {
   const recentShipments = useMemo(() => {
     return [...shipments]
-      .sort((a, b) => Date.parse(b.lastUpdated) - Date.parse(a.lastUpdated))
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
       .slice(0, 3);
   }, [shipments]);
 
@@ -54,7 +54,7 @@ export const RecentShipmentsList = ({ shipments }: { shipments: Shipment[] }) =>
                 <div>
                   <p className="text-sm font-semibold text-[rgb(var(--foreground))]">{item.alias}</p>
                   <p className="text-xs text-[rgb(var(--muted-foreground))]">
-                    {item.courier} · {formatRelativeTime(item.lastUpdated)}
+                    {item.courier} · {formatRelativeTime(item.createdAt)}
                   </p>
                 </div>
               </div>

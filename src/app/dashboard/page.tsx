@@ -64,28 +64,28 @@ export default function DashboardPage() {
       value: metrics[ShipmentStatus.IN_TRANSIT] || 0,
       trend: '↗ +12% vs última semana',
       icon: Truck,
-      accentClass: 'bg-sky-500/15 text-sky-500 dark:text-sky-300',
+      accentClass: 'bg-sky-500/25 text-sky-400 dark:text-sky-300',
     },
     {
       title: metricOrder[1].label,
       value: metrics[ShipmentStatus.DELIVERED] || 0,
       trend: '↗ +12% vs última semana',
       icon: CheckCircle2,
-      accentClass: 'bg-emerald-500/15 text-emerald-500 dark:text-emerald-300',
+      accentClass: 'bg-emerald-500/25 text-emerald-400 dark:text-emerald-300',
     },
     {
       title: metricOrder[2].label,
       value: metrics[ShipmentStatus.CUSTOMS] || 0,
       trend: '↗ +12% vs última semana',
       icon: Layers,
-      accentClass: 'bg-amber-500/15 text-amber-500 dark:text-amber-300',
+      accentClass: 'bg-amber-500/25 text-amber-400 dark:text-amber-300',
     },
     {
       title: metricOrder[3].label,
       value: metrics[ShipmentStatus.ISSUE] || 0,
       trend: '↗ +12% vs última semana',
       icon: AlertTriangle,
-      accentClass: 'bg-rose-500/15 text-rose-500 dark:text-rose-300',
+      accentClass: 'bg-rose-500/25 text-rose-400 dark:text-rose-300',
     },
   ];
 

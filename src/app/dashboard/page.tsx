@@ -112,7 +112,7 @@ export default function DashboardPage() {
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <ShipmentsActivityChart />
-          <RecentShipmentsList />
+          <RecentShipmentsList shipments={shipments} />
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-4">

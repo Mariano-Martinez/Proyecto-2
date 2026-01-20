@@ -34,7 +34,15 @@ const writeLocal = (key: string, value: unknown) => {
 
 export const getShipments = (): Shipment[] => {
   if (typeof window === 'undefined') return [];
-  return readLocal<Shipment[]>(STORAGE_KEYS.shipments) ?? [];
+  const stored = readLocal<Shipment[]>(STORAGE_KEYS.shipments) ?? [];
+  const normalized = stored.map((shipment) => ({
+    ...shipment,
+    createdAt: shipment.createdAt ?? shipment.lastUpdated ?? nowISO(),
+  }));
+  if (normalized.some((shipment, index) => shipment.createdAt !== stored[index]?.createdAt)) {
+    writeLocal(STORAGE_KEYS.shipments, normalized);
+  }
+  return normalized;
 };
 
 export const addShipment = (data: {
@@ -58,6 +66,7 @@ export const addShipment = (data: {
     alias: data.alias?.trim() || 'Envío sin alias',
     courier,
     status: data.prefilled?.status ?? ShipmentStatus.CREATED,
+    createdAt,
     lastUpdated: data.prefilled?.lastUpdated ?? createdAt,
     origin: data.prefilled?.origin ?? 'Buenos Aires',
     destination: data.prefilled?.destination ?? 'Argentina',

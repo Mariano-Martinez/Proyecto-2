@@ -41,6 +41,7 @@ export type Shipment = {
   alias: string;
   courier: Courier;
   status: ShipmentStatus;
+  createdAt: string;
   lastUpdated: string;
   origin?: string;
   destination?: string;

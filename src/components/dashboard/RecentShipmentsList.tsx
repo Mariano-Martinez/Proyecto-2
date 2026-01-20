@@ -5,6 +5,7 @@ import { ChevronRight, PackageSearch, Truck } from 'lucide-react';
 import { Panel } from '@/components/ui/Panel';
 import { IconBadge } from '@/components/ui/IconBadge';
 import { Shipment } from '@/lib/types';
+import Link from 'next/link';
 
 const formatRelativeTime = (timestamp: string) => {
   const parsed = Date.parse(timestamp);
@@ -42,9 +43,11 @@ export const RecentShipmentsList = ({ shipments }: { shipments: Shipment[] }) =>
           </div>
         ) : (
           recentShipments.map((item) => (
-            <div
+            <Link
               key={item.id}
+              href={`/shipments/${item.id}`}
               className="panel flex items-center justify-between bg-[rgb(var(--muted))] px-4 py-3 transition hover:border-[rgb(var(--panel-hover-border))] hover:shadow-[0_8px_18px_rgba(0,0,0,0.2)]"
+              aria-label={`Ver envío ${item.alias}`}
             >
               <div className="flex items-center gap-3">
                 <IconBadge icon={Truck} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
@@ -56,7 +59,7 @@ export const RecentShipmentsList = ({ shipments }: { shipments: Shipment[] }) =>
                 </div>
               </div>
               <ChevronRight className="h-4 w-4 text-[rgb(var(--muted-foreground))]" />
-            </div>
+            </Link>
           ))
         )}
       </div>

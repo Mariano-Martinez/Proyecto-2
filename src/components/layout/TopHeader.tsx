@@ -52,7 +52,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           {primaryActionHref ? (
             <Link
               href={primaryActionHref}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(56,189,248,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_24px_rgba(56,189,248,0.45)] active:scale-95"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>
@@ -61,7 +61,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
             <button
               type="button"
               onClick={onPrimaryAction}
-              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_20px_rgba(56,189,248,0.35)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_24px_rgba(56,189,248,0.45)] active:scale-95"
+              className="inline-flex items-center gap-2 rounded-[10px] bg-gradient-to-r from-sky-500 via-sky-500 to-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:translate-y-[-1px] active:scale-95"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">{actionLabel}</span>

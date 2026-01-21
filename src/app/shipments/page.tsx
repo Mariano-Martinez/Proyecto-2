@@ -9,6 +9,7 @@ import { ShipmentTable } from '@/components/ShipmentTable';
 import { ArrowDownTrayIcon, FunnelIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
+import { AddShipmentModal } from '@/components/AddShipmentModal';
 
 export default function ShipmentsPage() {
   const ready = useAuthGuard();
@@ -20,6 +21,7 @@ export default function ShipmentsPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [usage, setUsage] = useState<{ active: number; limit: number }>({ active: 0, limit: 3 });
   const [page, setPage] = useState(1);
+  const [open, setOpen] = useState(false);
   const { toast, showToast, clearToast } = useToast();
   const pageSize = 6;
 
@@ -115,7 +117,7 @@ export default function ShipmentsPage() {
   if (!ready) return null;
 
   return (
-    <AppShell>
+    <AppShell onPrimaryAction={() => setOpen(true)} primaryActionLabel="Agregar Tracking">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-sm font-semibold text-sky-600">Gestión de envíos</p>
@@ -265,6 +267,7 @@ export default function ShipmentsPage() {
         )}
       </div>
       <Toast toast={toast} onClose={clearToast} />
+      <AddShipmentModal open={open} onClose={() => setOpen(false)} onCreated={refresh} />
     </AppShell>
   );
 }

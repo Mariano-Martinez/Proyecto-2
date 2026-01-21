@@ -58,7 +58,7 @@ export default function PricingPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-slate-900">Comparativa de features</h2>
-            <button onClick={() => router.push('/login')} className="btn-secondary rounded-xl px-4 py-2">
+            <button onClick={() => router.push('/')} className="btn-secondary rounded-xl px-4 py-2">
               Probar ahora
             </button>
           </div>
@@ -96,7 +96,7 @@ export default function PricingPage() {
             <h3 className="text-xl font-bold text-slate-900">Elegí un plan y probá TrackHub AR</h3>
             <p className="text-sm text-slate-600">Podés cambiar de plan luego desde Configuración.</p>
           </div>
-          <button onClick={() => router.push('/login')} className="btn-primary rounded-xl px-4 py-2">
+          <button onClick={() => router.push('/')} className="btn-primary rounded-xl px-4 py-2">
             Probar ahora
           </button>
         </div>

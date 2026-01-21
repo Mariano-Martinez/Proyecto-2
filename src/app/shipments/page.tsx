@@ -158,9 +158,6 @@ export default function ShipmentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="hidden rounded-xl bg-[rgb(var(--muted))] px-3 py-2 text-xs text-[rgb(var(--muted-foreground))] ring-1 ring-[rgb(var(--border))] sm:inline-flex">
-              <FunnelIcon className="mr-1 h-4 w-4" /> Filtros móviles acá
-            </span>
           </div>
         </div>
       </div>

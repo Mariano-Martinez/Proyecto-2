@@ -171,13 +171,19 @@ export default function HomePage() {
                   <ArrowRightIcon className="h-4 w-4" />
                 </button>
                 <p className="text-center text-xs text-slate-400">
-                  Al continuar, aceptás nuestros <span className="text-sky-300">Términos de Servicio</span> y{' '}
-                  <span className="text-sky-300">Política de Privacidad</span>
+                  Al continuar, aceptás nuestros{' '}
+                  <Link href="/terminos" className="text-sky-300 transition hover:text-sky-200">
+                    Términos de Servicio
+                  </Link>{' '}
+                  y{' '}
+                  <Link href="/privacidad" className="text-sky-300 transition hover:text-sky-200">
+                    Política de Privacidad
+                  </Link>
                 </p>
               </div>
             </div>
           </div>
-          </RevealSection>
+        </RevealSection>
         </section>
 
         <section>

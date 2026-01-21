@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Soporte — TrackHub AR',
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 export default function SoportePage() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-16">
+      <div className="mx-auto flex w-full max-w-6xl flex-col px-4 py-12 sm:py-16">
         <header className="space-y-2">
           <h1 className="text-3xl font-bold sm:text-4xl">Soporte — TrackHub AR (formal)</h1>
           <p className="text-sm text-slate-600 dark:text-slate-400">Última actualización: [COMPLETAR FECHA]</p>
@@ -76,6 +77,24 @@ export default function SoportePage() {
             <p>Asunto sugerido: “Sugerencia TrackHub AR”</p>
           </section>
         </div>
+
+        <footer className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 py-8 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400 sm:flex-row">
+          <div className="flex items-center gap-2">
+            <span className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500" />
+            © 2024 TrackHub AR. Todos los derechos reservados.
+          </div>
+          <div className="flex items-center gap-6 text-xs">
+            <Link href="/privacidad" className="transition hover:text-sky-500">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="transition hover:text-sky-500">
+              Términos
+            </Link>
+            <Link href="/soporte" className="transition hover:text-sky-500">
+              Soporte
+            </Link>
+          </div>
+        </footer>
       </div>
     </main>
   );

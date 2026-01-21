@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { PricingCard } from '@/components/PricingCard';
 import { PricingComparison } from '@/components/PricingComparison';
-import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/layout/AppShell';
 
 const faqs = [
@@ -23,7 +22,6 @@ const faqs = [
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
-  const router = useRouter();
 
   return (
     <AppShell>
@@ -56,12 +54,7 @@ export default function PricingPage() {
         </section>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-slate-900">Comparativa de features</h2>
-            <button onClick={() => router.push('/')} className="btn-secondary rounded-xl px-4 py-2">
-              Probar ahora
-            </button>
-          </div>
+          <h2 className="text-2xl font-bold text-slate-900">Comparativa de features</h2>
           <PricingComparison />
         </div>
 
@@ -90,16 +83,19 @@ export default function PricingPage() {
           </div>
         </section>
 
-        <div className="card mt-4 flex flex-col items-start gap-3 p-6 text-left sm:flex-row sm:items-center sm:justify-between">
+        <footer className="mt-4 flex flex-col items-center justify-between gap-4 border-t border-[rgb(var(--border))] py-8 text-xs text-[rgb(var(--muted-foreground))] sm:flex-row">
           <div>
-            <p className="text-xs uppercase text-[rgb(var(--muted-foreground))]">¿Listo para empezar?</p>
-            <h3 className="text-xl font-bold text-slate-900">Elegí un plan y probá TrackHub AR</h3>
-            <p className="text-sm text-slate-600">Podés cambiar de plan luego desde Configuración.</p>
+            <div className="flex items-center gap-2">
+              <span className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500" />
+              © 2024 TrackHub AR. Todos los derechos reservados.
+            </div>
           </div>
-          <button onClick={() => router.push('/')} className="btn-primary rounded-xl px-4 py-2">
-            Probar ahora
-          </button>
-        </div>
+          <div className="flex items-center gap-6 text-xs">
+            <span>Privacidad</span>
+            <span>Términos</span>
+            <span>Soporte</span>
+          </div>
+        </footer>
       </div>
     </AppShell>
   );

@@ -75,7 +75,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           <button
             type="button"
             onClick={handleLogout}
-            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition md:inline-flex"
+            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition hover:text-sky-400 md:inline-flex"
             aria-label="Cerrar sesión"
           >
             <span>Hola, Maria</span>

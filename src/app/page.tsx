@@ -9,12 +9,12 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowRightIcon, CheckBadgeIcon, EyeIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
 
 const couriers: { name: Courier; logo: string }[] = [
-  { name: Courier.OCA, logo: '/images/oca.svg' },
-  { name: Courier.CORREO_ARGENTINO, logo: '/images/correo.svg' },
+  { name: Courier.OCA, logo: '/couriers/oca.svg' },
+  { name: Courier.CORREO_ARGENTINO, logo: '/couriers/correo-argentino.svg' },
   { name: Courier.ANDREANI, logo: '/images/andreani.svg' },
-  { name: Courier.URBANO, logo: '/images/urbano.svg' },
-  { name: Courier.DHL, logo: '/images/dhl.svg' },
-  { name: Courier.FEDEX, logo: '/images/fedex.svg' },
+  { name: Courier.URBANO, logo: '/couriers/urbano.svg' },
+  { name: Courier.DHL, logo: '/couriers/dhl.svg' },
+  { name: Courier.FEDEX, logo: '/couriers/fedex.svg' },
 ];
 
 const RevealSection = ({ children, className }: { children: React.ReactNode; className?: string }) => {
@@ -216,8 +216,14 @@ export default function HomePage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {couriers.map((courier) => (
               <div key={courier.name} className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
-                  <Image src={courier.logo} alt={courier.name} width={40} height={24} className="h-6 w-auto object-contain" />
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 p-2">
+                  <Image
+                    src={courier.logo}
+                    alt={courier.name}
+                    width={56}
+                    height={56}
+                    className="h-full w-full object-contain"
+                  />
                 </div>
                 <p className="mt-4 text-sm font-semibold">{courier.name}</p>
               </div>

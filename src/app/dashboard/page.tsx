@@ -117,16 +117,8 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Mis envíos</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Envíos principales</h2>
             <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
-              Exportar CSV
-            </button>
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
-              Filtrar
-            </button>
           </div>
         </div>
 

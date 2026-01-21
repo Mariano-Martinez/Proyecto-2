@@ -6,7 +6,7 @@ import { deleteShipment, getShipments, getUsage } from '@/lib/storage';
 import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import { ShipmentCard } from '@/components/ShipmentCard';
 import { ShipmentTable } from '@/components/ShipmentTable';
-import { ArrowDownTrayIcon, FunnelIcon, Squares2X2Icon, TableCellsIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, FunnelIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
 
@@ -37,10 +37,13 @@ export default function ShipmentsPage() {
 
   useEffect(() => {
     if (!ready) return;
-    if (typeof window !== 'undefined') {
+    const updateView = () => {
       setView(window.innerWidth >= 1024 ? 'table' : 'cards');
-    }
+    };
+    updateView();
+    window.addEventListener('resize', updateView);
     refresh();
+    return () => window.removeEventListener('resize', updateView);
   }, [ready]);
 
   useEffect(() => {
@@ -121,28 +124,6 @@ export default function ShipmentsPage() {
             Activos: {usage.active} / {usage.limit === Infinity ? '∞' : usage.limit}
           </p>
         </div>
-        <div className="panel flex items-center gap-2 rounded-full p-1">
-          <button
-            onClick={() => setView('cards')}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'cards'
-                ? 'bg-[rgb(var(--muted))] text-[rgb(var(--foreground))] shadow-sm ring-1 ring-[rgb(var(--border))]'
-                : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))]'
-            }`}
-          >
-            <Squares2X2Icon className="mr-1 inline h-4 w-4" /> Cards
-          </button>
-          <button
-            onClick={() => setView('table')}
-            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-              view === 'table'
-                ? 'bg-[rgb(var(--muted))] text-[rgb(var(--foreground))] shadow-sm ring-1 ring-[rgb(var(--border))]'
-                : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))]'
-            }`}
-          >
-            <TableCellsIcon className="mr-1 inline h-4 w-4" /> Tabla
-          </button>
-        </div>
       </div>
 
       <div className="panel mt-4 grid gap-4 rounded-2xl p-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -177,9 +158,6 @@ export default function ShipmentsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <span className="hidden rounded-xl bg-[rgb(var(--muted))] px-3 py-2 text-xs text-[rgb(var(--muted-foreground))] ring-1 ring-[rgb(var(--border))] sm:inline-flex">
-              <FunnelIcon className="mr-1 h-4 w-4" /> Filtros móviles acá
-            </span>
           </div>
         </div>
       </div>

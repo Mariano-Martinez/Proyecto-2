@@ -4,6 +4,7 @@ import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan, setUser } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRightIcon, CheckBadgeIcon, EyeIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
 
@@ -73,8 +74,9 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top,_#101827,_#05060a_60%)] text-white">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-4 py-12">
-        <RevealSection className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_25px_80px_rgba(15,23,42,0.45)] backdrop-blur">
+      <div className="mx-auto flex w-full max-w-6xl flex-col space-y-16 px-4 py-12 md:space-y-28">
+        <section>
+          <RevealSection className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_25px_80px_rgba(15,23,42,0.45)] backdrop-blur">
           <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start">
             <div className="flex-1 space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold">
@@ -169,15 +171,23 @@ export default function HomePage() {
                   <ArrowRightIcon className="h-4 w-4" />
                 </button>
                 <p className="text-center text-xs text-slate-400">
-                  Al continuar, aceptás nuestros <span className="text-sky-300">Términos de Servicio</span> y{' '}
-                  <span className="text-sky-300">Política de Privacidad</span>
+                  Al continuar, aceptás nuestros{' '}
+                  <Link href="/terminos" className="text-sky-300 transition hover:text-sky-200">
+                    Términos de Servicio
+                  </Link>{' '}
+                  y{' '}
+                  <Link href="/privacidad" className="text-sky-300 transition hover:text-sky-200">
+                    Política de Privacidad
+                  </Link>
                 </p>
               </div>
             </div>
           </div>
         </RevealSection>
+        </section>
 
-        <RevealSection className="grid gap-8 lg:grid-cols-3">
+        <section>
+          <RevealSection className="grid gap-8 lg:grid-cols-3">
           {[
             { title: 'Agregá tu tracking', copy: 'Copiá el código de seguimiento y agregalo a TrackHub en segundos.' },
             { title: 'Seguí en tiempo real', copy: 'Recibí notificaciones automáticas en cada actualización del envío.' },
@@ -191,9 +201,11 @@ export default function HomePage() {
               <p className="mt-2 text-sm text-slate-300">{step.copy}</p>
             </div>
           ))}
-        </RevealSection>
+          </RevealSection>
+        </section>
 
-        <RevealSection className="space-y-8">
+        <section>
+          <RevealSection className="space-y-8">
           <div className="text-center">
             <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Couriers soportados</p>
             <h2 className="mt-3 text-3xl font-semibold">Integraciones con los principales servicios de envío</h2>
@@ -211,9 +223,11 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-        </RevealSection>
+          </RevealSection>
+        </section>
 
-        <RevealSection className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-10 text-center">
+        <section>
+          <RevealSection className="rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-10 text-center">
           <h2 className="text-2xl font-semibold sm:text-3xl">Empezá a rastrear tus envíos hoy</h2>
           <p className="mt-2 text-sm text-slate-300">
             Unite a miles de usuarios que ya confían en TrackHub para gestionar sus paquetes.
@@ -228,7 +242,8 @@ export default function HomePage() {
               <ArrowRightOnRectangleIcon className="h-4 w-4" />
             </button>
           </div>
-        </RevealSection>
+          </RevealSection>
+        </section>
 
         <footer className="flex flex-col items-center justify-between gap-4 border-t border-white/10 py-8 text-xs text-slate-400 sm:flex-row">
           <div className="flex items-center gap-2">
@@ -236,9 +251,15 @@ export default function HomePage() {
             © 2024 TrackHub AR. Todos los derechos reservados.
           </div>
           <div className="flex items-center gap-6 text-xs">
-            <span>Privacidad</span>
-            <span>Términos</span>
-            <span>Soporte</span>
+            <Link href="/privacidad" className="transition hover:text-sky-300">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="transition hover:text-sky-300">
+              Términos
+            </Link>
+            <Link href="/soporte" className="transition hover:text-sky-300">
+              Soporte
+            </Link>
           </div>
         </footer>
       </div>

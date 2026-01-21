@@ -3,7 +3,8 @@ import { es } from 'date-fns/locale';
 import { StatusBadge } from './StatusBadge';
 import { Shipment } from '@/lib/types';
 import Link from 'next/link';
-import { ClipboardDocumentIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowUpRightIcon, ClipboardDocumentIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { Panel } from '@/components/ui/Panel';
 
 type Props = {
   shipments: Shipment[];
@@ -21,86 +22,84 @@ export const ShipmentTable = ({ shipments, onDelete, selectable, selectedIds, on
   };
 
   return (
-    <div className="panel overflow-hidden rounded-2xl">
-      <table className="min-w-full bg-[rgb(var(--panel-bg))]">
-        <thead className="sticky top-0 z-10 bg-[rgb(var(--muted))] text-left text-xs uppercase text-[rgb(var(--muted-foreground))] shadow-sm">
-          <tr>
-            {selectable && <th className="table-cell w-12">Sel.</th>}
-            <th className="table-cell w-44">Alias</th>
-            <th className="table-cell w-32">Courier</th>
-            <th className="table-cell w-44">Código</th>
-            <th className="table-cell w-32">Estado</th>
-            <th className="table-cell w-40">Actualizado</th>
-            <th className="table-cell text-right">Acciones</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-[rgb(var(--border))]">
-          {shipments.map((shipment) => (
-            <tr key={shipment.id} className="transition hover:bg-[rgb(var(--muted))]">
-              {selectable && (
-                <td className="table-cell align-middle">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] text-sky-500"
-                    checked={selectedIds?.has(shipment.id)}
-                    onChange={() => onToggleSelect?.(shipment.id)}
-                  />
-                </td>
-              )}
-              <td className="table-cell font-semibold text-[rgb(var(--foreground))]">{shipment.alias}</td>
-              <td className="table-cell text-[rgb(var(--muted-foreground))]">{shipment.courier}</td>
-              <td className="table-cell">
-                <div className="flex items-center gap-2">
-                  <span className="rounded-lg bg-[rgb(var(--muted))] px-2 py-1 font-mono text-xs font-semibold text-[rgb(var(--foreground))] ring-1 ring-[rgb(var(--border))]">
-                    {shipment.code}
-                  </span>
-                  <button
-                    onClick={() => copy(shipment.code)}
-                    className="rounded-lg p-1 text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
-                    aria-label="Copiar código"
-                    title="Copiar código"
-                  >
-                    <ClipboardDocumentIcon className="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
-              <td className="table-cell">
-                <StatusBadge status={shipment.status} />
-              </td>
-              <td className="table-cell text-sm text-[rgb(var(--muted-foreground))]">
-                {format(new Date(shipment.lastUpdated), 'dd MMM, HH:mm', { locale: es })}
-              </td>
-              <td className="table-cell text-right">
-                <div className="flex justify-end gap-2">
-                  <Link
-                    href={`/shipments/${shipment.id}`}
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-sky-600 transition hover:bg-sky-500/10 hover:text-sky-400"
-                    title="Ver detalle"
-                  >
-                    Ver
-                  </Link>
-                  <button
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-[rgb(var(--muted-foreground))] transition hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]"
-                    title="Editar"
-                  >
-                    <PencilIcon className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => onDelete(shipment.id)}
-                    className="rounded-lg px-2 py-1 text-xs font-semibold text-rose-500 transition hover:bg-rose-500/10 hover:text-rose-400"
-                    title="Eliminar"
-                  >
-                    <TrashIcon className="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
+    <Panel className="overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-left text-sm">
+          <thead className="border-b border-[rgb(var(--panel-border))] text-xs uppercase tracking-wide text-[rgb(var(--muted-foreground))]">
+            <tr>
+              {selectable && <th className="px-4 py-4">Sel.</th>}
+              <th className="px-4 py-4">Alias</th>
+              <th className="px-4 py-4">Courier</th>
+              <th className="px-4 py-4">Código</th>
+              <th className="px-4 py-4">Estado</th>
+              <th className="px-4 py-4">Actualizado</th>
+              <th className="px-4 py-4 text-right">Acciones</th>
             </tr>
-          ))}
+          </thead>
+          <tbody className="divide-y divide-[rgb(var(--panel-border))]">
+            {shipments.map((shipment) => (
+              <tr key={shipment.id} className="text-[rgb(var(--foreground))] transition hover:bg-slate-50 dark:hover:bg-white/5">
+                {selectable && (
+                  <td className="px-4 py-4 align-middle">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-[rgb(var(--border))] bg-[rgb(var(--panel-bg))] text-sky-500"
+                      checked={selectedIds?.has(shipment.id)}
+                      onChange={() => onToggleSelect?.(shipment.id)}
+                    />
+                  </td>
+                )}
+                <td className="px-4 py-4">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-sky-400" />
+                    <span className="font-semibold">{shipment.alias}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-4 text-[rgb(var(--muted-foreground))]">{shipment.courier}</td>
+                <td className="px-4 py-4 text-[rgb(var(--muted-foreground))]">{shipment.code}</td>
+                <td className="px-4 py-4">
+                  <StatusBadge status={shipment.status} />
+                </td>
+                <td className="px-4 py-4 text-[rgb(var(--muted-foreground))]">
+                  {format(new Date(shipment.lastUpdated), 'dd MMM, HH:mm', { locale: es })}
+                </td>
+                <td className="px-4 py-4 text-right">
+                  <div className="inline-flex items-center gap-2">
+                    <Link
+                      href={`/shipments/${shipment.id}`}
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      aria-label="Ver envío"
+                    >
+                      <ArrowUpRightIcon className="h-4 w-4" />
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => copy(shipment.code)}
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95"
+                      aria-label="Copiar código"
+                    >
+                      <ClipboardDocumentIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(shipment.id)}
+                      className="flex h-9 w-9 items-center justify-center rounded-[10px] border border-[rgb(var(--panel-border))] text-[rgb(var(--muted-foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-rose-400 active:scale-95"
+                      aria-label="Eliminar envío"
+                    >
+                      <TrashIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
         </tbody>
-      </table>
+        </table>
+      </div>
       {shipments.length === 0 && (
-        <div className="p-6 text-center text-sm text-[rgb(var(--muted-foreground))]">No tenés envíos todavía.</div>
+        <div className="border-t border-[rgb(var(--panel-border))] px-6 py-6 text-center text-sm text-[rgb(var(--muted-foreground))]">
+          No tenés envíos todavía.
+        </div>
       )}
-    </div>
+    </Panel>
   );
 };

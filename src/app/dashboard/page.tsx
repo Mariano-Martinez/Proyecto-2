@@ -133,7 +133,7 @@ export default function DashboardPage() {
             <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
               <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
               <div>
-                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no registraste envíos</p>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no hay envíos principales</p>
                 <p className="text-xs text-[rgb(var(--muted-foreground))]">
                   Agregá tu primer tracking para ver el historial reciente.
                 </p>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
             <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
               <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
               <div>
-                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no registraste envíos</p>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no hay envíos principales</p>
                 <p className="text-xs text-[rgb(var(--muted-foreground))]">
                   Agregá tu primer tracking para ver el historial reciente.
                 </p>

@@ -77,7 +77,7 @@ export default function HomePage() {
       <div className="mx-auto flex w-full max-w-6xl flex-col space-y-16 px-4 py-12 md:space-y-28">
         <section>
           <RevealSection className="rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_25px_80px_rgba(15,23,42,0.45)] backdrop-blur">
-          <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-start">
+          <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center">
             <div className="flex-1 space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold">
                 <span className="h-2 w-2 rounded-full bg-sky-400" />

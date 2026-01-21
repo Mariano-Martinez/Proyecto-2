@@ -117,7 +117,7 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Mis envíos</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Envíos principales</h2>
             <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
           </div>
         </div>

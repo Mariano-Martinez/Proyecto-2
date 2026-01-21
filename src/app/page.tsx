@@ -4,6 +4,7 @@ import { Courier } from '@/lib/types';
 import { setAuth, setPlan, getPlan, setUser } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRightIcon, CheckBadgeIcon, EyeIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
 
@@ -244,9 +245,15 @@ export default function HomePage() {
             © 2024 TrackHub AR. Todos los derechos reservados.
           </div>
           <div className="flex items-center gap-6 text-xs">
-            <span>Privacidad</span>
-            <span>Términos</span>
-            <span>Soporte</span>
+            <Link href="/privacidad" className="transition hover:text-sky-300">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="transition hover:text-sky-300">
+              Términos
+            </Link>
+            <Link href="/soporte" className="transition hover:text-sky-300">
+              Soporte
+            </Link>
           </div>
         </footer>
       </div>

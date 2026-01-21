@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { PricingCard } from '@/components/PricingCard';
 import { PricingComparison } from '@/components/PricingComparison';
 import { AppShell } from '@/components/layout/AppShell';
+import Link from 'next/link';
 
 const faqs = [
   {
@@ -91,9 +92,15 @@ export default function PricingPage() {
             </div>
           </div>
           <div className="flex items-center gap-6 text-xs">
-            <span>Privacidad</span>
-            <span>Términos</span>
-            <span>Soporte</span>
+            <Link href="/privacidad" className="transition hover:text-sky-500">
+              Privacidad
+            </Link>
+            <Link href="/terminos" className="transition hover:text-sky-500">
+              Términos
+            </Link>
+            <Link href="/soporte" className="transition hover:text-sky-500">
+              Soporte
+            </Link>
           </div>
         </footer>
       </div>

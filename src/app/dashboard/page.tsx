@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AddShipmentModal } from '@/components/AddShipmentModal';
 import { useAuthGuard } from '@/lib/hooks';
-import { deleteShipment, getShipments } from '@/lib/storage';
+import { deleteShipment, getRecentlyViewedShipments, getShipments } from '@/lib/storage';
 import { Shipment, ShipmentStatus } from '@/lib/types';
 import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
@@ -12,7 +12,8 @@ import { ShipmentsActivityChart } from '@/components/dashboard/ShipmentsActivity
 import { RecentShipmentsList } from '@/components/dashboard/RecentShipmentsList';
 import { ShipmentsTable } from '@/components/dashboard/ShipmentsTable';
 import { ShipmentCard } from '@/components/ShipmentCard';
-import { AlertTriangle, CheckCircle2, Clock, Layers, Truck } from 'lucide-react';
+import { IconBadge } from '@/components/ui/IconBadge';
+import { AlertTriangle, CheckCircle2, Clock, Layers, PackageSearch, Truck } from 'lucide-react';
 
 const metricOrder: { key: ShipmentStatus; label: string }[] = [
   { key: ShipmentStatus.IN_TRANSIT, label: 'En Tránsito' },
@@ -24,16 +25,19 @@ const metricOrder: { key: ShipmentStatus; label: string }[] = [
 export default function DashboardPage() {
   const ready = useAuthGuard();
   const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [recentShipments, setRecentShipments] = useState<Shipment[]>([]);
   const [open, setOpen] = useState(false);
   const { toast, showToast, clearToast } = useToast();
 
   useEffect(() => {
     if (!ready) return;
     setShipments(getShipments());
+    setRecentShipments(getRecentlyViewedShipments());
   }, [ready]);
 
   const refresh = () => {
     setShipments(getShipments());
+    setRecentShipments(getRecentlyViewedShipments());
   };
 
   const handleDelete = (id: string) => {
@@ -117,29 +121,39 @@ export default function DashboardPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Mis envíos</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--foreground))]">Envíos principales</h2>
             <p className="text-sm text-[rgb(var(--muted-foreground))]">Gestiona y rastrea tus paquetes activos</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
-              Exportar CSV
-            </button>
-            <button className="rounded-[10px] border border-[rgb(var(--panel-border))] bg-[rgb(var(--panel-bg))] px-4 py-2 text-xs font-semibold text-[rgb(var(--foreground))] transition hover:border-[rgb(var(--panel-hover-border))] hover:text-sky-400 active:scale-95">
-              Filtrar
-            </button>
           </div>
         </div>
 
         <div className="hidden lg:block">
-          <ShipmentsTable shipments={shipments} onDelete={handleDelete} onCopy={handleCopy} />
+          {recentShipments.length > 0 ? (
+            <ShipmentsTable shipments={recentShipments} onDelete={handleDelete} onCopy={handleCopy} />
+          ) : (
+            <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
+              <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
+              <div>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no hay envíos principales</p>
+                <p className="text-xs text-[rgb(var(--muted-foreground))]">
+                  Agregá tu primer tracking para ver el historial reciente.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
         <div className="space-y-4 lg:hidden">
-          {shipments.map((shipment) => (
+          {recentShipments.map((shipment) => (
             <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => handleCopy(shipment.code)} />
           ))}
-          {shipments.length === 0 && (
-            <div className="panel p-6 text-center text-sm text-[rgb(var(--muted-foreground))]">
-              No tenés envíos todavía. Cargá tu primer tracking.
+          {recentShipments.length === 0 && (
+            <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
+              <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
+              <div>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no hay envíos principales</p>
+                <p className="text-xs text-[rgb(var(--muted-foreground))]">
+                  Agregá tu primer tracking para ver el historial reciente.
+                </p>
+              </div>
             </div>
           )}
         </div>

@@ -7,6 +7,7 @@ import { Courier, Plan, Shipment, ShipmentStatus, TimelineEvent } from './types'
 
 const STORAGE_KEYS = {
   shipments: 'trackhub_shipments',
+  recentlyViewedShipments: 'trackhub_recently_viewed_shipments',
   auth: 'trackhub_auth',
   plan: 'trackhub_plan',
   redirect: 'trackhub_redirect',
@@ -31,6 +32,12 @@ const writeLocal = (key: string, value: unknown) => {
   if (typeof window === 'undefined') return;
   localStorage.setItem(key, JSON.stringify(value));
 };
+
+const MAX_RECENTLY_VIEWED = 7;
+
+const getRecentlyViewedIds = () => readLocal<string[]>(STORAGE_KEYS.recentlyViewedShipments) ?? [];
+
+const setRecentlyViewedIds = (ids: string[]) => writeLocal(STORAGE_KEYS.recentlyViewedShipments, ids);
 
 export const getShipments = (): Shipment[] => {
   if (typeof window === 'undefined') return [];
@@ -126,6 +133,11 @@ export const deleteShipment = (id: string) => {
   const shipments = getShipments();
   const updated = shipments.filter((s) => s.id !== id);
   writeLocal(STORAGE_KEYS.shipments, updated);
+  const currentRecent = getRecentlyViewedIds();
+  const nextRecent = currentRecent.filter((recentId) => recentId !== id);
+  if (nextRecent.length !== currentRecent.length) {
+    setRecentlyViewedIds(nextRecent);
+  }
 };
 
 export const simulateProgress = (id: string) => {
@@ -187,3 +199,22 @@ export const getUsage = () => {
 };
 
 export const overwriteShipments = (shipments: Shipment[]) => writeLocal(STORAGE_KEYS.shipments, shipments);
+
+export const markShipmentViewed = (id: string) => {
+  const shipments = getShipments();
+  if (!shipments.some((shipment) => shipment.id === id)) return;
+  const current = getRecentlyViewedIds();
+  const next = [id, ...current.filter((item) => item !== id)].slice(0, MAX_RECENTLY_VIEWED);
+  setRecentlyViewedIds(next);
+};
+
+export const getRecentlyViewedShipments = (): Shipment[] => {
+  const shipments = getShipments();
+  const shipmentMap = new Map(shipments.map((shipment) => [shipment.id, shipment]));
+  const ids = getRecentlyViewedIds();
+  const normalized = ids.filter((id) => shipmentMap.has(id));
+  if (normalized.length !== ids.length) {
+    setRecentlyViewedIds(normalized);
+  }
+  return normalized.map((id) => shipmentMap.get(id)!).slice(0, MAX_RECENTLY_VIEWED);
+};

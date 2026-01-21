@@ -79,7 +79,7 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
             aria-label="Cerrar sesión"
           >
             <span>Hola, Maria</span>
-            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100 group-hover:text-red-500" />
           </button>
         </div>
       </div>

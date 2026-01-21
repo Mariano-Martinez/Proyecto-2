@@ -99,7 +99,7 @@ export const AddShipmentModal = ({ open, onClose, onCreated }: { open: boolean; 
       if (typeof window !== 'undefined') {
         setRedirectPath(window.location.pathname);
       }
-      router.push('/login?reason=save');
+      router.push('/');
       return;
     }
     setLoading(true);

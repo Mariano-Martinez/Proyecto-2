@@ -5,7 +5,7 @@ import { StatusBadge } from '@/components/StatusBadge';
 import { Timeline } from '@/components/Timeline';
 import { useAuthGuard } from '@/lib/hooks';
 import { detectCourier } from '@/lib/detection';
-import { applyPrefilledShipment, getShipments, simulateProgress } from '@/lib/storage';
+import { applyPrefilledShipment, getShipments, markShipmentViewed, simulateProgress } from '@/lib/storage';
 import { Courier, Shipment, ShipmentStatus } from '@/lib/types';
 import {
   getTrackingLastUpdated,
@@ -65,6 +65,9 @@ export default function ShipmentDetailPage({ params }: { params: { id: string } 
     if (!ready) return;
     const data = getShipments().find((s) => s.id === params.id) || null;
     setShipment(data);
+    if (data) {
+      markShipmentViewed(data.id);
+    }
   }, [params.id, ready]);
 
   const fetchTracking = async (carrierId: CarrierId, shipmentCode: string): Promise<TrackingNormalized> => {

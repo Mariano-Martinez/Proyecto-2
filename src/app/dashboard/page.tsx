@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AddShipmentModal } from '@/components/AddShipmentModal';
 import { useAuthGuard } from '@/lib/hooks';
-import { deleteShipment, getShipments } from '@/lib/storage';
+import { deleteShipment, getRecentlyViewedShipments, getShipments } from '@/lib/storage';
 import { Shipment, ShipmentStatus } from '@/lib/types';
 import { AppShell } from '@/components/layout/AppShell';
 import { Toast, useToast } from '@/components/Toast';
@@ -12,7 +12,8 @@ import { ShipmentsActivityChart } from '@/components/dashboard/ShipmentsActivity
 import { RecentShipmentsList } from '@/components/dashboard/RecentShipmentsList';
 import { ShipmentsTable } from '@/components/dashboard/ShipmentsTable';
 import { ShipmentCard } from '@/components/ShipmentCard';
-import { AlertTriangle, CheckCircle2, Clock, Layers, Truck } from 'lucide-react';
+import { IconBadge } from '@/components/ui/IconBadge';
+import { AlertTriangle, CheckCircle2, Clock, Layers, PackageSearch, Truck } from 'lucide-react';
 
 const metricOrder: { key: ShipmentStatus; label: string }[] = [
   { key: ShipmentStatus.IN_TRANSIT, label: 'En Tránsito' },
@@ -24,16 +25,19 @@ const metricOrder: { key: ShipmentStatus; label: string }[] = [
 export default function DashboardPage() {
   const ready = useAuthGuard();
   const [shipments, setShipments] = useState<Shipment[]>([]);
+  const [recentShipments, setRecentShipments] = useState<Shipment[]>([]);
   const [open, setOpen] = useState(false);
   const { toast, showToast, clearToast } = useToast();
 
   useEffect(() => {
     if (!ready) return;
     setShipments(getShipments());
+    setRecentShipments(getRecentlyViewedShipments());
   }, [ready]);
 
   const refresh = () => {
     setShipments(getShipments());
+    setRecentShipments(getRecentlyViewedShipments());
   };
 
   const handleDelete = (id: string) => {
@@ -123,15 +127,33 @@ export default function DashboardPage() {
         </div>
 
         <div className="hidden lg:block">
-          <ShipmentsTable shipments={shipments} onDelete={handleDelete} onCopy={handleCopy} />
+          {recentShipments.length > 0 ? (
+            <ShipmentsTable shipments={recentShipments} onDelete={handleDelete} onCopy={handleCopy} />
+          ) : (
+            <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
+              <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
+              <div>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no registraste envíos</p>
+                <p className="text-xs text-[rgb(var(--muted-foreground))]">
+                  Agregá tu primer tracking para ver el historial reciente.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
         <div className="space-y-4 lg:hidden">
-          {shipments.map((shipment) => (
+          {recentShipments.map((shipment) => (
             <ShipmentCard key={shipment.id} shipment={shipment} onDelete={handleDelete} onCopy={() => handleCopy(shipment.code)} />
           ))}
-          {shipments.length === 0 && (
-            <div className="panel p-6 text-center text-sm text-[rgb(var(--muted-foreground))]">
-              No tenés envíos todavía. Cargá tu primer tracking.
+          {recentShipments.length === 0 && (
+            <div className="panel flex flex-col items-center gap-2 bg-[rgb(var(--muted))] px-4 py-6 text-center">
+              <IconBadge icon={PackageSearch} className="bg-sky-500/10 text-sky-400 dark:text-sky-300" />
+              <div>
+                <p className="text-sm font-semibold text-[rgb(var(--foreground))]">Todavía no registraste envíos</p>
+                <p className="text-xs text-[rgb(var(--muted-foreground))]">
+                  Agregá tu primer tracking para ver el historial reciente.
+                </p>
+              </div>
             </div>
           )}
         </div>

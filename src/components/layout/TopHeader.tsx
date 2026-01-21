@@ -75,11 +75,11 @@ export const TopHeader = ({ onMenu, onPrimaryAction, primaryActionLabel, primary
           <button
             type="button"
             onClick={handleLogout}
-            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition hover:text-sky-400 md:inline-flex"
+            className="group hidden items-center gap-2 text-sm font-semibold text-[rgb(var(--foreground))] transition md:inline-flex"
             aria-label="Cerrar sesión"
           >
             <span>Hola, Maria</span>
-            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100" />
+            <LogOut className="h-4 w-4 opacity-0 transition group-hover:opacity-100 group-hover:text-red-500" />
           </button>
         </div>
       </div>
